@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:17:48 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/06/22 15:22:21 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/06/22 16:20:57 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ int main(void)
     socklen_t				addr_size;
     struct addrinfo			hints, *res;
     int						sockfd, new_fd, n;
-	char					buf[1000];
+	std::string					buf;
+	std::string					msg("01234567890123456789");
 
     // !! don't forget your error checking for these calls !!
     // first, load up address structs with getaddrinfo():
@@ -28,29 +29,27 @@ int main(void)
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_PASSIVE;     // fill in my IP for me
 
-    if (getaddrinfo(NULL, MYPORT, &hints, &res) == -1)
+    if (getaddrinfo("10.12.3.3", MYPORT, &hints, &res) == -1)
 		perror("");
 
     // make a socket, bind it, and listen on it:
     sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-    bind(sockfd, res->ai_addr, res->ai_addrlen);
-    listen(sockfd, BACKLOG);
+    connect(sockfd, res->ai_addr, res->ai_addrlen);
+    n = recv(sockfd, (void *) msg.c_str(), 20, 0);
+    std::cout << msg << std::endl;
 
-    // now accept an incoming connection:
-
-    addr_size = sizeof their_addr;
-    new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &addr_size);
 
     // ready to communicate on socket descriptor new_fd!
 
 	while (42)
 	{
-		n = recv(new_fd, buf, 1000, 0);
+		std::getline(std::cin, buf);
+		n = send(sockfd, buf.c_str(), buf.size(), 0);
 		if (n < 0)
 			return (15);
 		if (!n)
 			break ;
-		std::cout << "Received: " << buf << std::endl;
+		std::cout << "Sent: " << n << std::endl;
 	}
 	std::cout << "Connection closed" << std::endl;
 	close(sockfd);
