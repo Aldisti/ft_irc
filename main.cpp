@@ -21,6 +21,7 @@ int	main(void)
 	int			sfd;
 	int			rs;
 	int			r;
+	int			on = 1;
 
 	memset((void *) &hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;
@@ -37,6 +38,13 @@ int	main(void)
 	if (sfd == -1)
 	{
 		std::cerr << "socket() failed" << std::endl;
+		return (1);
+	}
+	err = setsockopt(sfd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on));
+	if (err < 0)
+	{
+		std::cerr << "setsockopt() failed" << std::endl;
+		close(sfd);
 		return (1);
 	}
 	if (bind(sfd, res->ai_addr, res->ai_addrlen))
@@ -68,6 +76,8 @@ int	main(void)
 			continue ;
 		for (int i = 0; i < npollfds && rs > 0; i++)
 		{
+			// if (i)
+			// 	std::cout << "revents: " << pollfds[i].revents << std::endl;
 			if (pollfds[i].revents != POLLIN || pollfds[i].fd == -1)
 				continue ;
 			std::cout << "POLLIN" << std::endl;
@@ -101,6 +111,7 @@ int	main(void)
 					pollfds[i].fd = -1;
 					continue ;
 				}
+				std::cout << ">> " << buff << std::endl;
 				if (npollfds > 2)
 				{
 					if (i + 1 != npollfds)
