@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/06/30 16:36:26 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/06/30 16:38:55 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ std::string	Server::getPass(void) const
 	return (this->_pass);
 }
 
-User		*Server::getUser(int fd) const
+User		*Server::getUser(int fd)
 {
 	for (std::vector<User*>::iterator ite = this->_users.begin(); ite != this->_users.end(); ite++)
 		if ((*ite)->getSockFd() == fd)
@@ -63,7 +63,7 @@ User		*Server::getUser(int fd) const
 	return (NULL);
 }
 
-User		*Server::getUser(std::string nick) const
+User		*Server::getUser(std::string nick)
 {
 	for (std::vector<User *>::iterator ite = this->_users.begin(); ite != this->_users.end(); ite++)
 		if ((*ite)->getNick() == nick)

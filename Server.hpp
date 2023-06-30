@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 10:15:13 by gpanico           #+#    #+#             */
-/*   Updated: 2023/06/30 16:36:47 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/06/30 16:38:52 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ class Server
 		
 		// getters
 		std::string	getPass(void) const;
-		User		*getUser(int fd) const;
-		User		*getUser(std::string nick) const;
+		User		*getUser(int fd);
+		User		*getUser(std::string nick);
 
 	public:
 		// exceptions
