@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/06/30 08:21:15 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/06/30 10:13:17 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,9 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <poll.h>
+#include <map>
 
 #define MYPORT "8001"  // the port users will be connecting to
 #define BACKLOG 10     // how many pending connections queue will hold
-
+// commands
+#define PASS std::string("PASS")
