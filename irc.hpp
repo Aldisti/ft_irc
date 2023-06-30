@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/06/22 15:38:47 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/06/30 08:21:15 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@
 #include <errno.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <poll.h>
 
-#define MYPORT "3490"  // the port users will be connecting to
+#define MYPORT "8001"  // the port users will be connecting to
 #define BACKLOG 10     // how many pending connections queue will hold
 

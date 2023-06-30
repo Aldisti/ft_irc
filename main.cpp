@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -10,49 +11,133 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "irc.hpp"
+#include <iostream>
+#include <string>
+#include <string.h>
+#include <netdb.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <sys/poll.h>
 
-int main(void)
+int	main(void)
 {
-    struct sockaddr_storage	their_addr;
-    socklen_t				addr_size;
-    struct addrinfo			hints, *res;
-    int						sockfd, new_fd, n;
-	std::string					buf;
-	std::string					msg("01234567890123456789");
+	struct addrinfo		hints;
+	struct addrinfo		*res;
+	struct sockaddr		their_addr;
+	socklen_t		sin_addr = sizeof(their_addr);
+	struct pollfd		pollfds[50];
+	char			buff[1001];
+	int			buff_size = 1000;
+	int			npollfds = 1;
+	int			err;
+	int			sfd;
+	int			rs;
+	int			r;
+	int			on = 1;
 
-    // !! don't forget your error checking for these calls !!
-    // first, load up address structs with getaddrinfo():
-
-    memset(&hints, 0, sizeof hints);
-    hints.ai_family = AF_UNSPEC;  // use IPv4 or IPv6, whichever
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_flags = AI_PASSIVE;     // fill in my IP for me
-
-    if (getaddrinfo("10.12.3.3", MYPORT, &hints, &res) == -1)
-		perror("");
-
-    // make a socket, bind it, and listen on it:
-    sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-    connect(sockfd, res->ai_addr, res->ai_addrlen);
-    n = recv(sockfd, (void *) msg.c_str(), 20, 0);
-    std::cout << msg << std::endl;
-
-
-    // ready to communicate on socket descriptor new_fd!
-
-	while (42)
+	memset((void *) &hints, 0, sizeof(hints));
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_protocol = 0;
+	hints.ai_flags = AI_PASSIVE;
+	err = getaddrinfo(NULL, "8000", &hints, &res);
+	if (err)
 	{
-		std::getline(std::cin, buf);
-		n = send(sockfd, buf.c_str(), buf.size(), 0);
-		if (n < 0)
-			return (15);
-		if (!n)
-			break ;
-		std::cout << "Sent: " << n << std::endl;
+		std::cerr << "getaddrinfo() failed" << std::endl;
+		return (err);
 	}
-	std::cout << "Connection closed" << std::endl;
-	close(sockfd);
-	close(new_fd);
+	sfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+	if (sfd == -1)
+	{
+		std::cerr << "socket() failed" << std::endl;
+		return (1);
+	}
+	err = setsockopt(sfd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on));
+	if (err < 0)
+	{
+		std::cerr << "setsockopt() failed" << std::endl;
+		close(sfd);
+		return (1);
+	}
+	if (bind(sfd, res->ai_addr, res->ai_addrlen))
+	{
+		std::cerr << "bind() failed" << std::endl;
+		return (1);
+	}
+	freeaddrinfo(res);
+	if (listen(sfd, 50))
+	{
+		std::cerr << "listen() failed" << std::endl;
+		close(sfd);
+		return (1);
+	}
+	memset((void *) pollfds, 0, sizeof(pollfds));
+	pollfds[0].fd = sfd;
+	pollfds[0].events = POLLIN;
+	for (int k = 0; k < 100; k++)
+	{
+		std::cout << "polling..." << std::endl;
+		rs = poll(pollfds, npollfds, 1000);
+		if (rs < 0)
+		{
+			std::cerr << "poll() failed" << std::endl;
+			close(sfd);
+			return (1);
+		}
+		else if (rs == 0)
+			continue ;
+		for (int i = 0; i < npollfds && rs > 0; i++)
+		{
+			// if (i)
+			// 	std::cout << "revents: " << pollfds[i].revents << std::endl;
+			if (pollfds[i].revents != POLLIN || pollfds[i].fd == -1)
+				continue ;
+			std::cout << "POLLIN" << std::endl;
+			if (pollfds[i].fd == sfd)
+			{
+				pollfds[npollfds].fd = accept(sfd, &their_addr, &sin_addr);
+				if (pollfds[npollfds].fd == -1)
+				{
+					std::cerr << "accept() failed" << std::endl;
+					pollfds[npollfds].fd = 0;
+					continue ;
+				}
+				pollfds[npollfds].events = POLLIN;
+				npollfds++;
+			}
+			else
+			{
+				memset((void *) buff, 0, buff_size + 1);
+				r = recv(pollfds[i].fd, buff, buff_size, MSG_DONTWAIT);
+				if (r < 0)
+				{
+					std::cerr << "recv() failed" << std::endl;
+					close(pollfds[i].fd);
+					pollfds[i].fd = -1;
+					continue ;
+				}
+				else if (r == 0)
+				{
+					std::cerr << "connection closed" << std::endl;
+					close(pollfds[i].fd);
+					pollfds[i].fd = -1;
+					continue ;
+				}
+				std::cout << ">> " << buff << std::endl;
+				if (npollfds > 2)
+				{
+					if (i + 1 != npollfds)
+						send(pollfds[i + 1].fd, buff, buff_size, MSG_DONTWAIT);
+					else
+						send(pollfds[i - 1].fd, buff, buff_size, MSG_DONTWAIT);
+				}
+				else
+					send(pollfds[i].fd, buff, buff_size, MSG_DONTWAIT);
+			}
+		}
+	}
+	for (int i = 0; i < npollfds; i++)
+		if (pollfds[i].fd != -1)
+			close(pollfds[i].fd);
 	return (0);
 }
