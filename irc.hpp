@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/06/30 14:20:31 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/06/30 17:10:04 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,12 @@
 
 // utils
 #define BUFFSIZE 512
-#define BACKLOG 50
+
+#define LETTERS std::string("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
+#define DIGITS std::string("0123456789")
+#define HEXDIGITS std::string("0123456789ABCDEF")
+#define SPECIAL std::string("[\]^_`{|}")
+#define NPOS std::string::npos
 
 // commands
 #define PASS std::string("PASS")

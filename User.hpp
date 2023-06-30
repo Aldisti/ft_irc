@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   classes.hpp                                        :+:      :+:    :+:   */
+/*   User.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 10:24:01 by gpanico           #+#    #+#             */
-/*   Updated: 2023/06/30 08:58:57 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/06/30 16:56:47 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,6 @@
 # define USER_HPP
 
 # include "irc.hpp"
-
-# define LETTERS std::string("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
-# define DIGITS std::string("0123456789")
-# define HEXDIGITS std::string("0123456789ABCDEF")
-# define SPECIAL std::string("[\]^_`{|}")
-# define NPOS std::string::npos
 
 class User
 {
