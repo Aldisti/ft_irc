@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/06/30 15:35:58 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/06/30 16:36:26 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,20 +24,20 @@ Server::Server(std::string pass): _pass(pass), _npollfds(1)
 	this->_hints.ai_protocol = 0;
 	this->_hints.ai_flags = AI_PASSIVE;
 	if (getaddrinfo(NULL, "8000", &this->_hints, &res))
-		throw (Server::ExceptionGetAddressInfo())
+		throw (Server::ExceptionGetAddrInfo());
 	this->_sfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 	if (this->_sfd == -1)
-		throw (Server::ExceptionSocket())
+		throw (Server::ExceptionSocket());
 	if (setsockopt(this->_sfd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on)))
-		throw (Server::ExceptionSetSockOpt())
+		throw (Server::ExceptionSetSockOpt());
 	if (bind(this->_sfd, res->ai_addr, res->ai_addrlen))
-		throw (Server::ExceptionBind())
+		throw (Server::ExceptionBind());
 	freeaddrinfo(res);
-	if (listen(sfd, BACKLOG))
-		throw (Server::ExceptionListen())
+	if (listen(this->_sfd, BACKLOG))
+		throw (Server::ExceptionListen());
 	memset((void *) this->_pollfds, 0, sizeof(this->_pollfds));
-	this->pollfds[0].fd = this->_sfd;
-	this->pollfds[0].events = POLLIN;
+	this->_pollfds[0].fd = this->_sfd;
+	this->_pollfds[0].events = POLLIN;
 }
 
 Server::~Server(void)
@@ -52,13 +52,13 @@ Server::~Server(void)
 
 std::string	Server::getPass(void) const
 {
-	return (this->pass);
+	return (this->_pass);
 }
 
 User		*Server::getUser(int fd) const
 {
-	for (std::vector<User *>::iterator ite = this->_users.begin(); ite != this->_users.end(); ite++)
-		if ((*ite)->getSockfd() == fd)
+	for (std::vector<User*>::iterator ite = this->_users.begin(); ite != this->_users.end(); ite++)
+		if ((*ite)->getSockFd() == fd)
 			return (*ite);
 	return (NULL);
 }
@@ -73,7 +73,7 @@ User		*Server::getUser(std::string nick) const
 
 void		Server::registerUser(void)
 {
-	if (this->_pollfds[0].revents != POLLIN || this->_pollfds[i].fd == -1)
+	if (this->_pollfds[0].revents != POLLIN || this->_pollfds[0].fd == -1)
 		return ;
 	this->_theirAddr.resize(this->_theirAddr.size() + 1);
 	this->_pollfds[this->_npollfds].fd = accept(this->_sfd, &(this->_theirAddr.back()), &(this->_sinAddr));

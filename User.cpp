@@ -1,4 +1,16 @@
-#include "classes.hpp"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   User.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/30 16:20:48 by adi-stef          #+#    #+#             */
+/*   Updated: 2023/06/30 16:26:13 by adi-stef         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "User.hpp"
 
 bool	User::checkNick(std::string nick)
 {
@@ -36,7 +48,7 @@ User		&User::operator=(User const &usr)
 	this->_registered = usr.getReg();
 	this->_mode = usr.getMode();
 	this->_op = usr.getOperator();
-	this->_nick = usr.getnick();
+	this->_nick = usr.getNick();
 	this->_user = usr.getUser();
 	this->_real = usr.getReal();
 	return (*this);
@@ -57,7 +69,7 @@ int			User::getMode(void) const
 	return (this->_mode);
 }
 
-int			User::getOperator(void) const
+bool		User::getOperator(void) const
 {
 	return (this->_op);
 }
@@ -72,7 +84,7 @@ std::string	User::getUser(void) const
 	return (this->_user);
 }
 
-std::string	User::getsockFd(void) const
+std::string	User::getReal(void) const
 {
 	return (this->_real);
 }
@@ -89,7 +101,7 @@ void		User::setReg(int reg)
 
 void		User::setMode(int mode)
 {
-	this->mode = mode;
+	this->_mode = mode;
 }
 
 void		User::setOperator(bool op)
