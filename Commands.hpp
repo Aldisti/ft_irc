@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 08:59:58 by gpanico           #+#    #+#             */
-/*   Updated: 2023/06/30 11:40:11 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/06/30 12:23:31 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,9 @@ class	Commands
 	public:
 
 		// commands
+		static void	capCommand(Server &srv, User *usr, std::vector<std::string> params);
 		static void	passCommand(Server &srv, User *usr, std::vector<std::string> params);
+		static void	nickCommand(Server &srv, User *usr, std::vector<std::string> params);
 		// functions
 		void	initCommands(void);
 		// vaiables
