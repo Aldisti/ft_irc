@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/06/30 12:31:09 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/07/03 09:33:48 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,15 @@ void	Commands::capCommand(Server *srv, User *usr, std::vector<std::string> param
 
 void	Commands::nickCommand(Server *srv, User *usr, std::vector<std::string> params)
 {
+	if (usr->getReg % 2 == 0)
+		// throw (Replies::ErrNotRegistered()); // we can also use this reply
+		throw (Replies::ErrPassNotSent()); // the command PASS has not yet been sent
 	if (params.size() == 0)
-		throw (Replies::ErrNoNicknameGiven());
+		throw (Replies::ErrNoNicknameGiven()); // nick not passed
 	if (!User::checkNick(params[0]))
-		throw (Replies::ErroneusNickname());
+		throw (Replies::ErroneusNickname()); // the nick passed contains unacceptable characters
+	if (srv->getUser(paramas[0]))
+		throw (Replies::ErrNicknameInUse()); // nickname is already paired with another User
+	usr->setNick(params[0]);
+	usr->setReg(usr->getReg() | 2);
 }

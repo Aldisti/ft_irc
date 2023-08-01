@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -7,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:17:48 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/06/22 16:20:57 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/01 10:03:01 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +25,7 @@ int	main(void)
 	struct sockaddr		their_addr;
 	socklen_t		sin_addr = sizeof(their_addr);
 	struct pollfd		pollfds[50];
-	char			buff[1001];
+	char		buff[1001];
 	int			buff_size = 1000;
 	int			npollfds = 1;
 	int			err;
@@ -124,6 +123,12 @@ int	main(void)
 					continue ;
 				}
 				std::cout << ">> " << buff << std::endl;
+				for (int i = 0; buff[i]; i++)
+				{
+					std::cout << (int) buff[i] << " ";
+				}
+				std::cout << std::endl;
+				//std::cout << "last chars: " << (int) buff[((int) strlen(buff)) - 2] << (int) buff[((int) strlen(buff)) - 1] << std::endl;
 				if (npollfds > 2)
 				{
 					if (i + 1 != npollfds)

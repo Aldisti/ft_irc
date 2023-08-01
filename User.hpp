@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   classes.hpp                                        :+:      :+:    :+:   */
+/*   User.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 10:24:01 by gpanico           #+#    #+#             */
-/*   Updated: 2023/06/30 08:58:57 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/01 12:37:58 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,6 @@
 # define USER_HPP
 
 # include "irc.hpp"
-
-# define LETTERS std::string("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
-# define DIGITS std::string("0123456789")
-# define HEXDIGITS std::string("0123456789ABCDEF")
-# define SPECIAL std::string("[\]^_`{|}")
-# define NPOS std::string::npos
 
 class User
 {
@@ -32,6 +26,7 @@ class User
 		std::string	_nick;
 		std::string	_user;
 		std::string	_real;
+		std::string	_buff;
 
 	public:
 		// CO functions
@@ -41,13 +36,14 @@ class User
 		User		&operator=(User const &usr);
 
 		// getters
-		int			getSockFd(void) const;
-		int			getReg(void) const;
-		int			getMode(void) const;
-		bool		getOperator(void) const;
-		std::string	getNick(void) const;
-		std::string	getUser(void) const;
-		std::string	getReal(void) const;
+		int				getSockFd(void) const;
+		int				getReg(void) const;
+		int				getMode(void) const;
+		bool			getOperator(void) const;
+		std::string		getNick(void) const;
+		std::string		getUser(void) const;
+		std::string		getReal(void) const;
+		std::string		getBuff(void) const;
 
 		// setters
 		void		setSockFd(int sfd);
@@ -57,9 +53,28 @@ class User
 		void		setNick(std::string nick);
 		void		setUser(std::string user);
 		void		setReal(std::string real);
+		void		setBuff(std::string buff);
+
+		// functions
+		void		checkBuff(void);
 
 		// static functions
 		static bool	checkNick(std::string nick);
+
+		// exceptions
+		
+		class	InvalidFormatException: public std::exception
+		{
+			private:
+				std::string	_message;
+
+			public:
+				InvalidFormatException(std::string message): std::exception(), _message(message) {};
+				virtual const char *what() const throw
+				{
+					return (this->_message.c_str());
+				}
+		};
 };
 
 #endif

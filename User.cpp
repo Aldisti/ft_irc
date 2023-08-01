@@ -1,4 +1,37 @@
-#include "classes.hpp"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   User.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/03 08:27:25 by gpanico           #+#    #+#             */
+/*   Updated: 2023/08/01 12:19:39 by gpanico          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "irc.hpp"
+
+void	User::checkBuff(Server const &server)
+{
+	std::vector<std::string>	commands;
+	std::vector<std::string>	cmd;
+
+	if (this->_buff.size() < MAX_BUFF && this->_buff.substr(this->_buff.size() - 2) != DEL)
+		return ;
+	if (this->_buff.size() > MAX_BUFF - 2)
+	{
+		this->_buff.resize();
+		this->_buff += DEL;
+	}
+	commands = split(this->_buff, DEL);
+	for (std::string command : commands)
+	{
+		cmd = ft_parse(command);
+		if (command[0] == ':' && cmd[0] != this->_nick)
+			throw User::InvalidFormatException();
+	}
+}
 
 bool	User::checkNick(std::string nick)
 {
@@ -13,7 +46,7 @@ bool	User::checkNick(std::string nick)
 	return (true);
 }
 
-User::User(int sockfd): _sockfd(sockfd), _registered(0), _op(false)
+User::User(int sockfd): _sockfd(sockfd), _registered(0), _op(false), _buff("")
 {
 	return ;
 }
@@ -77,6 +110,11 @@ std::string	User::getsockFd(void) const
 	return (this->_real);
 }
 
+std::string	User::getBuff(void) const
+{
+	return (this->_buff);
+}
+
 void		User::setSockFd(int sfd)
 {
 	this->_sockfd = sfd;
@@ -110,4 +148,9 @@ void		User::setUser(std::string user)
 void		User::setReal(std::string real)
 {
 	this->_real = real;
+}
+
+void		User::setBuff(std::string buff)
+{
+	this->_buff = buff;
 }

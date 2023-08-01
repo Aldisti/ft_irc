@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/06/30 15:35:58 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/01 12:16:07 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,8 @@ void		Server::registerUser(void)
 
 void		Server::checkFd(int	rs)
 {
-	int	r;
+	User	*tmp;
+	int		r;
 
 	for (int i = 1; i < this->_npollfds && rs > 0; i++)
 	{
@@ -109,6 +110,13 @@ void		Server::checkFd(int	rs)
 			close(pollfds[i].fd);
 			pollfds[i].fd = -1;
 			continue ;
+		}
+		tmp = this->getUser(this->_pollfds[i].fd);
+		tmp->setBuff(tmp->getBurealff() + std::string(this->_buff));
+		try {
+			tmp->checkBuff();
+		} catch (std::exception e) {
+
 		}
 	}
 }

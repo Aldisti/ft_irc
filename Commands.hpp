@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 08:59:58 by gpanico           #+#    #+#             */
-/*   Updated: 2023/06/30 12:23:31 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/01 12:41:38 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,25 +52,40 @@ class	Replies
 		// exceptions
 		class	ErrNeedMoreParams: public std::exception
 		{
+			private:
+				std::string	_message;
+
+			public:
+				ErrNeedMoreParams(std::string message): std::exception(), _message(message) {};
 			virtual const char *what() const throw
 			{
-				return (" ");
+				return (this->_message.c_str());
 			}
 		};
 
 		class	ErrAlreadyRegistered: public std::exception
 		{
+			private:
+				std::string	_message;
+
+			public:
+				ErrAlreadyRegistered(std::string message): std::exception(), _message(message) {};
 			virtual const char *what() const throw
 			{
-				return (" ");
+				return (this->_message.c_str());
 			}
 		};
 
 		class	ErrIncorrectPassword: public std::exception
 		{
+			private:
+				std::string	_message;
+
+			public:
+				ErrIncorrectPassword(std::string message): std::exception(), _message(message) {};
 			virtual const char *what() const throw
 			{
-				return (" ");
+				return (this->_message.c_str());
 			}
 		};
 };
