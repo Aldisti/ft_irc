@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/01 12:16:07 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/01 16:18:25 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,20 +24,20 @@ Server::Server(std::string pass): _pass(pass), _npollfds(1)
 	this->_hints.ai_protocol = 0;
 	this->_hints.ai_flags = AI_PASSIVE;
 	if (getaddrinfo(NULL, "8000", &this->_hints, &res))
-		throw (Server::ExceptionGetAddressInfo())
+		throw (Server::ExceptionGetAddressInfo());
 	this->_sfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 	if (this->_sfd == -1)
-		throw (Server::ExceptionSocket())
+		throw (Server::ExceptionSocket());
 	if (setsockopt(this->_sfd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on)))
-		throw (Server::ExceptionSetSockOpt())
+		throw (Server::ExceptionSetSockOpt());
 	if (bind(this->_sfd, res->ai_addr, res->ai_addrlen))
-		throw (Server::ExceptionBind())
+		throw (Server::ExceptionBind());
 	freeaddrinfo(res);
-	if (listen(sfd, BACKLOG))
-		throw (Server::ExceptionListen())
+	if (listen(this->_sfd, BACKLOG))
+		throw (Server::ExceptionListen());
 	memset((void *) this->_pollfds, 0, sizeof(this->_pollfds));
-	this->pollfds[0].fd = this->_sfd;
-	this->pollfds[0].events = POLLIN;
+	this->_pollfds[0].fd = this->_sfd;
+	this->_pollfds[0].events = POLLIN;
 }
 
 Server::~Server(void)
@@ -52,7 +52,7 @@ Server::~Server(void)
 
 std::string	Server::getPass(void) const
 {
-	return (this->pass);
+	return (this->_pass);
 }
 
 User		*Server::getUser(int fd) const
@@ -115,8 +115,8 @@ void		Server::checkFd(int	rs)
 		tmp->setBuff(tmp->getBurealff() + std::string(this->_buff));
 		try {
 			tmp->checkBuff();
-		} catch (std::exception e) {
-
+		} catch (Replies::ErrException e) {
+			send(tmp->getSockFd(), e.what(), std::string(e.what()).size(), MSG_DONTWAIT);
 		}
 	}
 }

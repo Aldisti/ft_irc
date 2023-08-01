@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:17:48 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/01 10:03:01 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/01 14:29:49 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <sys/poll.h>
+#include "irc.hpp"
 
 int	main(void)
 {
@@ -39,6 +40,7 @@ int	main(void)
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = 0;
 	hints.ai_flags = AI_PASSIVE;
+	std::cout << ERR_NOSUCHNICK(std::string("gpanico"), std::string("gp")) << std::endl;
 	err = getaddrinfo(NULL, "8000", &hints, &res);
 	if (err)
 	{

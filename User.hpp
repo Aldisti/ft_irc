@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 10:24:01 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/01 12:37:58 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/01 15:03:51 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,21 +60,6 @@ class User
 
 		// static functions
 		static bool	checkNick(std::string nick);
-
-		// exceptions
-		
-		class	InvalidFormatException: public std::exception
-		{
-			private:
-				std::string	_message;
-
-			public:
-				InvalidFormatException(std::string message): std::exception(), _message(message) {};
-				virtual const char *what() const throw
-				{
-					return (this->_message.c_str());
-				}
-		};
 };
 
 #endif

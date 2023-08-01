@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 10:15:13 by gpanico           #+#    #+#             */
-/*   Updated: 2023/06/30 15:08:09 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/01 16:17:26 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,9 @@ class Server
 
 	public:
 		// exceptions
-		class ExceptionGetAddrInfo: public std::exception
+		class ExceptionGetAddressInfo: public std::exception
 		{
-			virtual const char *what() const throw
+			virtual const char *what() const throw()
 			{
 				return ("getaddrinfo() failed");
 			}
@@ -56,7 +56,7 @@ class Server
 
 		class ExceptionSocket: public std::exception
 		{
-			virtual const char *what() const throw
+			virtual const char *what() const throw()
 			{
 				return ("socket() failed");
 			}
@@ -64,7 +64,7 @@ class Server
 
 		class ExceptionSetSockOpt: public std::exception
 		{
-			virtual const char *what() const throw
+			virtual const char *what() const throw()
 			{
 				return ("setsockopt() failed");
 			}
@@ -72,7 +72,7 @@ class Server
 
 		class ExceptionBind: public std::exception
 		{
-			virtual const char *what() const throw
+			virtual const char *what() const throw()
 			{
 				return ("bind() failed");
 			}
@@ -80,7 +80,7 @@ class Server
 
 		class ExceptionListen: public std::exception
 		{
-			virtual const char *what() const throw
+			virtual const char *what() const throw()
 			{
 				return ("listen() failed");
 			}
@@ -88,7 +88,7 @@ class Server
 
 		class ExceptionAccept: public std::exception
 		{
-			virtual const char *what() const throw
+			virtual const char *what() const throw()
 			{
 				return ("accept() failed");
 			}

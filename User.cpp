@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 08:27:25 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/01 12:19:39 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/01 16:14:54 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ void	User::checkBuff(Server const &server)
 {
 	std::vector<std::string>	commands;
 	std::vector<std::string>	cmd;
+	std::string					cmdName;
 
 	if (this->_buff.size() < MAX_BUFF && this->_buff.substr(this->_buff.size() - 2) != DEL)
 		return ;
@@ -27,10 +28,28 @@ void	User::checkBuff(Server const &server)
 	commands = split(this->_buff, DEL);
 	for (std::string command : commands)
 	{
-		cmd = ft_parse(command);
-		if (command[0] == ':' && cmd[0] != this->_nick)
-			throw User::InvalidFormatException();
+		try {
+			cmd = ft_parse(command);
+		} catch (std::exception e) {
+			this->_buff = "";
+			throw Replies::ErrException(ERR_BADSYNTAX(this->_nick, this->_user).c_str());
+		}
+		if (command[0] == ':' && cmd[0] != this->_nick) {
+			this->_buff = "";
+			throw Replies::ErrException(ERR_NOSUCHNICK(this->_nick, this->_user).c_str());
+		}
+		else if (command[0] == ':')
+			cmd.pop(0);
+		cmdName = cmd[0];
+		cmd.pop(0);
+		try {
+			Commands::commands.at(cmdName)(server, this, cmd);
+		} catch (std::out_of_range e) {
+			this->_buff = "";
+			throw Replies::ErrException(ERR_UNKNOWNCOMMAND(this->_nick, this->_user, cmdName).c_str());
+		}
 	}
+	this->_buff = "";
 }
 
 bool	User::checkNick(std::string nick)
