@@ -11,22 +11,23 @@
 /* ************************************************************************** */
 
 #include "irc.hpp"
+#include "utils.hpp"
 
-std::vector<std::string>	split(std::string str, std::string del)
+std::vector<std::string>	ft_split(std::string str, std::string del)
 {
 	std::vector<std::string>	splitted;
 	int							i = 0;
 	int							j = 0;
 
-	while (i < str.size())
+	while (i < (int) str.size())
 	{
 		i = str.find(del, j);
-		if (i == NPOS)
+		if (i == (int) NPOS)
 		{
-			splitted.add(str.substr(j));
+			splitted.push_back(str.substr(j));
 			break ;
 		}
-		splitted.add(str.substr(j, i - j));
+		splitted.push_back(str.substr(j, i - j));
 		j = i + 2;
 	}
 	return (splitted);

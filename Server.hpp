@@ -17,6 +17,8 @@
 # include "User.hpp"
 # include "Commands.hpp"
 
+class User;
+
 class Server
 {
 	private:
@@ -38,6 +40,7 @@ class Server
 		~Server(void);
 		void		registerUser(void);
 		//void		parseCommand(User *usr );
+		void		checkFd(int	rs);
 		
 		// getters
 		std::string	getPass(void) const;

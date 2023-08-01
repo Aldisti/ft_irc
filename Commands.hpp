@@ -19,10 +19,11 @@
 # include "Server.hpp"
 
 class	Server;
+class	User;
 
 class	Commands
 {
-	typedef void (*cmd_p)(Server &, User *, std::vector<std::string>);
+	typedef void (*cmd_p)(const Server &, User *, std::vector<std::string>);
 
 	private:
 		// constructor and destructor are private 'cause this is a static class
@@ -53,10 +54,10 @@ class	Replies
 		class	ErrException: public std::exception
 		{
 			private:
-				char *	_message;
+				const char *	_message;
 
 			public:
-				ErrException(char * message): _message(message) {};
+				ErrException(const char * message): _message(message) {};
 				virtual const char * what() const throw()
 				{
 					return (this->_message);

@@ -11,26 +11,30 @@
 /* ************************************************************************** */
 
 #include "irc.hpp"
+#include "User.hpp"
 
 void	User::checkBuff(Server const &server)
 {
 	std::vector<std::string>	commands;
 	std::vector<std::string>	cmd;
 	std::string					cmdName;
+	std::string					command;
 
 	if (this->_buff.size() < MAX_BUFF && this->_buff.substr(this->_buff.size() - 2) != DEL)
 		return ;
 	if (this->_buff.size() > MAX_BUFF - 2)
 	{
-		this->_buff.resize();
+		this->_buff.resize(MAX_BUFF - 2);
 		this->_buff += DEL;
 	}
-	commands = split(this->_buff, DEL);
-	for (std::string command : commands)
+	commands = ft_split(this->_buff, DEL);
+	for (int i = 0; i < (int) commands.size(); i++)
 	{
+		command = commands[i];
 		try {
-			cmd = ft_parse(command);
-		} catch (std::exception e) {
+//			cmd = ft_parse(command);
+			(void) cmd;
+		} catch (std::exception &e) {
 			this->_buff = "";
 			throw Replies::ErrException(ERR_BADSYNTAX(this->_nick, this->_user).c_str());
 		}
@@ -39,12 +43,12 @@ void	User::checkBuff(Server const &server)
 			throw Replies::ErrException(ERR_NOSUCHNICK(this->_nick, this->_user).c_str());
 		}
 		else if (command[0] == ':')
-			cmd.pop(0);
+			cmd.erase(cmd.begin());
 		cmdName = cmd[0];
-		cmd.pop(0);
+		cmd.erase(cmd.begin());
 		try {
 			Commands::commands.at(cmdName)(server, this, cmd);
-		} catch (std::out_of_range e) {
+		} catch (std::out_of_range &e) {
 			this->_buff = "";
 			throw Replies::ErrException(ERR_UNKNOWNCOMMAND(this->_nick, this->_user, cmdName).c_str());
 		}
@@ -59,8 +63,8 @@ bool	User::checkNick(std::string nick)
 	if (LETTERS.find(nick[0]) == NPOS && SPECIAL.find(nick[0]) == NPOS)
 		return (false);
 	for (int i = 1; i < (int) nick.size(); i++)
-		if (LETTERS.find(nick[0]) == NPOS && SPECIAL.find(nick[0]) == NPOS
-				&& DIGITS.find(nick[0]) == NPOS || nick[0] != '-')
+		if (LETTERS.find(nick[i]) == NPOS && SPECIAL.find(nick[i]) == NPOS
+				&& DIGITS.find(nick[i]) == NPOS && nick[i] != '-')
 			return (false);
 	return (true);
 }
@@ -88,7 +92,7 @@ User		&User::operator=(User const &usr)
 	this->_registered = usr.getReg();
 	this->_mode = usr.getMode();
 	this->_op = usr.getOperator();
-	this->_nick = usr.getnick();
+	this->_nick = usr.getNick();
 	this->_user = usr.getUser();
 	this->_real = usr.getReal();
 	return (*this);
@@ -109,7 +113,7 @@ int			User::getMode(void) const
 	return (this->_mode);
 }
 
-int			User::getOperator(void) const
+bool		User::getOperator(void) const
 {
 	return (this->_op);
 }
@@ -124,7 +128,7 @@ std::string	User::getUser(void) const
 	return (this->_user);
 }
 
-std::string	User::getsockFd(void) const
+std::string	User::getReal(void) const
 {
 	return (this->_real);
 }
@@ -146,7 +150,7 @@ void		User::setReg(int reg)
 
 void		User::setMode(int mode)
 {
-	this->mode = mode;
+	this->_mode = mode;
 }
 
 void		User::setOperator(bool op)

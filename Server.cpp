@@ -57,15 +57,15 @@ std::string	Server::getPass(void) const
 
 User		*Server::getUser(int fd) const
 {
-	for (std::vector<User *>::iterator ite = this->_users.begin(); ite != this->_users.end(); ite++)
-		if ((*ite)->getSockfd() == fd)
+	for (std::vector<User *>::const_iterator ite = this->_users.begin(); ite != this->_users.end(); ite++)
+		if ((*ite)->getSockFd() == fd)
 			return (*ite);
 	return (NULL);
 }
 
 User		*Server::getUser(std::string nick) const
 {
-	for (std::vector<User *>::iterator ite = this->_users.begin(); ite != this->_users.end(); ite++)
+	for (std::vector<User *>::const_iterator ite = this->_users.begin(); ite != this->_users.end(); ite++)
 		if ((*ite)->getNick() == nick)
 			return (*ite);
 	return (NULL);
@@ -73,8 +73,8 @@ User		*Server::getUser(std::string nick) const
 
 void		Server::registerUser(void)
 {
-	if (this->_pollfds[0].revents != POLLIN || this->_pollfds[i].fd == -1)
-		return ;
+//	if (this->_pollfds[0].revents != POLLIN || this->_pollfds[i].fd == -1)
+//		return ;
 	this->_theirAddr.resize(this->_theirAddr.size() + 1);
 	this->_pollfds[this->_npollfds].fd = accept(this->_sfd, &(this->_theirAddr.back()), &(this->_sinAddr));
 	if (this->_pollfds[this->_npollfds].fd == -1)
@@ -100,22 +100,22 @@ void		Server::checkFd(int	rs)
 		if (r < 0)
 		{
 			std::cerr << "recv() failed" << std::endl;
-			close(pollfds[i].fd);
-			pollfds[i].fd = -1;
+			close(this->_pollfds[i].fd);
+			this->_pollfds[i].fd = -1;
 			continue ;
 		}
 		else if (r == 0)
 		{
 			std::cerr << "connection closed" << std::endl;
-			close(pollfds[i].fd);
-			pollfds[i].fd = -1;
+			close(this->_pollfds[i].fd);
+			this->_pollfds[i].fd = -1;
 			continue ;
 		}
 		tmp = this->getUser(this->_pollfds[i].fd);
-		tmp->setBuff(tmp->getBurealff() + std::string(this->_buff));
+		tmp->setBuff(tmp->getBuff() + std::string(this->_buff));
 		try {
-			tmp->checkBuff();
-		} catch (Replies::ErrException e) {
+			tmp->checkBuff(*this);
+		} catch (Replies::ErrException &e) {
 			send(tmp->getSockFd(), e.what(), std::string(e.what()).size(), MSG_DONTWAIT);
 		}
 	}

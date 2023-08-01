@@ -14,6 +14,11 @@
 # define USER_HPP
 
 # include "irc.hpp"
+# include "Server.hpp"
+# include "Commands.hpp"
+# include "utils.hpp"
+
+class Server;
 
 class User
 {
@@ -56,7 +61,7 @@ class User
 		void		setBuff(std::string buff);
 
 		// functions
-		void		checkBuff(void);
+		void		checkBuff(Server const &server);
 
 		// static functions
 		static bool	checkNick(std::string nick);

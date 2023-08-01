@@ -46,7 +46,7 @@
 #define LETTERS std::string("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
 #define DIGITS std::string("0123456789")
 #define HEXDIGITS std::string("0123456789ABCDEF")
-#define SPECIAL std::string("[\]^_`{|}")
+#define SPECIAL std::string("[\\]^_`{|}")
 #define DEL	std::string("\r\n")
 #define MAX_BUFF 512
 
