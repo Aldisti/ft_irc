@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/02 14:40:10 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/02 15:57:30 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@
 #include <map>
 
 #define MYPORT "8001"  // the port users will be connecting to
+#define IP std::string("10.12.3.3")
+#define SRV_NAME std::string("ircsrv")
 
 // utils
 #define BUFFSIZE 100
@@ -47,7 +49,8 @@
 #define PONG std::string("PONG")
 
 // messages
-#define CAPMSG std::string("CAP * LS")
+#define MSG_CAP std::string("CAP * LS\r\n")
+#define MSG_PONG(ip) std::string("PONG :" + ip + "\r\n")
 
 // irc format
 #define LETTERS std::string("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
@@ -58,14 +61,15 @@
 #define MAX_BUFF 512
 
 // replies/errors
-#define RPL_WELCOME(nick, user) std::string(":" + nick + "!" + user + "@localhost 001 Welcome =) " + nick + "!" + user + "@localhost")
-#define ERR_NOSUCHNICK(nick, user) std::string(":" + nick + "!" + user + "@localhost 401 " + nick + " :no such nick")
-#define ERR_UNKNOWNCOMMAND(nick, user, cmd) std::string(":" + nick + "!" + user + "@localhost 421 " + cmd + " :Unknown command")
-#define ERR_NONICKNAMEGIVEN(nick, user) std::string(":" + nick + "!" + user + "@localhost 431 :No nickname given")
-#define ERR_ERRONEUSNICKNAME(nick, user) std::string(":" + nick + "!" + user + "@localhost 432 " + nick + " :Erroneous nickname")
-#define ERR_NICKNAMEINUSE(nick, user) std::string(":" + nick + "!" + user + "@localhost 433 " + nick + " :Nickname is already in use")
-#define ERR_NOTREGISTERED(nick, user) std::string(":" + nick + "!" + user + "@localhost 451 :You have not registered")
-#define ERR_NEEDMOREPARAMS(nick, user, cmd) std::string(":" + nick + "!" + user + "@localhost 461 " + cmd + " :Not enough parameters")
-#define ERR_ALREADYREGISTERED(nick, user) std::string(":" + nick + "!" + user + "@localhost 462 :Unauthorized command (already registered)")
-#define ERR_BADSYNTAX(nick, user) std::string(":" + nick + "!" + user + "@localhost 542 :bad syntax")
-#define ERR_INCORRECTPASS(nick, user) std::string(":" + nick + "!" + user + "@localhost 543 :incorrect password")
+#define RPL_WELCOME(nick, user, server) std::string(":" + nick + "!" + user + "@localhost 001 " + server + " " + nick + "!" + user + "@localhost\r\n")
+#define ERR_NOSUCHNICK(nick, user) std::string(":" + nick + "!" + user + "@localhost 401 " + nick + " :no such nick\r\n")
+#define ERR_NOSUCHSERVER(nick, user, server) std::string(":" + nick + "!" + user + "@localhost 402 " + server + " :no such server\r\n")
+#define ERR_UNKNOWNCOMMAND(nick, user, cmd) std::string(":" + nick + "!" + user + "@localhost 421 " + cmd + " :Unknown command\r\n")
+#define ERR_NONICKNAMEGIVEN(nick, user) std::string(":" + nick + "!" + user + "@localhost 431 :No nickname given\r\n")
+#define ERR_ERRONEUSNICKNAME(nick, user) std::string(":" + nick + "!" + user + "@localhost 432 " + nick + " :Erroneous nickname\r\n")
+#define ERR_NICKNAMEINUSE(nick, user) std::string(":" + nick + "!" + user + "@localhost 433 " + nick + " :Nickname is already in use\r\n")
+#define ERR_NOTREGISTERED(nick, user) std::string(":" + nick + "!" + user + "@localhost 451 :You have not registered\r\n")
+#define ERR_NEEDMOREPARAMS(nick, user, cmd) std::string(":" + nick + "!" + user + "@localhost 461 " + cmd + " :Not enough parameters\r\n")
+#define ERR_ALREADYREGISTERED(nick, user) std::string(":" + nick + "!" + user + "@localhost 462 :Unauthorized command (already registered)\r\n")
+#define ERR_BADSYNTAX(nick, user) std::string(":" + nick + "!" + user + "@localhost 542 :bad syntax\r\n")
+#define ERR_INCORRECTPASS(nick, user) std::string(":" + nick + "!" + user + "@localhost 543 :incorrect password\r\n")

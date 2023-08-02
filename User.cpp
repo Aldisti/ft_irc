@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 08:27:25 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/02 14:14:35 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/02 16:04:02 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ void	User::checkBuff(Server const &server)
 	std::string					cmdName;
 	std::string					command;
 
-//	std::cout << this->_buff.size() << std::endl;
-//	std::cout << this->_buff << std::endl;
+	std::cout << this->_buff.size() << std::endl;
+	std::cout << this->_buff << std::endl;
 //	std::cout << "| ";
 //	for (int i = 0; i < (int) this->_buff.size(); i++) {
 //		std::cout << (int) this->_buff[i] << " ";

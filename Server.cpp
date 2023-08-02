@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/02 14:47:43 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/02 16:17:07 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,8 @@
 
 Server::Server(std::string pass): _pass(pass), _npollfds(1)
 {
-	struct addrinfo	*res, *tmp;
+	struct addrinfo	*res;
 	int				on = 1;
-	void			*addr;
-	char			ipstr[INET6_ADDRSTRLEN];
 
 	this->_sinAddr = sizeof(struct sockaddr);
 	memset((void *) &this->_hints, 0, sizeof(struct addrinfo));
@@ -25,15 +23,8 @@ Server::Server(std::string pass): _pass(pass), _npollfds(1)
 	this->_hints.ai_socktype = SOCK_STREAM;
 	this->_hints.ai_protocol = 0;
 	this->_hints.ai_flags = AI_PASSIVE;
-	if (getaddrinfo(NULL, MYPORT, &this->_hints, &res))
+	if (getaddrinfo(IP.c_str(), MYPORT, &this->_hints, &res))
 		throw (Server::ExceptionGetAddressInfo());
-	for (tmp = res; tmp ; tmp = tmp->ai_next)
-	{
-		addr = &(((struct sockaddr_in *) tmp->ai_addr)->sin_addr);
-		inet_ntop(tmp->ai_family, addr, ipstr, sizeof (ipstr));
-		this->_ipv4 = std::string(ipstr);
-		std::cout << this->_ipv4 << std::endl;
-	}
 	this->_sfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 	if (this->_sfd == -1)
 		throw (Server::ExceptionSocket());
@@ -57,11 +48,6 @@ Server::~Server(void)
 		delete this->_users.back();
 		this->_users.pop_back();
 	}
-}
-
-std::string	Server::getIp(void) const
-{
-	return (this->_ipv4);
 }
 
 std::string	Server::getPass(void) const
@@ -109,6 +95,12 @@ void		Server::checkFd(int	rs)
 
 	for (int i = 1; i < this->_npollfds && rs > 0; i++)
 	{
+//		std::cout << "revent: " << this->_pollfds[i].revents << std::endl;
+//		std::cout << "POLLIN: " << POLLIN << std::endl;
+//		std::cout << "POLLOUT: " << POLLOUT << std::endl;
+//		if (this->_pollfds[i].revents == POLLOUT) {
+//			std::cout << "prova" << std::endl;
+//		}
 		if (this->_pollfds[i].revents != POLLIN || this->_pollfds[i].fd == -1)
 			continue ;
 		std::cout << this->_pollfds[i].revents << std::endl;
@@ -136,6 +128,7 @@ void		Server::checkFd(int	rs)
 			tmp->checkBuff(*this);
 		} catch (Replies::ErrException &e) {
 			send(tmp->getSockFd(), e.what(), std::string(e.what()).size(), MSG_DONTWAIT);
+			tmp->setBuff("");
 		}
 	}
 }
@@ -143,7 +136,8 @@ void		Server::checkFd(int	rs)
 void	Server::polling(void)
 {
 	int	rs;
-	for (int k = 0; k < 1000; k++) {
+	while (true)
+	{
 		std::cout << "polling..." << std::endl;
 		rs = poll(this->_pollfds, this->_npollfds, TIMEOUT);
 		if (rs < 0)
@@ -154,5 +148,6 @@ void	Server::polling(void)
 		}
 		this->registerUser();
 		this->checkFd(rs);
+		sleep(1);
 	}
 }

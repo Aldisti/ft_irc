@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/02 14:41:36 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/02 15:58:11 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ void	Commands::initCommands(void)
 	Commands::commands[PASS] = Commands::passCommand;
 	Commands::commands[NICK] = Commands::nickCommand;
 	Commands::commands[USER] = Commands::userCommand;
-	Commands::commands[PING] = Commands::pingCommand;
-	Commands::commands[PONG] = Commands::pongCommand;
+	Commands::commands[PING] = Commands::pongCommand;
+	Commands::commands[PONG] = Commands::pingCommand;
 }
 
 void	Commands::passCommand(const Server &srv, User *usr, std::vector<std::string> params)
@@ -40,7 +40,8 @@ void	Commands::capCommand(const Server &srv, User *usr, std::vector<std::string>
 	(void) usr;
 	(void) params;
 	(void) srv;
-	send(usr->getSockFd(), CAPMSG.c_str(), CAPMSG.size(), MSG_DONTWAIT);
+	if (params[0] == "LS")
+		send(usr->getSockFd(), MSG_CAP.c_str(), MSG_CAP.size(), MSG_DONTWAIT);
 }
 
 void	Commands::nickCommand(const Server &srv, User *usr, std::vector<std::string> params)
@@ -56,8 +57,8 @@ void	Commands::nickCommand(const Server &srv, User *usr, std::vector<std::string
 	usr->setNick(params[0]);
 	usr->setReg(usr->getReg() | 2);
 	if (usr->getReg() >= 7) {
-		send(usr->getSockFd(), RPL_WELCOME(usr->getNick(), usr->getUser()).c_str(),
-				RPL_WELCOME(usr->getNick(), usr->getUser()).size(), MSG_DONTWAIT);
+		send(usr->getSockFd(), RPL_WELCOME(usr->getNick(), usr->getUser(), SRV_NAME).c_str(),
+				RPL_WELCOME(usr->getNick(), usr->getUser(), SRV_NAME).size(), MSG_DONTWAIT);
 	}
 }
 
@@ -75,8 +76,8 @@ void	Commands::userCommand(const Server &srv, User *usr, std::vector<std::string
 	usr->setReal(params[3]);
 	usr->setReg(usr->getReg() | 4);
 	if (usr->getReg() >= 7) {
-		send(usr->getSockFd(), RPL_WELCOME(usr->getNick(), usr->getUser()).c_str(),
-				RPL_WELCOME(usr->getNick(), usr->getUser()).size(), MSG_DONTWAIT);
+		send(usr->getSockFd(), RPL_WELCOME(usr->getNick(), usr->getUser(), SRV_NAME).c_str(),
+				RPL_WELCOME(usr->getNick(), usr->getUser(), SRV_NAME).size(), MSG_DONTWAIT);
 	}
 }
 
@@ -89,7 +90,9 @@ void	Commands::pingCommand(const Server &srv, User *usr, std::vector<std::string
 
 void	Commands::pongCommand(const Server &srv, User *usr, std::vector<std::string> params)
 {
- (void) srv;
- (void) usr;
- (void) params;
+	(void) srv;
+	if (params[0] != IP && params[0] != SRV_NAME)
+		throw (Replies::ErrException(ERR_NOSUCHSERVER(usr->getNick(), usr->getUser(), params[0]).c_str()));
+	int r = send(usr->getSockFd(), MSG_PONG(IP).c_str(), MSG_PONG(IP).size(), MSG_DONTWAIT);
+	std::cout << r << std::endl;
 }

@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 10:15:13 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/02 14:30:07 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/02 15:16:13 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ class Server
 {
 	private:
 		// variables
-		std::string						_ipv4;
 		const std::string				_pass;
 		std::vector<User *>				_users;
 		std::vector<struct sockaddr>	_theirAddr;
