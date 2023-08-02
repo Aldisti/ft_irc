@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 08:27:25 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/01 16:14:54 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/02 10:05:43 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,7 @@ void	User::checkBuff(Server const &server)
 	{
 		command = commands[i];
 		try {
-//			cmd = ft_parse(command);
-			(void) cmd;
+			cmd = ft_parse(command);
 		} catch (std::exception &e) {
 			this->_buff = "";
 			throw Replies::ErrException(ERR_BADSYNTAX(this->_nick, this->_user).c_str());

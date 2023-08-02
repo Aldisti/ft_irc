@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/01 16:18:25 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/02 10:15:40 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ Server::Server(std::string pass): _pass(pass), _npollfds(1)
 	this->_hints.ai_socktype = SOCK_STREAM;
 	this->_hints.ai_protocol = 0;
 	this->_hints.ai_flags = AI_PASSIVE;
-	if (getaddrinfo(NULL, "8000", &this->_hints, &res))
+	if (getaddrinfo(NULL, MYPORT, &this->_hints, &res))
 		throw (Server::ExceptionGetAddressInfo());
 	this->_sfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 	if (this->_sfd == -1)
@@ -73,8 +73,8 @@ User		*Server::getUser(std::string nick) const
 
 void		Server::registerUser(void)
 {
-//	if (this->_pollfds[0].revents != POLLIN || this->_pollfds[i].fd == -1)
-//		return ;
+	if (this->_pollfds[0].revents != POLLIN || this->_pollfds[0].fd == -1)
+		return ;
 	this->_theirAddr.resize(this->_theirAddr.size() + 1);
 	this->_pollfds[this->_npollfds].fd = accept(this->_sfd, &(this->_theirAddr.back()), &(this->_sinAddr));
 	if (this->_pollfds[this->_npollfds].fd == -1)
@@ -83,6 +83,7 @@ void		Server::registerUser(void)
 		throw (Server::ExceptionAccept());
 	}
 	this->_pollfds[this->_npollfds].events = POLLIN;
+	this->_users.push_back(new User(this->_pollfds[this->_npollfds].fd));
 	this->_npollfds++;
 }
 
