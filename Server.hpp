@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 10:15:13 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/01 16:17:26 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/02 14:30:07 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ class Server
 {
 	private:
 		// variables
+		std::string						_ipv4;
 		const std::string				_pass;
 		std::vector<User *>				_users;
 		std::vector<struct sockaddr>	_theirAddr;
@@ -41,9 +42,11 @@ class Server
 		void		registerUser(void);
 		//void		parseCommand(User *usr );
 		void		checkFd(int	rs);
+		void		polling(void);
 		
 		// getters
 		std::string	getPass(void) const;
+		std::string	getIp(void) const;
 		User		*getUser(int fd) const;
 		User		*getUser(std::string nick) const;
 

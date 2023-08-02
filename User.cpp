@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 08:27:25 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/02 10:05:43 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/02 14:14:35 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,13 @@ void	User::checkBuff(Server const &server)
 	std::string					cmdName;
 	std::string					command;
 
+//	std::cout << this->_buff.size() << std::endl;
+//	std::cout << this->_buff << std::endl;
+//	std::cout << "| ";
+//	for (int i = 0; i < (int) this->_buff.size(); i++) {
+//		std::cout << (int) this->_buff[i] << " ";
+//	}
+//	std::cout << "|" << std::endl;
 	if (this->_buff.size() < MAX_BUFF && this->_buff.substr(this->_buff.size() - 2) != DEL)
 		return ;
 	if (this->_buff.size() > MAX_BUFF - 2)
@@ -48,6 +55,7 @@ void	User::checkBuff(Server const &server)
 		try {
 			Commands::commands.at(cmdName)(server, this, cmd);
 		} catch (std::out_of_range &e) {
+			std::cout << cmdName << std::endl;
 			this->_buff = "";
 			throw Replies::ErrException(ERR_UNKNOWNCOMMAND(this->_nick, this->_user, cmdName).c_str());
 		}

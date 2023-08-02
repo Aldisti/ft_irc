@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 08:59:58 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/01 16:14:09 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/02 14:20:47 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,9 @@ class	Commands
 		static void	capCommand(Server const &srv, User *usr, std::vector<std::string> params);
 		static void	passCommand(Server const &srv, User *usr, std::vector<std::string> params);
 		static void	nickCommand(Server const &srv, User *usr, std::vector<std::string> params);
+		static void	userCommand(Server const &srv, User *usr, std::vector<std::string> params);
+		static void	pingCommand(Server const &srv, User *usr, std::vector<std::string> params);
+		static void	pongCommand(Server const &srv, User *usr, std::vector<std::string> params);
 		// functions
 		static void	initCommands(void);
 		// vaiables

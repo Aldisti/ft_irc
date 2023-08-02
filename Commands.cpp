@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/02 12:00:28 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/02 14:41:36 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,12 @@ std::map<std::string, Commands::cmd_p >	Commands::commands;
 
 void	Commands::initCommands(void)
 {
-	Commands::commands[PASS] = Commands::passCommand;
 	Commands::commands[CAP] = Commands::capCommand;
+	Commands::commands[PASS] = Commands::passCommand;
+	Commands::commands[NICK] = Commands::nickCommand;
+	Commands::commands[USER] = Commands::userCommand;
+	Commands::commands[PING] = Commands::pingCommand;
+	Commands::commands[PONG] = Commands::pongCommand;
 }
 
 void	Commands::passCommand(const Server &srv, User *usr, std::vector<std::string> params)
@@ -51,13 +55,15 @@ void	Commands::nickCommand(const Server &srv, User *usr, std::vector<std::string
 		throw (Replies::ErrException(std::string(ERR_NICKNAMEINUSE(usr->getNick(), usr->getUser())).c_str()));
 	usr->setNick(params[0]);
 	usr->setReg(usr->getReg() | 2);
-	if (usr->getReg >= 7) {
-		send(usr->getSockFd(), RPL_WELCOME.c_str(), RPL_WELCOME.size(), MSG_DONTWAIT);
+	if (usr->getReg() >= 7) {
+		send(usr->getSockFd(), RPL_WELCOME(usr->getNick(), usr->getUser()).c_str(),
+				RPL_WELCOME(usr->getNick(), usr->getUser()).size(), MSG_DONTWAIT);
 	}
 }
 
 void	Commands::userCommand(const Server &srv, User *usr, std::vector<std::string> params)
 {
+	(void) srv;
 	if (usr->getReg() % 2 == 0)
 		throw (Replies::ErrException(std::string(ERR_NOTREGISTERED(usr->getNick(), usr->getUser())).c_str()));
 	if (params.size() < 4)
@@ -65,10 +71,25 @@ void	Commands::userCommand(const Server &srv, User *usr, std::vector<std::string
 	if ((usr->getReg() >> 2) % 2)
 		throw (Replies::ErrException(std::string(ERR_ALREADYREGISTERED(usr->getNick(), usr->getUser())).c_str()));
 	usr->setUser(params[0]);
-	usr->setMode(atoi(params[1])); // ft_atoi
-	usr->setReal(plarams[3]);
+	usr->setMode(atoi(params[1].c_str())); // ft_atoi
+	usr->setReal(params[3]);
 	usr->setReg(usr->getReg() | 4);
-	if (usr->getReg >= 7) {
-		send(usr->getSockFd(), RPL_WELCOME.c_str(), RPL_WELCOME.size(), MSG_DONTWAIT);
+	if (usr->getReg() >= 7) {
+		send(usr->getSockFd(), RPL_WELCOME(usr->getNick(), usr->getUser()).c_str(),
+				RPL_WELCOME(usr->getNick(), usr->getUser()).size(), MSG_DONTWAIT);
 	}
+}
+
+void	Commands::pingCommand(const Server &srv, User *usr, std::vector<std::string> params)
+{
+ (void) srv;
+ (void) usr;
+ (void) params;
+}
+
+void	Commands::pongCommand(const Server &srv, User *usr, std::vector<std::string> params)
+{
+ (void) srv;
+ (void) usr;
+ (void) params;
 }

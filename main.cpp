@@ -6,19 +6,14 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:17:48 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/01 14:29:49 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/02 14:17:01 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
-#include <string>
-#include <string.h>
-#include <netdb.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/poll.h>
 #include "irc.hpp"
+#include "Server.hpp"
 
+/*
 int	main(void)
 {
 	struct addrinfo		hints;
@@ -147,4 +142,13 @@ int	main(void)
 		if (pollfds[i].fd != -1)
 			close(pollfds[i].fd);
 	return (0);
+}
+*/
+
+int	main(void) {
+	Server	*srv;
+
+	Commands::initCommands();
+	srv = new Server("123");
+	srv->polling();
 }
