@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/02 10:43:33 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/02 11:59:57 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@
 #define MAX_BUFF 512
 
 // replies/errors
+#define RPL_WELCOME(nick, user) std::string(":" + nick + "!" + user + "@localhost 001 Welcome =) " + nick + "!" + user + "@localhost")
 #define ERR_NOSUCHNICK(nick, user) std::string(":" + nick + "!" + user + "@localhost 401 " + nick + " :no such nick")
 #define ERR_UNKNOWNCOMMAND(nick, user, cmd) std::string(":" + nick + "!" + user + "@localhost 421 " + command + " :Unknown command")
 #define ERR_NONICKNAMEGIVEN(nick, user) std::string(":" + nick + "!" + user + "@localhost 431 :No nickname given")

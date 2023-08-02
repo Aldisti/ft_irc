@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/02 10:44:17 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/02 12:00:28 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,4 +51,24 @@ void	Commands::nickCommand(const Server &srv, User *usr, std::vector<std::string
 		throw (Replies::ErrException(std::string(ERR_NICKNAMEINUSE(usr->getNick(), usr->getUser())).c_str()));
 	usr->setNick(params[0]);
 	usr->setReg(usr->getReg() | 2);
+	if (usr->getReg >= 7) {
+		send(usr->getSockFd(), RPL_WELCOME.c_str(), RPL_WELCOME.size(), MSG_DONTWAIT);
+	}
+}
+
+void	Commands::userCommand(const Server &srv, User *usr, std::vector<std::string> params)
+{
+	if (usr->getReg() % 2 == 0)
+		throw (Replies::ErrException(std::string(ERR_NOTREGISTERED(usr->getNick(), usr->getUser())).c_str()));
+	if (params.size() < 4)
+		throw (Replies::ErrException(std::string(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), PASS)).c_str()));
+	if ((usr->getReg() >> 2) % 2)
+		throw (Replies::ErrException(std::string(ERR_ALREADYREGISTERED(usr->getNick(), usr->getUser())).c_str()));
+	usr->setUser(params[0]);
+	usr->setMode(atoi(params[1])); // ft_atoi
+	usr->setReal(plarams[3]);
+	usr->setReg(usr->getReg() | 4);
+	if (usr->getReg >= 7) {
+		send(usr->getSockFd(), RPL_WELCOME.c_str(), RPL_WELCOME.size(), MSG_DONTWAIT);
+	}
 }
