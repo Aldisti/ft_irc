@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/01 15:39:06 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/02 10:44:17 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,11 @@ void	Commands::initCommands(void)
 void	Commands::passCommand(const Server &srv, User *usr, std::vector<std::string> params)
 {
 	if (params.size() == 0)
-		throw (Replies::ErrException(std::string("").c_str())); // ErrNeedMoreParams
+		throw (Replies::ErrException(std::string(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), PASS)).c_str()));
 	if (usr->getReg() != 0)
-		throw (Replies::ErrException(std::string("").c_str())); // ErrAlreadyRegistered
+		throw (Replies::ErrException(std::string(ERR_ALREADYREGISTERED(usr->getNick(), usr->getUser())).c_str()));
 	if (params[0] != srv.getPass())
-		throw (Replies::ErrException(std::string("").c_str())); // ErrIncorrectPassword
+		throw (Replies::ErrException(std::string(ERR_INCORRECTPASS(usr->getNick(), usr->getUser())).c_str()));
 	usr->setReg(1);
 }
 
@@ -36,20 +36,19 @@ void	Commands::capCommand(const Server &srv, User *usr, std::vector<std::string>
 	(void) usr;
 	(void) params;
 	(void) srv;
-	//srv.send(CAPMSG);
+	send(usr->getSockFd(), CAPMSG.c_str(), CAPMSG.size(), MSG_DONTWAIT);
 }
 
 void	Commands::nickCommand(const Server &srv, User *usr, std::vector<std::string> params)
 {
 	if (usr->getReg() % 2 == 0)
-		// throw (Replies::ErrNotRegistered()); // we can also use this reply
-		throw (Replies::ErrException(std::string("").c_str())); // the command PASS has not yet been sent
+		throw (Replies::ErrException(std::string(ERR_NOTREGISTERED(usr->getNick(), usr->getUser())).c_str()));
 	if (params.size() == 0)
-		throw (Replies::ErrException(std::string("").c_str())); // nick not passed
+		throw (Replies::ErrException(std::string(ERR_NONICKNAMEGIVEN(usr->getNick(), usr->getUser())).c_str()));
 	if (!User::checkNick(params[0]))
-		throw (Replies::ErrException(std::string("").c_str())); // the nick passed contains unacceptable characters
+		throw (Replies::ErrException(std::string(ERR_ERRONEUSNICKNAME(usr->getNick(), usr->getUser())).c_str()));
 	if (srv.getUser(params[0]))
-		throw (Replies::ErrException(std::string("").c_str())); // nickname is already paired with another User
+		throw (Replies::ErrException(std::string(ERR_NICKNAMEINUSE(usr->getNick(), usr->getUser())).c_str()));
 	usr->setNick(params[0]);
 	usr->setReg(usr->getReg() | 2);
 }
