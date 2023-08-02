@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/06/30 17:10:04 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/02 11:22:32 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@
 #define LETTERS std::string("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
 #define DIGITS std::string("0123456789")
 #define HEXDIGITS std::string("0123456789ABCDEF")
-#define SPECIAL std::string("[\]^_`{|}")
+#define SPECIAL std::string("[\\]^_`{|}")
 #define NPOS std::string::npos
 
 // commands
