@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/03 13:44:40 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/03 16:14:51 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,12 @@
 #define USER std::string("USER")
 #define PING std::string("PING")
 #define PONG std::string("PONG")
+#define QUIT std::string("QUIT")
 
 // messages
 #define MSG_CAP std::string("CAP * LS\r\n")
 #define MSG_PONG(ip) std::string("PONG :" + ip + "\r\n")
+#define MSG_ERROR(message) std::string(":" + SRV_NAME + " ERROR :" + message + "\r\n")
 
 // irc format
 #define LETTERS std::string("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")

@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/03 14:00:58 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/03 15:44:47 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,11 @@ void		Server::checkFd(void)
 				std::cout << ">> user events set to POLLOUT [" << POLLOUT << "]" << std::endl;
 			#endif
 		}
+		if (tmp->getClose() && tmp->getWriteBuff() == "")
+		{
+			this->_toClean = true;
+			this->_pollfds[i].fd = -1;
+		}
 	}
 	#ifdef DEBUG
 		std::cout << "########## CHECKED FDs ##########" << std::endl;
@@ -160,8 +165,8 @@ void	Server::pollIn(User *usr, int index)
 	if (r < 0)
 	{
 		std::cerr << "recv() failed" << std::endl;
-		close(usr->getSockFd());
-		usr->setSockFd(-1);
+		usr->setClose(true);
+		usr->setWriteBuff("");
 		this->_pollfds[index].fd = -1;
 		this->_toClean = true;
 		return ;
@@ -169,8 +174,8 @@ void	Server::pollIn(User *usr, int index)
 	else if (r == 0)
 	{
 		std::cerr << "connection closed" << std::endl;
-		close(usr->getSockFd());
-		usr->setSockFd(-1);
+		usr->setClose(true);
+		usr->setWriteBuff("");
 		this->_pollfds[index].fd = -1;
 		this->_toClean = true;
 		return ;
@@ -210,8 +215,8 @@ void	Server::pollOut(User *usr, int index)
 	if (s < 0)
 	{
 		std::cerr << "send() failed" << std::endl;
-		close(usr->getSockFd());
-		usr->setSockFd(-1);
+		usr->setClose(true);
+		usr->setWriteBuff("");
 		this->_pollfds[index].fd = -1;
 		this->_toClean = true;
 		return ;
@@ -219,8 +224,8 @@ void	Server::pollOut(User *usr, int index)
 	else if (s == 0)
 	{
 		std::cerr << "connection closed" << std::endl;
-		close(usr->getSockFd());
-		usr->setSockFd(-1);
+		usr->setClose(true);
+		usr->setWriteBuff("");
 		this->_pollfds[index].fd = -1;
 		this->_toClean = true;
 		return ;
@@ -250,7 +255,7 @@ void	Server::cleanPollfds(void) {
 	for (int i = 0; i < size; i++)
 	{
 		usr = this->_users[i];
-		if (usr->getSockFd() == -1)
+		if (usr->getClose() == true && usr->getWriteBuff() == "")
 		{
 			delete usr;
 			this->_users.erase(this->_users.begin() + i);

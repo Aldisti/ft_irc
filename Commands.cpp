@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/03 11:51:18 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/03 16:01:24 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ void	Commands::initCommands(void)
 	Commands::commands[USER] = Commands::userCommand;
 	Commands::commands[PING] = Commands::pongCommand;
 	Commands::commands[PONG] = Commands::pingCommand;
+	Commands::commands[QUIT] = Commands::errorCommand;
 }
 
 void	Commands::passCommand(const Server &srv, User *usr, std::vector<std::string> params)
@@ -121,4 +122,14 @@ void	Commands::pongCommand(const Server &srv, User *usr, std::vector<std::string
 		std::cout << ">> PONG command executed" << std::endl;
 	#endif
 	usr->setWriteBuff(usr->getWriteBuff() + MSG_PONG(IP));
+}
+
+void	Commands::errorCommand(const Server &srv, User *usr, std::vector<std::string> params)
+{
+	std::string	message;
+
+	(void)	srv;
+	message = params.size() == 0 ? std::string("") : params[0];
+	usr->setClose(true);
+	usr->setWriteBuff(usr->getWriteBuff() + MSG_ERROR(message));
 }
