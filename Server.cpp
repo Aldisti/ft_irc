@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/03 10:41:30 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/03 11:05:57 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,14 +95,20 @@ void		Server::checkFd(void)
 	for (int i = 1; i < this->_npollfds; i++)
 	{
 		tmp = this->getUser(this->_pollfds[i].fd);
+		#ifdef DEBUG
+			std::cout << ">> usr(" << i << ")->revents: " << this->_pollfds[i].revents << std::endl;
+		#endif
 		if (this->_pollfds[i].revents == POLLIN && this->_pollfds[i].fd != -1)
 			this->pollIn(tmp, i);
 		else if (this->_pollfds[i].revents == POLLOUT && this->_pollfds[i].fd != -1)
 			this->pollOut(tmp, i);
 		if (tmp->getWriteBuff() == "")
-			this->_pollfds[i].revents = POLLIN;
+			this->_pollfds[i].events = POLLIN;
 		else
-			this->_pollfds[i].revents = POLLOUT;
+			this->_pollfds[i].events = POLLOUT;
+		#ifdef DEBUG
+			std::cout << ">> usr(" << i << ")->revents: " << this->_pollfds[i].revents << std::endl;
+		#endif
 	}
 }
 
@@ -143,6 +149,9 @@ void	Server::pollOut(User *usr, int index)
 	std::string	writeBuff;
 
 	writeBuff = usr->getWriteBuff();
+	#ifdef DEBUG
+		std::cout << ">> writeBuff: " << writeBuff << std::endl;
+	#endif
 	s = send(usr->getSockFd(), writeBuff.c_str(), writeBuff.size(), MSG_DONTWAIT);
 	if (s < 0)
 	{
@@ -181,6 +190,5 @@ void	Server::polling(void)
 		}
 		this->registerUser();
 		this->checkFd();
-		sleep(1);
 	}
 }
