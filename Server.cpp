@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/03 09:56:11 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/03 10:27:30 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,6 @@ void		Server::registerUser(void)
 void		Server::checkFd(void)
 {
 	User	*tmp;
-	int		r;
 
 	for (int i = 1; i < this->_npollfds; i++)
 	{
@@ -102,37 +101,75 @@ void		Server::checkFd(void)
 //			std::cout << "prova" << std::endl;
 //		}
 		tmp = this->getUser(this->_pollfds[i].fd);
-		if (this->_pollfds[i].revents != POLLIN || this->_pollfds[i].fd == -1)
-			continue ;
+		if (this->_pollfds[i].revents == POLLIN && this->_pollfds[i].fd != -1)
+			this->pollIn(tmp, i);
+		else if (this->_pollfds[i].revents == POLLOUT && this->_pollfds[i].fd != -1)
+			this->pollOut(tmp, i);
+		if (tmp->getWriteBuff() == "")
+			this->_pollfds[i].revents == POLLIN;
+		else
+			this->_pollfds[i].revents == POLLOUT;
 	}
 }
 
-void	Server::pollIn(User *user)
+void	Server::pollIn(User *user, int index)
 {
+	int			r;
+
 	memset((void *) this->_buff, 0, BUFFSIZE); // ft_memset()
-	r = recv(this->_pollfds[i].fd, this->_buff, BUFFSIZE, MSG_DONTWAIT);
+	r = recv(usr->getSockFd(), this->_buff, BUFFSIZE, MSG_DONTWAIT);
 	if (r < 0)
 	{
 		std::cerr << "recv() failed" << std::endl;
-		close(this->_pollfds[i].fd);
-		this->_pollfds[i].fd = -1;
+		close(usr->getSockFd());
+		usr->setSockfd(-1);
+		this->_pollfds[index].fd = -1;
 		continue ;
 	}
 	else if (r == 0)
 	{
 		std::cerr << "connection closed" << std::endl;
-		close(this->_pollfds[i].fd);
-		this->_pollfds[i].fd = -1;
+		close(usr->getSockFd());
+		usr->setSockfd(-1);
+		this->_pollfds[index].fd = -1;
 		continue ;
 	}
-	user->setBuff(user->getBuff() + std::string(this->_buff));
+	user->setReadBuff(user->getReadBuff() + std::string(this->_buff));
 	try {
 		user->checkBuff(*this);
 	} catch (Replies::ErrException &e) {
-		send(user->getSockFd(), e.what(), std::string(e.what()).size(), MSG_DONTWAIT);
-		user->setBuff("");
+		user->setWriteBuff(user->getWriteBuff() + e.what());
+		user->setReadBuff("");
 	}
+}
 
+void	Server::pollOut(User *user, int index)
+{
+	int			s;
+	std::string	writeBuff;
+
+	writeBuff = usr->getWriteBuff();
+	s = send(usr->getSockFd(), writeBuff.c_str(), writeBuff.size(), MSG_DONTWAIT);
+	if (s < 0)
+	{
+		std::cerr << "send() failed" << std::endl;
+		close(usr->getSockFd());
+		usr->setSockfd(-1);
+		this->_pollfds[index].fd = -1;
+		continue ;
+	}
+	else if (s == 0)
+	{
+		std::cerr << "connection closed" << std::endl;
+		close(usr->getSockFd());
+		usr->setSockfd(-1);
+		this->_pollfds[index].fd = -1;
+		continue ;
+	}
+	else if (s < writeBuff.size())
+		usr->setWriteBuff(writeBuff.substring(s));
+	else 
+		usr->setWriteBuff("");
 }
 
 void	Server::polling(void)
