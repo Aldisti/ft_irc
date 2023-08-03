@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/03 15:44:47 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/03 17:05:21 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,9 +145,6 @@ void		Server::checkFd(void)
 			this->_pollfds[i].fd = -1;
 		}
 	}
-	#ifdef DEBUG
-		std::cout << "########## CHECKED FDs ##########" << std::endl;
-	#endif
 }
 
 void	Server::pollIn(User *usr, int index)
@@ -252,21 +249,34 @@ void	Server::cleanPollfds(void) {
 	User	*usr;
 
 	size = this->_users.size();
+	#ifdef DEBUG
+		std::cout << ">> cycling through users" << std::endl;
+	#endif
 	for (int i = 0; i < size; i++)
 	{
 		usr = this->_users[i];
 		if (usr->getClose() == true && usr->getWriteBuff() == "")
 		{
+			#ifdef DEBUG
+				std::cout << ">> deleting user id [" << (i + 1)
+				<< "] sfd [" << usr->getSockFd() << "]" << std::endl;
+			#endif
 			delete usr;
 			this->_users.erase(this->_users.begin() + i);
 			i--;
 			size--;
 		}
 	}
+	#ifdef DEBUG
+		std::cout << ">> cycling through pollfds" << std::endl;
+	#endif
 	for (int i = 1; i < this->_npollfds - 1; i++)
 	{
 		if (this->_pollfds[i].fd == -1)
 		{
+			#ifdef DEBUG
+				std::cout << ">> deleting user id [" << (i + 1) << "]" << std::endl;
+			#endif
 			for (int j = i; j < this->_npollfds - 1; j++)
 				this->_pollfds[j] = this->_pollfds[j + 1];
 			i--;
