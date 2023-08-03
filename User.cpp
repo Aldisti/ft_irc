@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 08:27:25 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/02 16:04:02 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/03 10:08:25 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,32 +20,25 @@ void	User::checkBuff(Server const &server)
 	std::string					cmdName;
 	std::string					command;
 
-	std::cout << this->_buff.size() << std::endl;
-	std::cout << this->_buff << std::endl;
-//	std::cout << "| ";
-//	for (int i = 0; i < (int) this->_buff.size(); i++) {
-//		std::cout << (int) this->_buff[i] << " ";
-//	}
-//	std::cout << "|" << std::endl;
-	if (this->_buff.size() < MAX_BUFF && this->_buff.substr(this->_buff.size() - 2) != DEL)
+	if (this->_readBuff.size() < MAX_BUFF && this->_readBuff.substr(this->_readBuff.size() - 2) != DEL)
 		return ;
-	if (this->_buff.size() > MAX_BUFF - 2)
+	if (this->_readBuff.size() > MAX_BUFF - 2)
 	{
-		this->_buff.resize(MAX_BUFF - 2);
-		this->_buff += DEL;
+		this->_readBuff.resize(MAX_BUFF - 2);
+		this->_readBuff += DEL;
 	}
-	commands = ft_split(this->_buff, DEL);
+	commands = ft_split(this->_readBuff, DEL);
 	for (int i = 0; i < (int) commands.size(); i++)
 	{
 		command = commands[i];
 		try {
 			cmd = ft_parse(command);
 		} catch (std::exception &e) {
-			this->_buff = "";
+			this->_readBuff = "";
 			throw Replies::ErrException(ERR_BADSYNTAX(this->_nick, this->_user).c_str());
 		}
 		if (command[0] == ':' && cmd[0] != this->_nick) {
-			this->_buff = "";
+			this->_readBuff = "";
 			throw Replies::ErrException(ERR_NOSUCHNICK(this->_nick, this->_user).c_str());
 		}
 		else if (command[0] == ':')
@@ -55,12 +48,11 @@ void	User::checkBuff(Server const &server)
 		try {
 			Commands::commands.at(cmdName)(server, this, cmd);
 		} catch (std::out_of_range &e) {
-			std::cout << cmdName << std::endl;
-			this->_buff = "";
+			this->_readBuff = "";
 			throw Replies::ErrException(ERR_UNKNOWNCOMMAND(this->_nick, this->_user, cmdName).c_str());
 		}
 	}
-	this->_buff = "";
+	this->_readBuff = "";
 }
 
 bool	User::checkNick(std::string nick)
@@ -76,7 +68,7 @@ bool	User::checkNick(std::string nick)
 	return (true);
 }
 
-User::User(int sockfd): _sockfd(sockfd), _registered(0), _op(false), _buff("")
+User::User(int sockfd): _sockfd(sockfd), _registered(0), _op(false), _readBuff(""), _writeBuff("")
 {
 	return ;
 }
@@ -140,9 +132,14 @@ std::string	User::getReal(void) const
 	return (this->_real);
 }
 
-std::string	User::getBuff(void) const
+std::string	User::getReadBuff(void) const
 {
-	return (this->_buff);
+	return (this->_readBuff);
+}
+
+std::string	User::getWriteBuff(void) const
+{
+	return (this->_writeBuff);
 }
 
 void		User::setSockFd(int sfd)
@@ -180,7 +177,12 @@ void		User::setReal(std::string real)
 	this->_real = real;
 }
 
-void		User::setBuff(std::string buff)
+void		User::setReadBuff(std::string buff)
 {
-	this->_buff = buff;
+	this->_readBuff = buff;
+}
+
+void		User::setWriteBuff(std::string buff)
+{
+	this->_writeBuff = buff;
 }

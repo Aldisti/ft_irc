@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/03 10:27:30 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/03 09:56:11 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,12 +94,6 @@ void		Server::checkFd(void)
 
 	for (int i = 1; i < this->_npollfds; i++)
 	{
-//		std::cout << "revent: " << this->_pollfds[i].revents << std::endl;
-//		std::cout << "POLLIN: " << POLLIN << std::endl;
-//		std::cout << "POLLOUT: " << POLLOUT << std::endl;
-//		if (this->_pollfds[i].revents == POLLOUT) {
-//			std::cout << "prova" << std::endl;
-//		}
 		tmp = this->getUser(this->_pollfds[i].fd);
 		if (this->_pollfds[i].revents == POLLIN && this->_pollfds[i].fd != -1)
 			this->pollIn(tmp, i);
@@ -124,7 +118,7 @@ void	Server::pollIn(User *user, int index)
 		close(usr->getSockFd());
 		usr->setSockfd(-1);
 		this->_pollfds[index].fd = -1;
-		continue ;
+		return ;
 	}
 	else if (r == 0)
 	{
@@ -132,7 +126,7 @@ void	Server::pollIn(User *user, int index)
 		close(usr->getSockFd());
 		usr->setSockfd(-1);
 		this->_pollfds[index].fd = -1;
-		continue ;
+		return ;
 	}
 	user->setReadBuff(user->getReadBuff() + std::string(this->_buff));
 	try {
@@ -156,7 +150,7 @@ void	Server::pollOut(User *user, int index)
 		close(usr->getSockFd());
 		usr->setSockfd(-1);
 		this->_pollfds[index].fd = -1;
-		continue ;
+		return ;
 	}
 	else if (s == 0)
 	{
@@ -164,7 +158,7 @@ void	Server::pollOut(User *user, int index)
 		close(usr->getSockFd());
 		usr->setSockfd(-1);
 		this->_pollfds[index].fd = -1;
-		continue ;
+		return ;
 	}
 	else if (s < writeBuff.size())
 		usr->setWriteBuff(writeBuff.substring(s));
