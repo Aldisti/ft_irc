@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 08:27:25 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/03 12:25:11 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/03 15:30:44 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ bool	User::checkNick(std::string nick)
 	return (true);
 }
 
-User::User(int sockfd): _sockfd(sockfd), _registered(0), _op(false), _readBuff(""), _writeBuff("")
+User::User(int sockfd): _sockfd(sockfd), _registered(0), _op(false), _close(false), _readBuff(""), _writeBuff("")
 {
 	return ;
 }
@@ -115,7 +115,7 @@ User::User(User const &usr)
 
 User::~User(void)
 {
-	return ;
+	close(this->_sockfd);
 }
 
 User		&User::operator=(User const &usr)
@@ -150,6 +150,11 @@ int			User::getMode(void) const
 bool		User::getOperator(void) const
 {
 	return (this->_op);
+}
+
+bool		User::getClose(void) const
+{
+	return (this->_close);
 }
 
 std::string	User::getNick(void) const
@@ -195,6 +200,11 @@ void		User::setMode(int mode)
 void		User::setOperator(bool op)
 {
 	this->_op = op;
+}
+
+void		User::setClose(bool close)
+{
+	this->_close = close;
 }
 
 void		User::setNick(std::string nick)

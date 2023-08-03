@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 08:59:58 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/03 15:47:22 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/03 15:55:57 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ class	Commands
 		static void	userCommand(Server const &srv, User *usr, std::vector<std::string> params);
 		static void	pingCommand(Server const &srv, User *usr, std::vector<std::string> params);
 		static void	pongCommand(Server const &srv, User *usr, std::vector<std::string> params);
+		static void	errorCommand(Server const &srv, User *usr, std::vector<std::string> params);
 		static void	operCommand(const Server &srv, User *usr, std::vector<std::string> params);
 		// functions
 		static void	initCommands(void);
@@ -61,9 +62,13 @@ class	Replies
 				const char *	_message;
 
 			public:
-				ErrException(const char * message): _message(message) {};
-				virtual const char * what() const throw()
-				{
+				ErrException(const char * message) {
+					this->_message = strdup(message); // ft_strdup
+				}
+				virtual	~ErrException() throw() {
+					delete this->_message;
+				}
+				virtual const char * what() const throw() {
 					return (this->_message);
 				}
 		};
