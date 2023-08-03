@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/03 12:39:23 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/03 15:27:19 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,7 +204,7 @@ void	Server::pollOut(User *usr, int index)
 	s = send(usr->getSockFd(), writeBuff.c_str(), writeBuff.size(), MSG_DONTWAIT);
 	#ifdef DEBUG
 		std::cout << ">> sent [" << s << "]:" << std::endl;
-		std::cout << "[" << writeBuff.substr(0, s) << "]" << std::endl;
+		std::cout << "[" << writeBuff.substr(0, s - DEL.size()) << "]" << std::endl;
 	#endif
 	if (s < 0)
 	{
