@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/03 10:27:42 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/03 11:51:18 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	Commands::passCommand(const Server &srv, User *usr, std::vector<std::string
 	if (params[0] != srv.getPass())
 		throw (Replies::ErrException(ERR_INCORRECTPASS(usr->getNick(), usr->getUser()).c_str()));
 	#ifdef DEBUG
-		std::cout << "PASS command executed\nuser->sfd [" << usr->getSockFd() << "]" << std::endl;
+		std::cout << ">> PASS command executed\nuser->sfd [" << usr->getSockFd() << "]" << std::endl;
 	#endif
 	usr->setReg(1);
 }
@@ -46,7 +46,7 @@ void	Commands::capCommand(const Server &srv, User *usr, std::vector<std::string>
 	if (params[0] == "LS")
 		usr->setWriteBuff(usr->getWriteBuff() + MSG_CAP);
 	#ifdef DEBUG
-		std::cout << "CAP command executed" << std::endl;
+		std::cout << ">> CAP command executed" << std::endl;
 	#endif
 }
 
@@ -63,14 +63,14 @@ void	Commands::nickCommand(const Server &srv, User *usr, std::vector<std::string
 	usr->setNick(params[0]);
 	usr->setReg(usr->getReg() | 2);
 	#ifdef DEBUG
-		std::cout << "NICK command executed" << std::endl
+		std::cout << ">> NICK command executed" << std::endl
 		<< "usr->sfd [" << usr->getSockFd() << "] "
 		<< "usr->nick [" << usr->getNick() << "] " << std::endl;
 	#endif
 	if (usr->getReg() >= 7) {
 		usr->setWriteBuff(usr->getWriteBuff() + RPL_WELCOME(usr->getNick(), usr->getUser(), SRV_NAME));
 		#ifdef DEBUG
-			std::cout << "USER registered correctly from NICK command" << std::endl;
+			std::cout << ">> USER registered correctly from NICK command" << std::endl;
 		#endif
 	}
 }
@@ -89,7 +89,7 @@ void	Commands::userCommand(const Server &srv, User *usr, std::vector<std::string
 	usr->setReal(params[3]);
 	usr->setReg(usr->getReg() | 4);
 	#ifdef DEBUG
-		std::cout << "USER command executed" << std::endl
+		std::cout << ">> USER command executed" << std::endl
 		<< "usr->sfd [" << usr->getSockFd() << "] "
 		<< "usr->user [" << usr->getUser() << "] "
 		<< "usr->real [" << usr->getReal() << "] " << std::endl;
@@ -97,7 +97,7 @@ void	Commands::userCommand(const Server &srv, User *usr, std::vector<std::string
 	if (usr->getReg() >= 7) {
 		usr->setWriteBuff(usr->getWriteBuff() + RPL_WELCOME(usr->getNick(), usr->getUser(), SRV_NAME));
 		#ifdef DEBUG
-			std::cout << "USER registered correctly from USER command" << std::endl;
+			std::cout << ">> USER registered correctly from USER command" << std::endl;
 		#endif
 	}
 }
@@ -108,7 +108,7 @@ void	Commands::pingCommand(const Server &srv, User *usr, std::vector<std::string
 	(void) usr;
 	(void) params;
 	#ifdef DEBUG
-		std::cout << "PING command executed" << std::endl;
+		std::cout << ">> PING command executed" << std::endl;
 	#endif
 }
 
@@ -118,7 +118,7 @@ void	Commands::pongCommand(const Server &srv, User *usr, std::vector<std::string
 	if (params[0] != IP && params[0] != SRV_NAME)
 		throw (Replies::ErrException(ERR_NOSUCHSERVER(usr->getNick(), usr->getUser(), params[0]).c_str()));
 	#ifdef DEBUG
-		std::cout << "PONG command executed" << std::endl;
+		std::cout << ">> PONG command executed" << std::endl;
 	#endif
 	usr->setWriteBuff(usr->getWriteBuff() + MSG_PONG(IP));
 }
