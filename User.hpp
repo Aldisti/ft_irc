@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 10:24:01 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/01 15:03:51 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/03 09:59:12 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ class User
 		std::string	_nick;
 		std::string	_user;
 		std::string	_real;
-		std::string	_buff;
+		std::string	_readBuff;
+		std::string	_writeBuff;
 
 	public:
 		// CO functions
@@ -48,7 +49,8 @@ class User
 		std::string		getNick(void) const;
 		std::string		getUser(void) const;
 		std::string		getReal(void) const;
-		std::string		getBuff(void) const;
+		std::string		getReadBuff(void) const;
+		std::string		getWriteBuff(void) const;
 
 		// setters
 		void		setSockFd(int sfd);
@@ -58,7 +60,8 @@ class User
 		void		setNick(std::string nick);
 		void		setUser(std::string user);
 		void		setReal(std::string real);
-		void		setBuff(std::string buff);
+		void		setReadBuff(std::string buff);
+		void		setWriteBuff(std::string buff);
 
 		// functions
 		void		checkBuff(Server const &server);
