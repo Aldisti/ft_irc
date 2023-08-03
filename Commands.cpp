@@ -22,6 +22,7 @@ void	Commands::initCommands(void)
 	Commands::commands[USER] = Commands::userCommand;
 	Commands::commands[PING] = Commands::pongCommand;
 	Commands::commands[PONG] = Commands::pingCommand;
+	Commands::commands[QUIT] = Commands::errorCommand;
 	Commands::commands[OPER] = Commands::operCommand;
 }
 
@@ -122,6 +123,16 @@ void	Commands::pongCommand(const Server &srv, User *usr, std::vector<std::string
 		std::cout << ">> PONG command executed" << std::endl;
 	#endif
 	usr->setWriteBuff(usr->getWriteBuff() + MSG_PONG(IP));
+}
+
+void	Commands::errorCommand(const Server &srv, User *usr, std::vector<std::string> params)
+{
+	std::string	message;
+
+	(void)	srv;
+	message = params.size() == 0 ? std::string("") : params[0];
+	usr->setClose(true);
+	usr->setWriteBuff(usr->getWriteBuff() + MSG_ERROR(message));
 }
 
 void	Commands::operCommand(const Server &srv, User *usr, std::vector<std::string> params)

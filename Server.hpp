@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 10:15:13 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/03 10:39:10 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/03 12:12:08 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ class Server
 {
 	private:
 		// variables
+		bool							_toClean;
 		const std::string				_pass;
 		std::vector<User *>				_users;
 		std::vector<struct sockaddr>	_theirAddr;
@@ -39,11 +40,11 @@ class Server
 		Server(std::string pass);
 		~Server(void);
 		void		registerUser(void);
-		//void		parseCommand(User *usr );
 		void		checkFd(void);
 		void		polling(void);
 		void		pollIn(User *usr, int index);
 		void		pollOut(User *usr, int index);
+		void		cleanPollfds(void);
 		
 		// getters
 		std::string	getPass(void) const;

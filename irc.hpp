@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/03 15:54:00 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/03 16:14:51 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,14 +32,18 @@
 
 #define DEBUG
 #define MYPORT "8001"  // the port users will be connecting to
-#define IP std::string("10.12.4.4")
+#define IP std::string("10.12.3.3")
 #define SRV_NAME std::string("ircsrv")
 #define OPER_PASSWORD std::string("admin")
 
 // utils
 #define BUFFSIZE 100
 #define BACKLOG 50     // how many pending connections queue will hold
-#define TIMEOUT 1000
+#ifdef DEBUG
+# define TIMEOUT 1000
+#else
+# define TIMEOUT 0
+#endif
 #define NPOS std::string::npos
 
 // commands
@@ -49,11 +53,13 @@
 #define USER std::string("USER")
 #define PING std::string("PING")
 #define PONG std::string("PONG")
+#define QUIT std::string("QUIT")
 #define OPER std::string("OPER")
 
 // messages
 #define MSG_CAP std::string("CAP * LS\r\n")
 #define MSG_PONG(ip) std::string("PONG :" + ip + "\r\n")
+#define MSG_ERROR(message) std::string(":" + SRV_NAME + " ERROR :" + message + "\r\n")
 
 // irc format
 #define LETTERS std::string("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
