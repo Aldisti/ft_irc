@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 08:59:58 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/02 14:20:47 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/03 14:18:55 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,13 @@ class	Replies
 				const char *	_message;
 
 			public:
-				ErrException(const char * message): _message(message) {};
-				virtual const char * what() const throw()
-				{
+				ErrException(const char * message) {
+					this->_message = strdup(message); // ft_strdup
+				}
+				virtual	~ErrException() throw() {
+					delete this->_message;
+				}
+				virtual const char * what() const throw() {
 					return (this->_message);
 				}
 		};

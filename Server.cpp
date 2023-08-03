@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/03 12:39:23 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/03 14:00:58 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,6 +183,7 @@ void	Server::pollIn(User *usr, int index)
 		usr->setReadBuff("");
 		#ifdef DEBUG
 			std::cout << ">> buffer checking failed" << std::endl;
+			std::cout << usr->getWriteBuff() << std::endl;
 		#endif
 	}
 	#ifdef DEBUG
