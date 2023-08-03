@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/03 16:01:24 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/03 16:29:59 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void	Commands::initCommands(void)
 	Commands::commands[PING] = Commands::pongCommand;
 	Commands::commands[PONG] = Commands::pingCommand;
 	Commands::commands[QUIT] = Commands::errorCommand;
+	Commands::commands[OPER] = Commands::operCommand;
 }
 
 void	Commands::passCommand(const Server &srv, User *usr, std::vector<std::string> params)
@@ -32,7 +33,7 @@ void	Commands::passCommand(const Server &srv, User *usr, std::vector<std::string
 	if (usr->getReg() != 0)
 		throw (Replies::ErrException(ERR_ALREADYREGISTERED(usr->getNick(), usr->getUser()).c_str()));
 	if (params[0] != srv.getPass())
-		throw (Replies::ErrException(ERR_INCORRECTPASS(usr->getNick(), usr->getUser()).c_str()));
+		throw (Replies::ErrException(ERR_PASSWDMISMATCH(usr->getNick(), usr->getUser()).c_str()));
 	#ifdef DEBUG
 		std::cout << ">> PASS command executed\nuser->sfd [" << usr->getSockFd() << "]" << std::endl;
 	#endif
@@ -132,4 +133,24 @@ void	Commands::errorCommand(const Server &srv, User *usr, std::vector<std::strin
 	message = params.size() == 0 ? std::string("") : params[0];
 	usr->setClose(true);
 	usr->setWriteBuff(usr->getWriteBuff() + MSG_ERROR(message));
+}
+
+void	Commands::operCommand(const Server &srv, User *usr, std::vector<std::string> params)
+{
+	(void) srv;
+	if (usr->getReg() < 7)
+		throw (Replies::ErrException(ERR_NOTREGISTERED(usr->getNick(), usr->getUser()).c_str()));
+	if (params.size() < 2)
+		throw (Replies::ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), OPER).c_str()));
+	if (params[1] != OPER_PASSWORD)
+		throw (Replies::ErrException(ERR_PASSWDMISMATCH(usr->getNick(), usr->getUser()).c_str()));
+	#ifdef DEBUG
+		std::cout << ">> OPER command executed" << std::endl;
+		std::cout << ">> usr: sfd [" << usr->getSockFd() << "] is now an operator" << std::endl;
+		std::cout << ">> usr user: old [" << usr->getUser()
+		<< "] new [" << params[1] << "]" << std::endl;
+	#endif
+	usr->setUser(params[0]);
+	usr->setOperator(true);
+	usr->setWriteBuff(usr->getWriteBuff() + RPL_YOUREOPER(usr->getNick(), usr->getUser()));
 }

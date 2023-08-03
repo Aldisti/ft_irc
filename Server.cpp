@@ -210,7 +210,7 @@ void	Server::pollOut(User *usr, int index)
 	s = send(usr->getSockFd(), writeBuff.c_str(), writeBuff.size(), MSG_DONTWAIT);
 	#ifdef DEBUG
 		std::cout << ">> sent [" << s << "]:" << std::endl;
-		std::cout << "[" << writeBuff.substr(0, s) << "]" << std::endl;
+		std::cout << "[" << writeBuff.substr(0, s - DEL.size()) << "]" << std::endl;
 	#endif
 	if (s < 0)
 	{
