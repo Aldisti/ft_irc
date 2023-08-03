@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 08:59:58 by gpanico           #+#    #+#             */
-/*   Updated: 2023/06/30 11:40:11 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/02 14:20:47 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,11 @@
 # include "Server.hpp"
 
 class	Server;
+class	User;
 
 class	Commands
 {
-	typedef void (*cmd_p)(Server &, User *, std::vector<std::string>);
+	typedef void (*cmd_p)(const Server &, User *, std::vector<std::string>);
 
 	private:
 		// constructor and destructor are private 'cause this is a static class
@@ -32,11 +33,39 @@ class	Commands
 	public:
 
 		// commands
-		static void	passCommand(Server &srv, User *usr, std::vector<std::string> params);
+		static void	capCommand(Server const &srv, User *usr, std::vector<std::string> params);
+		static void	passCommand(Server const &srv, User *usr, std::vector<std::string> params);
+		static void	nickCommand(Server const &srv, User *usr, std::vector<std::string> params);
+		static void	userCommand(Server const &srv, User *usr, std::vector<std::string> params);
+		static void	pingCommand(Server const &srv, User *usr, std::vector<std::string> params);
+		static void	pongCommand(Server const &srv, User *usr, std::vector<std::string> params);
 		// functions
-		void	initCommands(void);
+		static void	initCommands(void);
 		// vaiables
-		static std::map<std::string, cmd_p>	_commands;
+		static std::map<std::string, cmd_p>	commands;
+};
+
+class	Replies
+{
+	private:
+		// constructor and destructor are private 'cause this is a static class
+		Replies(void) {};
+		~Replies(void) {};
+
+	public:
+		// exceptions
+		class	ErrException: public std::exception
+		{
+			private:
+				const char *	_message;
+
+			public:
+				ErrException(const char * message): _message(message) {};
+				virtual const char * what() const throw()
+				{
+					return (this->_message);
+				}
+		};
 };
 
 #endif

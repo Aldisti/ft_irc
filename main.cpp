@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -7,18 +6,14 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:17:48 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/06/22 16:20:57 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/02 14:17:01 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
-#include <string>
-#include <string.h>
-#include <netdb.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/poll.h>
+#include "irc.hpp"
+#include "Server.hpp"
 
+/*
 int	main(void)
 {
 	struct addrinfo		hints;
@@ -26,7 +21,7 @@ int	main(void)
 	struct sockaddr		their_addr;
 	socklen_t		sin_addr = sizeof(their_addr);
 	struct pollfd		pollfds[50];
-	char			buff[1001];
+	char		buff[1001];
 	int			buff_size = 1000;
 	int			npollfds = 1;
 	int			err;
@@ -40,6 +35,7 @@ int	main(void)
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = 0;
 	hints.ai_flags = AI_PASSIVE;
+	std::cout << ERR_NOSUCHNICK(std::string("gpanico"), std::string("gp")) << std::endl;
 	err = getaddrinfo(NULL, "8000", &hints, &res);
 	if (err)
 	{
@@ -124,6 +120,12 @@ int	main(void)
 					continue ;
 				}
 				std::cout << ">> " << buff << std::endl;
+				for (int i = 0; buff[i]; i++)
+				{
+					std::cout << (int) buff[i] << " ";
+				}
+				std::cout << std::endl;
+				//std::cout << "last chars: " << (int) buff[((int) strlen(buff)) - 2] << (int) buff[((int) strlen(buff)) - 1] << std::endl;
 				if (npollfds > 2)
 				{
 					if (i + 1 != npollfds)
@@ -140,4 +142,13 @@ int	main(void)
 		if (pollfds[i].fd != -1)
 			close(pollfds[i].fd);
 	return (0);
+}
+*/
+
+int	main(void) {
+	Server	*srv;
+
+	Commands::initCommands();
+	srv = new Server("123");
+	srv->polling();
 }
