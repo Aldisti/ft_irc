@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/03 11:17:55 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/03 11:57:13 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 
 #define DEBUG
 #define MYPORT "8001"  // the port users will be connecting to
-#define IP std::string("10.12.3.3")
+#define IP std::string("10.12.4.4")
 #define SRV_NAME std::string("ircsrv")
 
 // utils
