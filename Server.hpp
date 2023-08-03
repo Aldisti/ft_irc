@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 10:15:13 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/03 09:55:04 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/03 10:39:10 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ class Server
 		//void		parseCommand(User *usr );
 		void		checkFd(void);
 		void		polling(void);
-		void		pollIn(User *user, int index);
-		void		pollOut(User *user, int index);
+		void		pollIn(User *usr, int index);
+		void		pollOut(User *usr, int index);
 		
 		// getters
 		std::string	getPass(void) const;
