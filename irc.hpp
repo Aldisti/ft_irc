@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/03 10:47:04 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/03 11:17:55 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,11 @@
 // utils
 #define BUFFSIZE 100
 #define BACKLOG 50     // how many pending connections queue will hold
-#define TIMEOUT 1000
+#ifdef DEBUG
+# define TIMEOUT 1000
+#else
+# define TIMEOUT 0
+#endif
 #define NPOS std::string::npos
 
 // commands

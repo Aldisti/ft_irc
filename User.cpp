@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 08:27:25 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/03 10:08:25 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/03 12:37:04 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ User::User(User const &usr)
 
 User::~User(void)
 {
-	close(this->_sockfd);
+	return ;
 }
 
 User		&User::operator=(User const &usr)
