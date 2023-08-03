@@ -1,16 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   tmp.cpp                                            :+:      :+:    :+:   */
+/*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/30 12:17:25 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/02 11:40:13 by adi-stef         ###   ########.fr       */
+/*   Created: 2023/08/01 10:46:40 by gpanico           #+#    #+#             */
+/*   Updated: 2023/08/02 11:43:16 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "irc.hpp"
+#include "utils.hpp"
 
 std::vector<std::string>	ft_split(std::string str, std::string del)
 {
@@ -62,19 +63,4 @@ std::vector<std::string>	ft_parse(std::string line)
 	if (arr.size() > 16 && line[0] != ':')
 		throw std::exception();
 	return (arr);
-}
-
-int	main(void)
-{
-	try { ft_parse(":fiffo 1 2"); }
-	catch (std::exception e) { std::cout << "caught" << std::endl; }
-	try { ft_parse(":fiffo 1 2 3 4 5 :ciao come stai"); }
-	catch (std::exception e) { std::cout << "caught" << std::endl; }
-	try { ft_parse(":fiffo cmd 0 1 2 3 4 5 6 7 8 9 1 2 3 4 5 :ciao come stai"); }
-	catch (std::exception e) { std::cout << "caught" << std::endl; }
-	try { ft_parse(""); }
-	catch (std::exception e) { std::cout << "caught" << std::endl; }
- ft_parse("    :fiffo              1                 2    :   ciao come     stai m     ");
-	//     01234567890123456789012345678901234
-	return (0);
 }

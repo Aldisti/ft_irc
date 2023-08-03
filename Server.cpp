@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/06/30 16:38:55 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/03 09:56:11 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ Server::Server(std::string pass): _pass(pass), _npollfds(1)
 	this->_hints.ai_socktype = SOCK_STREAM;
 	this->_hints.ai_protocol = 0;
 	this->_hints.ai_flags = AI_PASSIVE;
-	if (getaddrinfo(NULL, "8000", &this->_hints, &res))
-		throw (Server::ExceptionGetAddrInfo());
+	if (getaddrinfo(IP.c_str(), MYPORT, &this->_hints, &res))
+		throw (Server::ExceptionGetAddressInfo());
 	this->_sfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 	if (this->_sfd == -1)
 		throw (Server::ExceptionSocket());
@@ -55,17 +55,17 @@ std::string	Server::getPass(void) const
 	return (this->_pass);
 }
 
-User		*Server::getUser(int fd)
+User		*Server::getUser(int fd) const
 {
-	for (std::vector<User*>::iterator ite = this->_users.begin(); ite != this->_users.end(); ite++)
+	for (std::vector<User *>::const_iterator ite = this->_users.begin(); ite != this->_users.end(); ite++)
 		if ((*ite)->getSockFd() == fd)
 			return (*ite);
 	return (NULL);
 }
 
-User		*Server::getUser(std::string nick)
+User		*Server::getUser(std::string nick) const
 {
-	for (std::vector<User *>::iterator ite = this->_users.begin(); ite != this->_users.end(); ite++)
+	for (std::vector<User *>::const_iterator ite = this->_users.begin(); ite != this->_users.end(); ite++)
 		if ((*ite)->getNick() == nick)
 			return (*ite);
 	return (NULL);
@@ -73,8 +73,9 @@ User		*Server::getUser(std::string nick)
 
 void		Server::registerUser(void)
 {
-	if (this->_pollfds[0].revents != POLLIN || this->_pollfds[0].fd == -1)
+	if (this->_pollfds[0].revents != POLLIN || this->_pollfds[0].fd == -1) {
 		return ;
+	}
 	this->_theirAddr.resize(this->_theirAddr.size() + 1);
 	this->_pollfds[this->_npollfds].fd = accept(this->_sfd, &(this->_theirAddr.back()), &(this->_sinAddr));
 	if (this->_pollfds[this->_npollfds].fd == -1)
@@ -83,32 +84,72 @@ void		Server::registerUser(void)
 		throw (Server::ExceptionAccept());
 	}
 	this->_pollfds[this->_npollfds].events = POLLIN;
+	this->_users.push_back(new User(this->_pollfds[this->_npollfds].fd));
 	this->_npollfds++;
 }
 
-void		Server::checkFd(int	rs)
+void		Server::checkFd(void)
 {
-	int	r;
+	User	*tmp;
+	int		r;
 
-	for (int i = 1; i < this->_npollfds && rs > 0; i++)
+	for (int i = 1; i < this->_npollfds; i++)
 	{
+//		std::cout << "revent: " << this->_pollfds[i].revents << std::endl;
+//		std::cout << "POLLIN: " << POLLIN << std::endl;
+//		std::cout << "POLLOUT: " << POLLOUT << std::endl;
+//		if (this->_pollfds[i].revents == POLLOUT) {
+//			std::cout << "prova" << std::endl;
+//		}
+		tmp = this->getUser(this->_pollfds[i].fd);
 		if (this->_pollfds[i].revents != POLLIN || this->_pollfds[i].fd == -1)
 			continue ;
-		memset((void *) this->_buff, 0, BUFFSIZE); // ft_memset()
-		r = recv(this->_pollfds[i].fd, this->_buff, BUFFSIZE, MSG_DONTWAIT);
-		if (r < 0)
+	}
+}
+
+void	Server::pollIn(User *user)
+{
+	memset((void *) this->_buff, 0, BUFFSIZE); // ft_memset()
+	r = recv(this->_pollfds[i].fd, this->_buff, BUFFSIZE, MSG_DONTWAIT);
+	if (r < 0)
+	{
+		std::cerr << "recv() failed" << std::endl;
+		close(this->_pollfds[i].fd);
+		this->_pollfds[i].fd = -1;
+		continue ;
+	}
+	else if (r == 0)
+	{
+		std::cerr << "connection closed" << std::endl;
+		close(this->_pollfds[i].fd);
+		this->_pollfds[i].fd = -1;
+		continue ;
+	}
+	user->setBuff(user->getBuff() + std::string(this->_buff));
+	try {
+		user->checkBuff(*this);
+	} catch (Replies::ErrException &e) {
+		send(user->getSockFd(), e.what(), std::string(e.what()).size(), MSG_DONTWAIT);
+		user->setBuff("");
+	}
+
+}
+
+void	Server::polling(void)
+{
+	int	rs;
+	while (true)
+	{
+		std::cout << "polling..." << std::endl;
+		rs = poll(this->_pollfds, this->_npollfds, TIMEOUT);
+		if (rs < 0)
 		{
-			std::cerr << "recv() failed" << std::endl;
-			close(pollfds[i].fd);
-			pollfds[i].fd = -1;
-			continue ;
+			std::cerr << "poll() failed" << std::endl; // throw something
+			close(this->_sfd);
+			return ;
 		}
-		else if (r == 0)
-		{
-			std::cerr << "connection closed" << std::endl;
-			close(pollfds[i].fd);
-			pollfds[i].fd = -1;
-			continue ;
-		}
+		this->registerUser();
+		this->checkFd();
+		sleep(1);
 	}
 }

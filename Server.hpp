@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 10:15:13 by gpanico           #+#    #+#             */
-/*   Updated: 2023/06/30 16:38:52 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/03 09:55:04 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,14 @@
 # include "User.hpp"
 # include "Commands.hpp"
 
+class User;
+
 class Server
 {
 	private:
 		// variables
 		const std::string				_pass;
-		std::vector<User*>				_users;
+		std::vector<User *>				_users;
 		std::vector<struct sockaddr>	_theirAddr;
 		socklen_t						_sinAddr;
 		struct addrinfo					_hints;
@@ -37,17 +39,20 @@ class Server
 		Server(std::string pass);
 		~Server(void);
 		void		registerUser(void);
-		void		checkFd(int	rs);
 		//void		parseCommand(User *usr );
+		void		checkFd(void);
+		void		polling(void);
+		void		pollIn(User *user);
 		
 		// getters
 		std::string	getPass(void) const;
-		User		*getUser(int fd);
-		User		*getUser(std::string nick);
+		std::string	getIp(void) const;
+		User		*getUser(int fd) const;
+		User		*getUser(std::string nick) const;
 
 	public:
 		// exceptions
-		class ExceptionGetAddrInfo: public std::exception
+		class ExceptionGetAddressInfo: public std::exception
 		{
 			virtual const char *what() const throw()
 			{
