@@ -12,13 +12,13 @@
 
 #include "Server.hpp"
 
-Server::Server(std::string pass): _pass(pass), _npollfds(1)
+Server::Server(std::string pass): _toClean(false), _pass(pass), _npollfds(1)
 {
 	struct addrinfo	*res;
 	int				on = 1;
 
 	this->_sinAddr = sizeof(struct sockaddr);
-	memset((void *) &this->_hints, 0, sizeof(struct addrinfo));
+	memset((void *) &this->_hints, 0, sizeof(struct addrinfo)); // ft_memset
 	this->_hints.ai_family = AF_UNSPEC;
 	this->_hints.ai_socktype = SOCK_STREAM;
 	this->_hints.ai_protocol = 0;
@@ -35,7 +35,7 @@ Server::Server(std::string pass): _pass(pass), _npollfds(1)
 	freeaddrinfo(res);
 	if (listen(this->_sfd, BACKLOG))
 		throw (Server::ExceptionListen());
-	memset((void *) this->_pollfds, 0, sizeof(this->_pollfds));
+	memset((void *) this->_pollfds, 0, sizeof(this->_pollfds)); // ft_memset
 	this->_pollfds[0].fd = this->_sfd;
 	this->_pollfds[0].events = POLLIN;
 	#ifdef DEBUG
@@ -116,6 +116,8 @@ void		Server::checkFd(void)
 	#endif
 	for (int i = 1; i < this->_npollfds; i++)
 	{
+		if (this->_pollfds[i].revents == 0 || this->_pollfds[i].fd == -1)
+			continue ;
 		tmp = this->getUser(this->_pollfds[i].fd);
 		#ifdef DEBUG
 			std::cout << ">> checking user: index [" << i
@@ -161,6 +163,7 @@ void	Server::pollIn(User *usr, int index)
 		close(usr->getSockFd());
 		usr->setSockFd(-1);
 		this->_pollfds[index].fd = -1;
+		this->_toClean = true;
 		return ;
 	}
 	else if (r == 0)
@@ -169,6 +172,7 @@ void	Server::pollIn(User *usr, int index)
 		close(usr->getSockFd());
 		usr->setSockFd(-1);
 		this->_pollfds[index].fd = -1;
+		this->_toClean = true;
 		return ;
 	}
 	usr->setReadBuff(usr->getReadBuff() + std::string(this->_buff));
@@ -208,6 +212,7 @@ void	Server::pollOut(User *usr, int index)
 		close(usr->getSockFd());
 		usr->setSockFd(-1);
 		this->_pollfds[index].fd = -1;
+		this->_toClean = true;
 		return ;
 	}
 	else if (s == 0)
@@ -216,6 +221,7 @@ void	Server::pollOut(User *usr, int index)
 		close(usr->getSockFd());
 		usr->setSockFd(-1);
 		this->_pollfds[index].fd = -1;
+		this->_toClean = true;
 		return ;
 	}
 	else if (s < (int) writeBuff.size()) {
@@ -235,6 +241,37 @@ void	Server::pollOut(User *usr, int index)
 	}
 }
 
+void	Server::cleanPollfds(void) {
+	int		size;
+	User	*usr;
+
+	size = this->_users.size();
+	for (int i = 0; i < size; i++)
+	{
+		usr = this->_users[i];
+		if (usr->getSockFd() == -1)
+		{
+			delete usr;
+			this->_users.erase(this->_users.begin() + i);
+			i--;
+			size--;
+		}
+	}
+	for (int i = 1; i < this->_npollfds - 1; i++)
+	{
+		if (this->_pollfds[i].fd == -1)
+		{
+			for (int j = i; j < this->_npollfds - 1; j++)
+				this->_pollfds[j] = this->_pollfds[j + 1];
+			i--;
+			this->_npollfds--;
+		}
+	}
+	if (this->_pollfds[this->_npollfds - 1].fd == -1)
+		memset((void *) &this->_pollfds[--this->_npollfds], 0, sizeof(struct pollfd)); // ft_memset
+	this->_toClean = false;
+}
+
 void	Server::polling(void)
 {
 	int	rs;
@@ -250,5 +287,7 @@ void	Server::polling(void)
 		}
 		this->registerUser();
 		this->checkFd();
+		if (this->_toClean)
+			this->cleanPollfds();
 	}
 }

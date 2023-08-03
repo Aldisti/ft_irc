@@ -115,7 +115,7 @@ User::User(User const &usr)
 
 User::~User(void)
 {
-	close(this->_sockfd);
+	return ;
 }
 
 User		&User::operator=(User const &usr)

@@ -38,7 +38,11 @@
 // utils
 #define BUFFSIZE 100
 #define BACKLOG 50     // how many pending connections queue will hold
-#define TIMEOUT 1000
+#ifdef DEBUG
+# define TIMEOUT 1000
+#else
+# define TIMEOUT 0
+#endif
 #define NPOS std::string::npos
 
 // commands
