@@ -42,7 +42,8 @@ class Server
 		//void		parseCommand(User *usr );
 		void		checkFd(void);
 		void		polling(void);
-		void		pollIn(User *user);
+		void		pollIn(User *user, int index);
+		void		pollOut(User *user, int index);
 		
 		// getters
 		std::string	getPass(void) const;
