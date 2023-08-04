@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/04 09:02:47 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/04 12:16:46 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	Commands::initCommands(void)
 	Commands::commands[PONG] = Commands::pingCommand;
 	Commands::commands[QUIT] = Commands::errorCommand;
 	Commands::commands[OPER] = Commands::operCommand;
-	Commands::commands[PRVMSG] = Commands::prvmsgCommand;
+	Commands::commands[PRIVMSG] = Commands::privmsgCommand;
 }
 
 void	Commands::passCommand(const Server &srv, User *usr, std::vector<std::string> params)
@@ -157,17 +157,20 @@ void	Commands::operCommand(const Server &srv, User *usr, std::vector<std::string
 	usr->setWriteBuff(usr->getWriteBuff() + RPL_YOUREOPER(usr->getNick(), usr->getUser()));
 }
 
-void	Commands::prvmsgCommand(const Server &srv, User *usr, std::vector<std::string> params)
+void	Commands::privmsgCommand(const Server &srv, User *usr, std::vector<std::string> params)
 {
 	User	*tmp;
 
 	if (params.size() < 1)
-		throw (Replies::ErrException(ERR_NORECIPIENT(usr->getNick(), usr->getUser(), PRVMSG).c_str()));
+		throw (Replies::ErrException(ERR_NORECIPIENT(usr->getNick(), usr->getUser(), PRIVMSG).c_str()));
 	if (params.size() < 2)
 		throw (Replies::ErrException(ERR_NOTEXTTOSEND(usr->getNick(), usr->getUser()).c_str()));
 	if (params[0].find('.') != NPOS)
 		throw (Replies::ErrException(ERR_BADMASK(usr->getNick(), usr->getUser(), params[0]).c_str()));
+	MY_DEBUG(">> trying to find user with nick: " + params[0])
 	if ((tmp = srv.getUser(params[0])) == NULL)
 		throw (Replies::ErrException(ERR_NOSUCHNICK(usr->getNick(), usr->getUser(), params[0]).c_str()));
-	tmp->setWriteBuff(tmp->getWriteBuff() + params[1]);
+	MY_DEBUG(">> user found with nick: " << tmp->getNick())
+	tmp->setWriteBuff(tmp->getWriteBuff() + PREFIX(usr->getNick(), usr->getUser()) + " " + PRIVMSG + " " + tmp->getNick() +
+			" " + params[1] + DEL);
 }

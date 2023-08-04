@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/04 10:29:34 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/04 12:09:01 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@
 #define MY_DEBUG(string) if(DEBUG_B) \
 	std::cout << string << std::endl;
 #define MYPORT "8001"  // the port users will be connecting to
-#define IP std::string("10.12.3.5")
-#define SRV_NAME std::string("ircsrv")
+#define IP std::string("10.12.3.3")
+#define SRV_NAME std::string("hcierVI")
 #define OPER_PASSWORD std::string("admin")
 
 // utils
@@ -58,7 +58,7 @@
 #define PONG std::string("PONG")
 #define QUIT std::string("QUIT")
 #define OPER std::string("OPER")
-#define PRVMSG std::string("PRVMSG")
+#define PRIVMSG std::string("PRIVMSG")
 
 // messages
 #define MSG_CAP std::string("CAP * LS\r\n")
@@ -74,10 +74,11 @@
 #define DEL	std::string("\r\n")
 #define MAX_BUFF 512
 
-#define PREFIX(nick, user) std::string(":" + nick + "!" + user + "@localhost")
+#define PREFIX(nick, user) std::string(":" + nick + "!" + user + "@" + SRV_NAME)
 
 // replies/errors
-#define RPL_WELCOME(nick, user, server) std::string(PREFIX(nick, user) + " 001 " + server + " " + nick + "!" + user + "@localhost\r\n")
+#define RPL_WELCOME(nick, user, server) std::string(PREFIX(nick, user) + " 001 " \
+		 + server + " " + nick + "!" + user + "@" + SRV_NAME + "\r\n")
 #define RPL_AWAY(nick, user, msg) std::string(PREFIX(nick, user) + " 301 " + nick + " :" + msg + DEL)
 #define RPL_YOUREOPER(nick, user) std::string(PREFIX(nick, user) + " 381 :You are now an IRC operator" + DEL)
 #define ERR_NOSUCHNICK(nick, user, name) std::string(PREFIX(nick, user) + " 401 " + name + " :no such nick" + DEL)
