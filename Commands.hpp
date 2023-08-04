@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 08:59:58 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/03 15:55:57 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/04 09:57:06 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,8 @@ class	Commands
 		static void	pingCommand(Server const &srv, User *usr, std::vector<std::string> params);
 		static void	pongCommand(Server const &srv, User *usr, std::vector<std::string> params);
 		static void	errorCommand(Server const &srv, User *usr, std::vector<std::string> params);
-		static void	operCommand(const Server &srv, User *usr, std::vector<std::string> params);
+		static void	operCommand(Server const &srv, User *usr, std::vector<std::string> params);
+		static void	prvmsgCommand(Server const &srv, User *usr, std::vector<std::string> params);
 		// functions
 		static void	initCommands(void);
 		// vaiables

@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/03 16:14:51 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/04 10:29:34 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 
 #define DEBUG
 #define MYPORT "8001"  // the port users will be connecting to
-#define IP std::string("10.12.3.3")
+#define IP std::string("10.12.3.5")
 #define SRV_NAME std::string("ircsrv")
 #define OPER_PASSWORD std::string("admin")
 
@@ -55,6 +55,7 @@
 #define PONG std::string("PONG")
 #define QUIT std::string("QUIT")
 #define OPER std::string("OPER")
+#define PRVMSG std::string("PRVMSG")
 
 // messages
 #define MSG_CAP std::string("CAP * LS\r\n")
@@ -73,9 +74,13 @@
 
 // replies/errors
 #define RPL_WELCOME(nick, user, server) std::string(PREFIX(nick, user) + " 001 " + server + " " + nick + "!" + user + "@localhost\r\n")
+#define RPL_AWAY(nick, user, msg) std::string(PREFIX(nick, user) + " 301 " + nick + " :" + msg + DEL)
 #define RPL_YOUREOPER(nick, user) std::string(PREFIX(nick, user) + " 381 :You are now an IRC operator" + DEL)
-#define ERR_NOSUCHNICK(nick, user) std::string(PREFIX(nick, user) + " 401 " + nick + " :no such nick\r\n")
+#define ERR_NOSUCHNICK(nick, user, name) std::string(PREFIX(nick, user) + " 401 " + name + " :no such nick" + DEL)
 #define ERR_NOSUCHSERVER(nick, user, server) std::string(PREFIX(nick, user) + " 402 " + server + " :no such server\r\n")
+#define ERR_NORECIPIENT(nick, user, cmd) std::string(PREFIX(nick, user) + " 411 :No recipient given (" + cmd + ")\r\n")
+#define ERR_NOTEXTTOSEND(nick, user) std::string(PREFIX(nick, user) + "412 :No text to send" + DEL)
+#define ERR_BADMASK(nick, user, mask) std::string(PREFIX(nick, user) + "415 " + mask + " :Bad Server/host mask" + DEL)
 #define ERR_UNKNOWNCOMMAND(nick, user, cmd) std::string(PREFIX(nick, user) + " 421 " + cmd + " :Unknown command\r\n")
 #define ERR_NONICKNAMEGIVEN(nick, user) std::string(PREFIX(nick, user) + " 431 :No nickname given\r\n")
 #define ERR_ERRONEUSNICKNAME(nick, user) std::string(PREFIX(nick, user) + " 432 " + nick + " :Erroneous nickname\r\n")
