@@ -6,14 +6,14 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 08:27:25 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/04 10:27:02 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/04 14:28:38 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "irc.hpp"
 #include "User.hpp"
 
-void	User::checkBuff(Server const &server)
+void	User::checkBuff(Server &server)
 {
 	std::vector<std::string>	commands;
 	std::vector<std::string>	cmd;
