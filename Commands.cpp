@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/04 12:16:46 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/04 14:51:20 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	Commands::initCommands(void)
 	Commands::commands[PRIVMSG] = Commands::privmsgCommand;
 }
 
-void	Commands::passCommand(const Server &srv, User *usr, std::vector<std::string> params)
+void	Commands::passCommand(Server &srv, User *usr, std::vector<std::string> params)
 {
 	if (params.size() == 0)
 		throw (Replies::ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), PASS).c_str()));
@@ -41,7 +41,7 @@ void	Commands::passCommand(const Server &srv, User *usr, std::vector<std::string
 	usr->setReg(1);
 }
 
-void	Commands::capCommand(const Server &srv, User *usr, std::vector<std::string> params)
+void	Commands::capCommand(Server &srv, User *usr, std::vector<std::string> params)
 {
 	(void) usr;
 	(void) params;
@@ -53,7 +53,7 @@ void	Commands::capCommand(const Server &srv, User *usr, std::vector<std::string>
 	#endif
 }
 
-void	Commands::nickCommand(const Server &srv, User *usr, std::vector<std::string> params)
+void	Commands::nickCommand(Server &srv, User *usr, std::vector<std::string> params)
 {
 	if (usr->getReg() % 2 == 0)
 		throw (Replies::ErrException(ERR_NOTREGISTERED(usr->getNick(), usr->getUser()).c_str()));
@@ -78,7 +78,7 @@ void	Commands::nickCommand(const Server &srv, User *usr, std::vector<std::string
 	}
 }
 
-void	Commands::userCommand(const Server &srv, User *usr, std::vector<std::string> params)
+void	Commands::userCommand(Server &srv, User *usr, std::vector<std::string> params)
 {
 	(void) srv;
 	if (usr->getReg() % 2 == 0)
@@ -105,7 +105,7 @@ void	Commands::userCommand(const Server &srv, User *usr, std::vector<std::string
 	}
 }
 
-void	Commands::pingCommand(const Server &srv, User *usr, std::vector<std::string> params)
+void	Commands::pingCommand(Server &srv, User *usr, std::vector<std::string> params)
 {
 	(void) srv;
 	(void) usr;
@@ -116,7 +116,7 @@ void	Commands::pingCommand(const Server &srv, User *usr, std::vector<std::string
 	usr->setWriteBuff(usr->getWriteBuff() + MSG_PING);
 }
 
-void	Commands::pongCommand(const Server &srv, User *usr, std::vector<std::string> params)
+void	Commands::pongCommand(Server &srv, User *usr, std::vector<std::string> params)
 {
 	(void) srv;
 	if (params[0] != IP && params[0] != SRV_NAME)
@@ -127,7 +127,7 @@ void	Commands::pongCommand(const Server &srv, User *usr, std::vector<std::string
 	usr->setWriteBuff(usr->getWriteBuff() + MSG_PONG(IP));
 }
 
-void	Commands::errorCommand(const Server &srv, User *usr, std::vector<std::string> params)
+void	Commands::errorCommand(Server &srv, User *usr, std::vector<std::string> params)
 {
 	std::string	message;
 
@@ -137,7 +137,7 @@ void	Commands::errorCommand(const Server &srv, User *usr, std::vector<std::strin
 	usr->setWriteBuff(usr->getWriteBuff() + MSG_ERROR(message));
 }
 
-void	Commands::operCommand(const Server &srv, User *usr, std::vector<std::string> params)
+void	Commands::operCommand(Server &srv, User *usr, std::vector<std::string> params)
 {
 	(void) srv;
 	if (usr->getReg() < 7)
@@ -157,10 +157,12 @@ void	Commands::operCommand(const Server &srv, User *usr, std::vector<std::string
 	usr->setWriteBuff(usr->getWriteBuff() + RPL_YOUREOPER(usr->getNick(), usr->getUser()));
 }
 
-void	Commands::privmsgCommand(const Server &srv, User *usr, std::vector<std::string> params)
+void	Commands::privmsgCommand(Server &srv, User *usr, std::vector<std::string> params)
 {
 	User	*tmp;
 
+	if (usr->getReg() < 7)
+		throw (Replies::ErrException(ERR_NOTREGISTERED(usr->getNick(), usr->getUser()).c_str()));
 	if (params.size() < 1)
 		throw (Replies::ErrException(ERR_NORECIPIENT(usr->getNick(), usr->getUser(), PRIVMSG).c_str()));
 	if (params.size() < 2)
@@ -172,5 +174,6 @@ void	Commands::privmsgCommand(const Server &srv, User *usr, std::vector<std::str
 		throw (Replies::ErrException(ERR_NOSUCHNICK(usr->getNick(), usr->getUser(), params[0]).c_str()));
 	MY_DEBUG(">> user found with nick: " << tmp->getNick())
 	tmp->setWriteBuff(tmp->getWriteBuff() + PREFIX(usr->getNick(), usr->getUser()) + " " + PRIVMSG + " " + tmp->getNick() +
-			" " + params[1] + DEL);
+			" :" + params[1] + DEL);
+	srv.setEvent(tmp->getSockFd(), POLLOUT);
 }

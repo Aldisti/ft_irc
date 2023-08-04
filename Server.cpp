@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/03 17:05:21 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/04 15:16:51 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,7 @@ void		Server::checkFd(void)
 			continue ;
 		tmp = this->getUser(this->_pollfds[i].fd);
 		MY_DEBUG(">> checking user: index [" << i << "] sfd [" << tmp->getSockFd() << "] revents [" << this->_pollfds[i].revents << "]")
+		MY_DEBUG((int) this->_buff[BUFFSIZE - 1])
 		if (this->_pollfds[i].revents == POLLIN && this->_pollfds[i].fd != -1)
 			this->pollIn(tmp, i);
 		else if (this->_pollfds[i].revents == POLLOUT && this->_pollfds[i].fd != -1)
@@ -234,12 +235,23 @@ void	Server::cleanPollfds(void) {
 	this->_toClean = false;
 }
 
+void	Server::setEvent(int fd, int event)
+{
+	if (event != POLLIN && event != POLLOUT)
+		return ;
+	for (int i = 1; i < this->_npollfds; i++)
+		if (this->_pollfds[i].fd == fd)
+		{
+			this->_pollfds[i].events = event;
+			break ;
+		}
+}
+
 void	Server::polling(void)
 {
 	int	rs;
 	while (true)
 	{
-		std::cout << "polling..." << std::endl;
 		rs = poll(this->_pollfds, this->_npollfds, TIMEOUT);
 		if (rs < 0)
 		{

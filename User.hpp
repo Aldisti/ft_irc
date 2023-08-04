@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 10:24:01 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/03 15:28:54 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/04 14:28:54 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ class User
 		void		setWriteBuff(std::string buff);
 
 		// functions
-		void		checkBuff(Server const &server);
+		void		checkBuff(Server &server);
 
 		// static functions
 		static bool	checkNick(std::string nick);

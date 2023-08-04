@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 10:15:13 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/03 12:12:08 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/04 14:21:35 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ class Server
 		void		pollIn(User *usr, int index);
 		void		pollOut(User *usr, int index);
 		void		cleanPollfds(void);
+		void		setEvent(int fd, int event);
 		
 		// getters
 		std::string	getPass(void) const;

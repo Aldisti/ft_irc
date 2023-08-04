@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 08:59:58 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/04 10:53:46 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/04 14:27:51 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ class	User;
 
 class	Commands
 {
-	typedef void (*cmd_p)(const Server &, User *, std::vector<std::string>);
+	typedef void (*cmd_p)(Server &, User *, std::vector<std::string>);
 
 	private:
 		// constructor and destructor are private 'cause this is a static class
@@ -33,15 +33,15 @@ class	Commands
 	public:
 
 		// commands
-		static void	capCommand(Server const &srv, User *usr, std::vector<std::string> params);
-		static void	passCommand(Server const &srv, User *usr, std::vector<std::string> params);
-		static void	nickCommand(Server const &srv, User *usr, std::vector<std::string> params);
-		static void	userCommand(Server const &srv, User *usr, std::vector<std::string> params);
-		static void	pingCommand(Server const &srv, User *usr, std::vector<std::string> params);
-		static void	pongCommand(Server const &srv, User *usr, std::vector<std::string> params);
-		static void	errorCommand(Server const &srv, User *usr, std::vector<std::string> params);
-		static void	operCommand(Server const &srv, User *usr, std::vector<std::string> params);
-		static void	privmsgCommand(Server const &srv, User *usr, std::vector<std::string> params);
+		static void	capCommand(Server &srv, User *usr, std::vector<std::string> params);
+		static void	passCommand(Server &srv, User *usr, std::vector<std::string> params);
+		static void	nickCommand(Server &srv, User *usr, std::vector<std::string> params);
+		static void	userCommand(Server &srv, User *usr, std::vector<std::string> params);
+		static void	pingCommand(Server &srv, User *usr, std::vector<std::string> params);
+		static void	pongCommand(Server &srv, User *usr, std::vector<std::string> params);
+		static void	errorCommand(Server &srv, User *usr, std::vector<std::string> params);
+		static void	operCommand(Server &srv, User *usr, std::vector<std::string> params);
+		static void	privmsgCommand(Server &srv, User *usr, std::vector<std::string> params);
 		// functions
 		static void	initCommands(void);
 		// vaiables

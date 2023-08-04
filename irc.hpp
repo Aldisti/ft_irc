@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/04 12:09:01 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/04 15:29:37 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,10 @@
 #define OPER_PASSWORD std::string("admin")
 
 // utils
-#define BUFFSIZE 100
+#define BUFFSIZE 1024
 #define BACKLOG 50     // how many pending connections queue will hold
 #ifdef DEBUG
-# define TIMEOUT 1000
+# define TIMEOUT 2147483647
 #else
 # define TIMEOUT 0
 #endif
