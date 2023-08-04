@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 08:27:25 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/03 15:30:44 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/04 10:27:02 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void	User::checkBuff(Server const &server)
 				std::cout << ">> prefix nickname wrong" << std::endl;
 				std::cout << "##### FINISHED CHECKING READ BUFFER ######" << std::endl;
 			#endif
-			throw Replies::ErrException(ERR_NOSUCHNICK(this->_nick, this->_user).c_str());
+			throw Replies::ErrException(ERR_NOSUCHNICK(this->_nick, this->_user, cmd[0]).c_str());
 		}
 		else if (command[0] == ':')
 			cmd.erase(cmd.begin());
