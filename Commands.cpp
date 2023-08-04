@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/03 16:29:59 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/04 09:02:47 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,7 @@ void	Commands::pingCommand(const Server &srv, User *usr, std::vector<std::string
 	#ifdef DEBUG
 		std::cout << ">> PING command executed" << std::endl;
 	#endif
+	usr->setWriteBuff(usr->getWriteBuff() + MSG_PING);
 }
 
 void	Commands::pongCommand(const Server &srv, User *usr, std::vector<std::string> params)
