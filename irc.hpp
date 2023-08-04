@@ -31,6 +31,9 @@
 #include <map>
 
 #define DEBUG
+#define DEBUG_B 1
+#define MY_DEBUG(string) if(DEBUG_B) \
+	std::cout << string << std::endl;
 #define MYPORT "8001"  // the port users will be connecting to
 #define IP std::string("10.12.3.5")
 #define SRV_NAME std::string("ircsrv")
@@ -60,6 +63,7 @@
 // messages
 #define MSG_CAP std::string("CAP * LS\r\n")
 #define MSG_PONG(ip) std::string("PONG :" + ip + "\r\n")
+#define MSG_PING std::string("PING :" + SRV_NAME + "\r\n")
 #define MSG_ERROR(message) std::string(":" + SRV_NAME + " ERROR :" + message + "\r\n")
 
 // irc format
