@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/04 09:33:12 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/03 17:05:21 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,6 @@ Server::Server(std::string pass): _toClean(false), _pass(pass), _npollfds(1)
 	this->_pollfds[0].fd = this->_sfd;
 	this->_pollfds[0].events = POLLIN;
 	MY_DEBUG("##### SERVER CREATED SUCCESSFULLY #####")
-//	#ifdef DEBUG
-//		std::cout << "##### SERVER CREATED SUCCESSFULLY #####" << std::endl;
-//	#endif
 }
 
 Server::~Server(void)
@@ -53,9 +50,6 @@ Server::~Server(void)
 		this->_users.pop_back();
 	}
 	MY_DEBUG("##### SERVER DELETED SUCCESSFULLY #####")
-//	#ifdef DEBUG
-//		std::cout << "##### SERVER DELETED SUCCESSFULLY #####" << std::endl;
-//	#endif
 }
 
 std::string	Server::getPass(void) const
@@ -85,32 +79,19 @@ void		Server::registerUser(void)
 		return ;
 	}
 	MY_DEBUG("########## REGISTERING USER ##########")
-//	#ifdef DEBUG
-//		std::cout << "########## REGISTERING USER ##########" << std::endl;
-//	#endif
 	this->_theirAddr.resize(this->_theirAddr.size() + 1);
 	this->_pollfds[this->_npollfds].fd = accept(this->_sfd, &(this->_theirAddr.back()), &(this->_sinAddr));
 	if (this->_pollfds[this->_npollfds].fd == -1)
 	{
 		this->_theirAddr.pop_back();
 		MY_DEBUG("########## REGISTRATION FAILED ##########")
-//		#ifdef DEBUG
-//			std::cout << "########## REGISTRATION FAILED ##########" << std::endl;
-//		#endif
 		throw (Server::ExceptionAccept());
 	}
 	this->_pollfds[this->_npollfds].events = POLLIN;
 	this->_users.push_back(new User(this->_pollfds[this->_npollfds].fd));
 	MY_DEBUG(">> new user: index[" << this->_npollfds << "] sfd [" << this->_pollfds[this->_npollfds].fd << "]")
-//	#ifdef DEBUG
-//		std::cout << ">> new user: index[" << this->_npollfds
-//		<< "] sfd [" << this->_pollfds[this->_npollfds].fd << "]" << std::endl;
-//	#endif
 	this->_npollfds++;
 	MY_DEBUG("########## REGISTRATION COMPLETED ##########")
-//	#ifdef DEBUG
-//		std::cout << "########## REGISTRATION COMPLETED ##########" << std::endl;
-//	#endif
 }
 
 void		Server::checkFd(void)
@@ -118,20 +99,12 @@ void		Server::checkFd(void)
 	User	*tmp;
 
 	MY_DEBUG("########## CHECKING FDs ##########")
-//	#ifdef DEBUG
-//		std::cout << "########## CHECKING FDs ##########" << std::endl;
-//	#endif
 	for (int i = 1; i < this->_npollfds; i++)
 	{
 		if (this->_pollfds[i].revents == 0 || this->_pollfds[i].fd == -1)
 			continue ;
 		tmp = this->getUser(this->_pollfds[i].fd);
 		MY_DEBUG(">> checking user: index [" << i << "] sfd [" << tmp->getSockFd() << "] revents [" << this->_pollfds[i].revents << "]")
-//		#ifdef DEBUG
-//			std::cout << ">> checking user: index [" << i
-//			<< "] sfd [" << tmp->getSockFd()
-//			<< "] revents [" << this->_pollfds[i].revents << "]" << std::endl;
-//		#endif
 		if (this->_pollfds[i].revents == POLLIN && this->_pollfds[i].fd != -1)
 			this->pollIn(tmp, i);
 		else if (this->_pollfds[i].revents == POLLOUT && this->_pollfds[i].fd != -1)
@@ -139,15 +112,9 @@ void		Server::checkFd(void)
 		if (tmp->getWriteBuff() == "") {
 			this->_pollfds[i].events = POLLIN;
 			MY_DEBUG(">> user events set to POLLIN [" << POLLIN << "]")
-//			#ifdef DEBUG
-//				std::cout << ">> user events set to POLLIN [" << POLLIN << "]" << std::endl;
-//			#endif
 		} else {
 			this->_pollfds[i].events = POLLOUT;
 			MY_DEBUG(">> user events set to POLLOUT [" << POLLOUT << "]")
-//			#ifdef DEBUG
-//				std::cout << ">> user events set to POLLOUT [" << POLLOUT << "]" << std::endl;
-//			#endif
 		}
 		if (tmp->getClose() && tmp->getWriteBuff() == "")
 		{
@@ -156,9 +123,6 @@ void		Server::checkFd(void)
 		}
 	}
 	MY_DEBUG("########## CHECKED FDs ##########")
-//	#ifdef DEBUG
-//		std::cout << "########## CHECKED FDs ##########" << std::endl;
-//	#endif
 }
 
 void	Server::pollIn(User *usr, int index)
@@ -169,12 +133,6 @@ void	Server::pollIn(User *usr, int index)
 	r = recv(usr->getSockFd(), this->_buff, BUFFSIZE, MSG_DONTWAIT);
 	MY_DEBUG(">> received [" << r << "]:" << std::endl << "[" << std::string(this->_buff).substr(0, std::string(this->_buff).size() - 2)
 			<< "]")
-//	#ifdef DEBUG
-//		std::cout << ">> received [" << r << "]:" << std::endl;
-//		std::cout << "["
-//		<< std::string(this->_buff).substr(0, std::string(this->_buff).size() - 2)
-//		<< "]" << std::endl;
-//	#endif
 	if (r < 0)
 	{
 		std::cerr << "recv() failed" << std::endl;
@@ -200,15 +158,8 @@ void	Server::pollIn(User *usr, int index)
 		usr->setWriteBuff(usr->getWriteBuff() + e.what());
 		usr->setReadBuff("");
 		MY_DEBUG(">> buffer checking failed" << std::endl << usr->getWriteBuff())
-//		#ifdef DEBUG
-//			std::cout << ">> buffer checking failed" << std::endl;
-//			std::cout << usr->getWriteBuff() << std::endl;
-//		#endif
 	}
 	MY_DEBUG(">> buffer checking completed")
-//	#ifdef DEBUG
-//		std::cout << ">> buffer checking completed" << std::endl;
-//	#endif
 }
 
 void	Server::pollOut(User *usr, int index)
@@ -218,17 +169,8 @@ void	Server::pollOut(User *usr, int index)
 
 	writeBuff = usr->getWriteBuff();
 	MY_DEBUG(">> writeBuff:\n[" << writeBuff.substr(0, writeBuff.size() - 2) << "]")
-//	#ifdef DEBUG
-//		std::cout << ">> writeBuff:\n["
-//		<< writeBuff.substr(0, writeBuff.size() - 2)
-//		<< "]" << std::endl;
-//	#endif
 	s = send(usr->getSockFd(), writeBuff.c_str(), writeBuff.size(), MSG_DONTWAIT);
 	MY_DEBUG(">> sent [" << s << "]:" << std::endl << "[" << writeBuff.substr(0, s - DEL.size()) << "]")
-//	#ifdef DEBUG
-//		std::cout << ">> sent [" << s << "]:" << std::endl;
-//		std::cout << "[" << writeBuff.substr(0, s - DEL.size()) << "]" << std::endl;
-//	#endif
 	if (s < 0)
 	{
 		std::cerr << "send() failed" << std::endl;
@@ -251,19 +193,9 @@ void	Server::pollOut(User *usr, int index)
 		usr->setWriteBuff(writeBuff.substr(s));
 		MY_DEBUG(">> writeBuff resized to [" << (int) writeBuff.size() - s << "]:" << std::endl << "["
 			<< usr->getWriteBuff().substr(0, usr->getWriteBuff().size() - DEL.size()) << "]")
-//		#ifdef DEBUG
-//			std::cout << ">> writeBuff resized to ["
-//			<< (int) writeBuff.size() - s << "]:" << std::endl;
-//			std::cout << "["
-//			<< usr->getWriteBuff().substr(0, usr->getWriteBuff().size() - DEL.size())
-//			<< "]" << std::endl;
-//		#endif
 	} else {
 		usr->setWriteBuff("");
 		MY_DEBUG(">> writeBuff resetted")
-//		#ifdef DEBUG
-//			std::cout << ">> writeBuff resetted" << std::endl;
-//		#endif
 	}
 }
 
@@ -272,21 +204,25 @@ void	Server::cleanPollfds(void) {
 	User	*usr;
 
 	size = this->_users.size();
+  MY_DEBUG(">> cycling through users")
 	for (int i = 0; i < size; i++)
 	{
 		usr = this->_users[i];
 		if (usr->getClose() == true && usr->getWriteBuff() == "")
 		{
+      MY_DEBUG(">> deleting user id [" << (i + 1) << "] sfd [" << usr->getSockFd() << "]")
 			delete usr;
 			this->_users.erase(this->_users.begin() + i);
 			i--;
 			size--;
 		}
 	}
+  MY_DEBUG(">> cycling through pollfds")
 	for (int i = 1; i < this->_npollfds - 1; i++)
 	{
 		if (this->_pollfds[i].fd == -1)
 		{
+      MY_DEBUG(">> deleting user id [" << (i + 1) << "]")
 			for (int j = i; j < this->_npollfds - 1; j++)
 				this->_pollfds[j] = this->_pollfds[j + 1];
 			i--;

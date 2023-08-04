@@ -24,6 +24,7 @@ void	Commands::initCommands(void)
 	Commands::commands[PONG] = Commands::pingCommand;
 	Commands::commands[QUIT] = Commands::errorCommand;
 	Commands::commands[OPER] = Commands::operCommand;
+	Commands::commands[PRVMSG] = Commands::prvmsgCommand;
 }
 
 void	Commands::passCommand(const Server &srv, User *usr, std::vector<std::string> params)
@@ -154,4 +155,19 @@ void	Commands::operCommand(const Server &srv, User *usr, std::vector<std::string
 	usr->setUser(params[0]);
 	usr->setOperator(true);
 	usr->setWriteBuff(usr->getWriteBuff() + RPL_YOUREOPER(usr->getNick(), usr->getUser()));
+}
+
+void	Commands::prvmsgCommand(const Server &srv, User *usr, std::vector<std::string> params)
+{
+	User	*tmp;
+
+	if (params.size() < 1)
+		throw (Replies::ErrException(ERR_NORECIPIENT(usr->getNick(), usr->getUser(), PRVMSG).c_str()));
+	if (params.size() < 2)
+		throw (Replies::ErrException(ERR_NOTEXTTOSEND(usr->getNick(), usr->getUser()).c_str()));
+	if (params[0].find('.') != NPOS)
+		throw (Replies::ErrException(ERR_BADMASK(usr->getNick(), usr->getUser(), params[0]).c_str()));
+	if ((tmp = srv.getUser(params[0])) == NULL)
+		throw (Replies::ErrException(ERR_NOSUCHNICK(usr->getNick(), usr->getUser(), params[0]).c_str()));
+	tmp->setWriteBuff(tmp->getWriteBuff() + params[1]);
 }
