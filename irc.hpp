@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/04 15:29:37 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/07 14:44:53 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 #include <cctype>
+#include <csignal>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -30,8 +31,8 @@
 #include <poll.h>
 #include <map>
 
-#define DEBUG
-#define DEBUG_B 1
+//#define DEBUG
+#define DEBUG_B 0
 #define MY_DEBUG(string) if(DEBUG_B) \
 	std::cout << string << std::endl;
 #define MYPORT "8001"  // the port users will be connecting to
@@ -45,9 +46,15 @@
 #ifdef DEBUG
 # define TIMEOUT 2147483647
 #else
-# define TIMEOUT 0
+# define TIMEOUT 2147483647
+
 #endif
 #define NPOS std::string::npos
+
+// mode
+#define WALLOP 1
+#define OPERATOR 2
+#define VALID_MODES std::string("woO")
 
 // commands
 #define CAP std::string("CAP")
@@ -58,7 +65,10 @@
 #define PONG std::string("PONG")
 #define QUIT std::string("QUIT")
 #define OPER std::string("OPER")
+#define MODE std::string("MODE")
 #define PRIVMSG std::string("PRIVMSG")
+#define WALLOPS std::string("WALLOPS")
+#define SQUIT std::string("SQUIT")
 
 // messages
 #define MSG_CAP std::string("CAP * LS\r\n")
@@ -79,6 +89,7 @@
 // replies/errors
 #define RPL_WELCOME(nick, user, server) std::string(PREFIX(nick, user) + " 001 " \
 		 + server + " " + nick + "!" + user + "@" + SRV_NAME + "\r\n")
+#define RPL_UMODEIS(nick, user, modes) std::string(PREFIX(nick, user) + " 221 :" + modes + DEL)
 #define RPL_AWAY(nick, user, msg) std::string(PREFIX(nick, user) + " 301 " + nick + " :" + msg + DEL)
 #define RPL_YOUREOPER(nick, user) std::string(PREFIX(nick, user) + " 381 :You are now an IRC operator" + DEL)
 #define ERR_NOSUCHNICK(nick, user, name) std::string(PREFIX(nick, user) + " 401 " + name + " :no such nick" + DEL)
@@ -94,4 +105,7 @@
 #define ERR_NEEDMOREPARAMS(nick, user, cmd) std::string(PREFIX(nick, user) + " 461 " + cmd + " :Not enough parameters\r\n")
 #define ERR_ALREADYREGISTERED(nick, user) std::string(PREFIX(nick, user) + " 462 :Unauthorized command (already registered)\r\n")
 #define ERR_PASSWDMISMATCH(nick, user) std::string(PREFIX(nick, user) + " 464 :Password incorrect" + DEL)
+#define ERR_NOPRIVILEGES(nick, user) std::string(PREFIX(nick, user) + " 481 :Permission Denied- You're not an IRC operator" + DEL)
+#define ERR_UMODEUNKNOWNFLAG(nick, user) std::string(PREFIX(nick, user) + " 501 :Unknown MODE flag" + DEL)
+#define ERR_USERSDONTMATCH(nick, user) std::string(PREFIX(nick, user) + " 502 :Cannot change mode for other users" + DEL)
 #define ERR_BADSYNTAX(nick, user) std::string(PREFIX(nick, user) + " 542 :bad syntax\r\n")

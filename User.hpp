@@ -6,17 +6,17 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 10:24:01 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/04 14:28:54 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/07 09:39:49 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef USER_HPP
 # define USER_HPP
 
+# include "utils.hpp"
 # include "irc.hpp"
 # include "Server.hpp"
 # include "Commands.hpp"
-# include "utils.hpp"
 
 class Server;
 
