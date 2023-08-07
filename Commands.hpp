@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 08:59:58 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/04 14:27:51 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/07 09:39:16 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ class	Commands
 		static void	errorCommand(Server &srv, User *usr, std::vector<std::string> params);
 		static void	operCommand(Server &srv, User *usr, std::vector<std::string> params);
 		static void	privmsgCommand(Server &srv, User *usr, std::vector<std::string> params);
+		static void	killCommand(Server &srv, User *usr, std::vector<std::string> params);
 		// functions
 		static void	initCommands(void);
 		// vaiables

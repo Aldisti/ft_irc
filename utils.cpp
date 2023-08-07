@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 10:46:40 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/02 11:43:16 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/07 11:05:23 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,4 +63,19 @@ std::vector<std::string>	ft_parse(std::string line)
 	if (arr.size() > 16 && line[0] != ':')
 		throw std::exception();
 	return (arr);
+}
+
+std::string	ft_toupper(std::string str)
+{
+	for (int i = 0; i < (int) str.size(); i++)
+		str[i] = std::toupper(str[i]);
+	return (str);
+}
+
+long	ft_gettime(void)
+{
+	time_t	now;
+
+	std::time(&now);
+	return (((long)((int) now)) * 1000);
 }
