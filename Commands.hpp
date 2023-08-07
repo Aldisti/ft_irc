@@ -46,6 +46,7 @@ class	Commands
 		static void	modeCommand(Server &srv, User *usr, std::vector<std::string> params);
 		static void	wallopsCommand(Server &srv, User *usr, std::vector<std::string> params);
 		static void	squitCommand(Server &srv, User *usr, std::vector<std::string> params);
+		static void	killCommand(Server &srv, User *usr, std::vector<std::string> params);
 		// functions
 		static void	initCommands(void);
 		// vaiables

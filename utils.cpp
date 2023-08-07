@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 10:46:40 by gpanico           #+#    #+#             */
 /*   Updated: 2023/08/07 15:03:17 by gpanico          ###   ########.fr       */
@@ -89,4 +89,18 @@ std::string	*ft_strdup(const char *str)
 
 	copy = new std::string(str);
 	return (copy);
+
+std::string	ft_toupper(std::string str)
+{
+	for (int i = 0; i < (int) str.size(); i++)
+		str[i] = std::toupper(str[i]);
+	return (str);
+}
+
+long	ft_gettime(void)
+{
+	time_t	now;
+
+	std::time(&now);
+	return (((long)((int) now)) * 1000);
 }

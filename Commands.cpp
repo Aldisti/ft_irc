@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/07 14:37:30 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/07 14:41:17 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void	Commands::initCommands(void)
 	Commands::commands[PRIVMSG] = Commands::privmsgCommand;
 	Commands::commands[WALLOPS] = Commands::wallopsCommand;
 	Commands::commands[SQUIT] = Commands::squitCommand;
+	Commands::commands[KILL] = Commands::killCommand;
 }
 
 void	Commands::passCommand(Server &srv, User *usr, std::vector<std::string> params)
@@ -111,12 +112,12 @@ void	Commands::userCommand(Server &srv, User *usr, std::vector<std::string> para
 void	Commands::pingCommand(Server &srv, User *usr, std::vector<std::string> params)
 {
 	(void) srv;
-	(void) usr;
 	(void) params;
 	#ifdef DEBUG
 		std::cout << ">> PING command executed" << std::endl;
 	#endif
-	usr->setWriteBuff(usr->getWriteBuff() + MSG_PING);
+	usr->resetTime();
+	usr->setPing(false);
 }
 
 void	Commands::pongCommand(Server &srv, User *usr, std::vector<std::string> params)
@@ -260,4 +261,25 @@ void	Commands::squitCommand(Server &srv, User *usr, std::vector<std::string> par
 	}
 	Commands::wallopsCommand(srv, usr, tmp);
 	srv.setEnd(true);
+}
+void	Commands::killCommand(Server &srv, User *usr, std::vector<std::string> params)
+{
+	User	*tmp = NULL;
+
+	MY_DEBUG(">> checking registration status of " << usr->getNick())
+	if (usr->getReg() < 7)
+		throw (Replies::ErrException(ERR_NOTREGISTERED(usr->getNick(), usr->getUser()).c_str()));
+	MY_DEBUG(">> checking operator status of " << usr->getNick())
+	if (!usr->getOperator())
+		throw (Replies::ErrException(ERR_NOPRIVILEGES(usr->getNick(), usr->getUser()).c_str()));
+	MY_DEBUG(">> checking params for KILL")
+	if (params.size() < 2)
+		throw (Replies::ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), KILL).c_str()));
+	MY_DEBUG(">> trying to find user with nick: " + params[0])
+	if ((tmp = srv.getUser(params[0])) == NULL)
+		throw (Replies::ErrException(ERR_NOSUCHNICK(usr->getNick(), usr->getUser(), params[0]).c_str()));
+	MY_DEBUG(">> user found with nick: " << tmp->getNick())
+	tmp->setClose(true);
+	tmp->setWriteBuff(usr->getWriteBuff() + MSG_KILL(usr->getNick(), params[1]));
+	srv.setEvent(tmp->getSockFd(), POLLOUT);
 }

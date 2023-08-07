@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 10:15:13 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/07 14:13:00 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/07 15:06:06 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,9 @@ class Server
 		char							_buff[BUFFSIZE];
 		int								_npollfds;
 		int								_sfd;
-
+		// functions
+		void	checkClean(User *usr, int index);
+		bool	checkPing(User *usr, int i);
 
 	public:
 		// functions

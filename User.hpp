@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 10:24:01 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/07 09:39:49 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/07 14:41:53 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ class User
 		int			_mode;
 		bool		_op;
 		bool		_close;
+		bool		_ping;
+		long		_time;
 		std::string	_nick;
 		std::string	_user;
 		std::string	_real;
@@ -48,6 +50,8 @@ class User
 		int				getMode(void) const;
 		bool			getOperator(void) const;
 		bool			getClose(void) const;
+		bool			getPing(void) const;
+		long			getTime(void) const;
 		std::string		getNick(void) const;
 		std::string		getUser(void) const;
 		std::string		getReal(void) const;
@@ -60,11 +64,13 @@ class User
 		void		setMode(int mode);
 		void		setOperator(bool op);
 		void		setClose(bool close);
+		void		setPing(bool ping);
 		void		setNick(std::string nick);
 		void		setUser(std::string user);
 		void		setReal(std::string real);
 		void		setReadBuff(std::string buff);
 		void		setWriteBuff(std::string buff);
+		void		resetTime(void);
 
 		// functions
 		void		checkBuff(Server &server);

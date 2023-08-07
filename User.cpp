@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 08:27:25 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/04 14:28:38 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/07 15:14:17 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void	User::checkBuff(Server &server)
 		cmdName = cmd[0];
 		cmd.erase(cmd.begin());
 		try {
-			Commands::commands.at(cmdName)(server, this, cmd);
+			Commands::commands.at(ft_toupper(cmdName))(server, this, cmd);
 		} catch (std::out_of_range &e) {
 			this->_readBuff = "";
 			#ifdef DEBUG
@@ -103,7 +103,7 @@ bool	User::checkNick(std::string nick)
 	return (true);
 }
 
-User::User(int sockfd): _sockfd(sockfd), _registered(0), _op(false), _close(false), _readBuff(""), _writeBuff("")
+User::User(int sockfd): _sockfd(sockfd), _registered(0), _op(false), _close(false), _ping(false), _time(ft_gettime()), _readBuff(""), _writeBuff("")
 {
 	return ;
 }
@@ -157,6 +157,16 @@ bool		User::getClose(void) const
 	return (this->_close);
 }
 
+bool		User::getPing(void) const
+{
+	return (this->_ping);
+}
+
+long		User::getTime(void) const
+{
+	return (this->_time);
+}
+
 std::string	User::getNick(void) const
 {
 	return (this->_nick);
@@ -207,6 +217,11 @@ void		User::setClose(bool close)
 	this->_close = close;
 }
 
+void		User::setPing(bool ping)
+{
+	this->_ping = ping;
+}
+
 void		User::setNick(std::string nick)
 {
 	this->_nick = nick;
@@ -230,4 +245,9 @@ void		User::setReadBuff(std::string buff)
 void		User::setWriteBuff(std::string buff)
 {
 	this->_writeBuff = buff;
+}
+
+void		User::resetTime(void)
+{
+	this->_time = ft_gettime();
 }

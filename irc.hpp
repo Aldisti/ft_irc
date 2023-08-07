@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/07 14:44:53 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/07 15:02:08 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,14 @@
 #include <unistd.h>
 #include <poll.h>
 #include <map>
+#include <ctime>
 
 //#define DEBUG
 #define DEBUG_B 0
 #define MY_DEBUG(string) if(DEBUG_B) \
 	std::cout << string << std::endl;
 #define MYPORT "8001"  // the port users will be connecting to
-#define IP std::string("10.12.3.3")
+#define IP std::string("10.12.3.5")
 #define SRV_NAME std::string("hcierVI")
 #define OPER_PASSWORD std::string("admin")
 
@@ -44,12 +45,13 @@
 #define BUFFSIZE 1024
 #define BACKLOG 50     // how many pending connections queue will hold
 #ifdef DEBUG
-# define TIMEOUT 2147483647
+# define TIMEOUT 1000
 #else
 # define TIMEOUT 2147483647
 
 #endif
 #define NPOS std::string::npos
+#define PING_TIMEOUT 15 * 1000
 
 // mode
 #define WALLOP 1
@@ -69,12 +71,14 @@
 #define PRIVMSG std::string("PRIVMSG")
 #define WALLOPS std::string("WALLOPS")
 #define SQUIT std::string("SQUIT")
+#define KILL std::string("KILL")
 
 // messages
 #define MSG_CAP std::string("CAP * LS\r\n")
 #define MSG_PONG(ip) std::string("PONG :" + ip + "\r\n")
 #define MSG_PING std::string("PING :" + SRV_NAME + "\r\n")
 #define MSG_ERROR(message) std::string(":" + SRV_NAME + " ERROR :" + message + "\r\n")
+#define MSG_KILL(nick, message) std::string(":" + nick + " KILL :" + message + DEL)
 
 // irc format
 #define LETTERS std::string("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
