@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 10:46:40 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/07 15:03:17 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/07 15:28:29 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ std::string	*ft_strdup(const char *str)
 
 	copy = new std::string(str);
 	return (copy);
+}
 
 std::string	ft_toupper(std::string str)
 {
