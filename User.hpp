@@ -6,17 +6,14 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 10:24:01 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/07 14:41:53 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/07 16:41:04 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef USER_HPP
 # define USER_HPP
 
-# include "utils.hpp"
 # include "irc.hpp"
-# include "Server.hpp"
-# include "Commands.hpp"
 
 class Server;
 

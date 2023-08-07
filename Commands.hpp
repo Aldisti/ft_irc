@@ -6,18 +6,14 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 08:59:58 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/07 15:02:49 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/07 17:23:52 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef COMMANDS_HPP
 # define COMMANDS_HPP
 
-# include <map>
 # include "irc.hpp"
-# include "utils.hpp"
-# include "User.hpp"
-# include "Server.hpp"
 
 class	Server;
 class	User;
@@ -47,6 +43,7 @@ class	Commands
 		static void	wallopsCommand(Server &srv, User *usr, std::vector<std::string> params);
 		static void	squitCommand(Server &srv, User *usr, std::vector<std::string> params);
 		static void	killCommand(Server &srv, User *usr, std::vector<std::string> params);
+		static void	joinCommand(Server &srv, User *usr, std::vector<std::string> params);
 		// functions
 		static void	initCommands(void);
 		// vaiables

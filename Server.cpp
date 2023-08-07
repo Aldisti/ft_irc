@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/07 15:19:04 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/07 17:30:48 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,11 @@ void	Server::closeServer(void)
 	{
 		delete this->_users.back();
 		this->_users.pop_back();
+	}
+	while (this->_channels.size())
+	{
+		delete this->_channels.back();
+		this->_channels.pop_back();
 	}
 	MY_DEBUG("##### SERVER DELETED SUCCESSFULLY #####")
 }
@@ -81,6 +86,14 @@ User	*Server::getUser(std::string nick) const
 std::vector<User *>	Server::getUsers(void) const
 {
 	return (this->_users);
+}
+
+Channel	*Server::getChannel(std::string name) const
+{
+	for (int i = 0; i < (int) this->_channels.size(); i++)
+		if (this->_channels[i]->getName() == name)
+			return (this->_channels[i]);
+	return (NULL);
 }
 
 void	Server::setEnd(bool end)
@@ -251,25 +264,27 @@ void	Server::cleanPollfds(void) {
 	User	*usr;
 
 	size = this->_users.size();
-  MY_DEBUG(">> cycling through users")
+	MY_DEBUG(">> cycling through users")
 	for (int i = 0; i < size; i++)
 	{
 		usr = this->_users[i];
 		if (usr->getClose() == true && usr->getWriteBuff() == "")
 		{
-      MY_DEBUG(">> deleting user id [" << (i + 1) << "] sfd [" << usr->getSockFd() << "]")
+			for (int j = 0; j < (int) this->_channels.size(); j++)
+				this->_channels[j]->removeUser(usr->getSockFd());
+			MY_DEBUG(">> deleting user id [" << (i + 1) << "] sfd [" << usr->getSockFd() << "]")
 			delete usr;
 			this->_users.erase(this->_users.begin() + i);
 			i--;
 			size--;
 		}
 	}
-  MY_DEBUG(">> cycling through pollfds")
+	MY_DEBUG(">> cycling through pollfds")
 	for (int i = 1; i < this->_npollfds - 1; i++)
 	{
 		if (this->_pollfds[i].fd == -1)
 		{
-      MY_DEBUG(">> deleting user id [" << (i + 1) << "]")
+			MY_DEBUG(">> deleting user id [" << (i + 1) << "]")
 			for (int j = i; j < this->_npollfds - 1; j++)
 				this->_pollfds[j] = this->_pollfds[j + 1];
 			i--;
