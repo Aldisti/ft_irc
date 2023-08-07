@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 10:46:40 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/07 11:05:23 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/07 15:28:29 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,32 @@ std::vector<std::string>	ft_parse(std::string line)
 	if (arr.size() > 16 && line[0] != ':')
 		throw std::exception();
 	return (arr);
+}
+
+int	ft_convertToMode(char c)
+{
+	switch (c)
+	{
+		case 'w':
+			return (WALLOP);
+			break ;
+		case 'o':
+			return (OPERATOR);
+			break ;
+		case 'O':
+			return (OPERATOR);
+			break ;
+		default:
+			return (0);
+	}
+}
+
+std::string	*ft_strdup(const char *str)
+{
+	std::string	*copy;
+
+	copy = new std::string(str);
+	return (copy);
 }
 
 std::string	ft_toupper(std::string str)

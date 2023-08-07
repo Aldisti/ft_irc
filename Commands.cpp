@@ -24,7 +24,10 @@ void	Commands::initCommands(void)
 	Commands::commands[PONG] = Commands::pingCommand;
 	Commands::commands[QUIT] = Commands::errorCommand;
 	Commands::commands[OPER] = Commands::operCommand;
+	Commands::commands[MODE] = Commands::modeCommand;
 	Commands::commands[PRIVMSG] = Commands::privmsgCommand;
+	Commands::commands[WALLOPS] = Commands::wallopsCommand;
+	Commands::commands[SQUIT] = Commands::squitCommand;
 	Commands::commands[KILL] = Commands::killCommand;
 }
 
@@ -155,6 +158,7 @@ void	Commands::operCommand(Server &srv, User *usr, std::vector<std::string> para
 	#endif
 	usr->setUser(params[0]);
 	usr->setOperator(true);
+	usr->setMode(usr->getMode() | OPERATOR);
 	usr->setWriteBuff(usr->getWriteBuff() + RPL_YOUREOPER(usr->getNick(), usr->getUser()));
 }
 
@@ -179,6 +183,85 @@ void	Commands::privmsgCommand(Server &srv, User *usr, std::vector<std::string> p
 	srv.setEvent(tmp->getSockFd(), POLLOUT);
 }
 
+void	Commands::modeCommand(Server &srv, User *usr, std::vector<std::string> params)
+{
+	char		first;
+	std::string	modes = "";
+
+	(void) srv;
+	if (usr->getReg() < 7)
+		throw (Replies::ErrException(ERR_NOTREGISTERED(usr->getNick(), usr->getUser()).c_str()));
+	if (params.size() < 2)
+		throw (Replies::ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), MODE).c_str()));
+	if (usr->getNick() != params[0])
+		throw (Replies::ErrException(ERR_USERSDONTMATCH(usr->getNick(), usr->getUser()).c_str()));
+	for (int i = 1; i < (int) params.size(); i++)
+	{
+		first = params[i][0];
+		if (first == '+' || first == '-') {
+			modes.append(1, params[i][0]);
+			for (int j = 1; j < (int) params[i].size(); j++) {
+				if (VALID_MODES.find(params[i][j]) == NPOS)
+					throw (Replies::ErrException(ERR_UMODEUNKNOWNFLAG(usr->getNick(), usr->getUser()).c_str()));
+				if (first == '+') {
+					if (params[i][j] == 'o' || params[i][j] == 'O')
+						continue ;
+					usr->setMode(usr->getMode() | ft_convertToMode(params[i][j]));
+				}
+				else {
+					if (params[i][j] == 'o' || params[i][j] == 'O')
+						usr->setOperator(false);
+					usr->setMode(usr->getMode() & (~ft_convertToMode(params[i][j])));
+				}
+				modes.append(1, params[i][j]);
+			}
+			modes.append(1, ' ');
+		} else {
+			throw (Replies::ErrException(ERR_UMODEUNKNOWNFLAG(usr->getNick(), usr->getUser()).c_str()));
+		}
+	}
+	usr->setWriteBuff(usr->getWriteBuff() + RPL_UMODEIS(usr->getNick(), usr->getUser(), modes));
+}
+
+void	Commands::wallopsCommand(Server &srv, User *usr, std::vector<std::string> params)
+{
+	std::vector<User *>	tmpUsers;
+
+	if (usr->getReg() < 7)
+		throw (Replies::ErrException(ERR_NOTREGISTERED(usr->getNick(), usr->getUser()).c_str()));
+	if (params.size() < 1)
+		throw (Replies::ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), WALLOPS).c_str()));
+	tmpUsers = srv.getUsers();
+	for (int i = 0; i < (int) tmpUsers.size(); i++)
+	{
+		if (tmpUsers[i]->getNick() == usr->getNick() || !(tmpUsers[i]->getMode() & WALLOP))
+			continue ;
+		tmpUsers[i]->setWriteBuff(tmpUsers[i]->getWriteBuff() + PREFIX(usr->getNick(),
+					usr->getUser()) + " " + WALLOPS + " :" + params[0] + DEL);
+		srv.setEvent(tmpUsers[i]->getSockFd(), POLLOUT);
+	}
+}
+
+void	Commands::squitCommand(Server &srv, User *usr, std::vector<std::string> params)
+{
+	std::vector<User *>	tmpUsers;
+	MY_DEBUG("prova")
+	if (params.size() < 2)
+		throw (Replies::ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), SQUIT).c_str()));
+	if (params[0] != IP && params[0] != SRV_NAME)
+		throw (Replies::ErrException(ERR_NOSUCHSERVER(usr->getNick(), usr->getUser(), params[0]).c_str()));
+	if (!usr->getOperator())
+		throw (Replies::ErrException(ERR_NOPRIVILEGES(usr->getNick(), usr->getUser()).c_str()));
+	std::vector<std::string>	tmp(params.begin() + 1, params.end());
+	tmpUsers = srv.getUsers();
+	for (int i = 0; i < (int) tmpUsers.size(); i++)
+	{
+		tmpUsers[i]->setClose(true);
+		tmpUsers[i]->setWriteBuff("");
+	}
+	Commands::wallopsCommand(srv, usr, tmp);
+	srv.setEnd(true);
+}
 void	Commands::killCommand(Server &srv, User *usr, std::vector<std::string> params)
 {
 	User	*tmp = NULL;
@@ -200,4 +283,3 @@ void	Commands::killCommand(Server &srv, User *usr, std::vector<std::string> para
 	tmp->setWriteBuff(usr->getWriteBuff() + MSG_KILL(usr->getNick(), params[1]));
 	srv.setEvent(tmp->getSockFd(), POLLOUT);
 }
-

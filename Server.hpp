@@ -23,6 +23,7 @@ class Server
 {
 	private:
 		// variables
+		bool							_end;
 		bool							_toClean;
 		const std::string				_pass;
 		std::vector<User *>				_users;
@@ -48,12 +49,17 @@ class Server
 		void		pollOut(User *usr, int index);
 		void		cleanPollfds(void);
 		void		setEvent(int fd, int event);
+		void		closeServer(void);
 		
 		// getters
-		std::string	getPass(void) const;
-		std::string	getIp(void) const;
-		User		*getUser(int fd) const;
-		User		*getUser(std::string nick) const;
+		std::string			getPass(void) const;
+		std::string			getIp(void) const;
+		User				*getUser(int fd) const;
+		User				*getUser(std::string nick) const;
+		std::vector<User *>	getUsers() const;
+
+		// setters
+		void				setEnd(bool end);
 
 	public:
 		// exceptions
