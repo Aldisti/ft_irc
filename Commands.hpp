@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 08:59:58 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/07 09:39:16 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/07 15:02:49 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include <map>
 # include "irc.hpp"
+# include "utils.hpp"
 # include "User.hpp"
 # include "Server.hpp"
 
@@ -42,6 +43,9 @@ class	Commands
 		static void	errorCommand(Server &srv, User *usr, std::vector<std::string> params);
 		static void	operCommand(Server &srv, User *usr, std::vector<std::string> params);
 		static void	privmsgCommand(Server &srv, User *usr, std::vector<std::string> params);
+		static void	modeCommand(Server &srv, User *usr, std::vector<std::string> params);
+		static void	wallopsCommand(Server &srv, User *usr, std::vector<std::string> params);
+		static void	squitCommand(Server &srv, User *usr, std::vector<std::string> params);
 		static void	killCommand(Server &srv, User *usr, std::vector<std::string> params);
 		// functions
 		static void	initCommands(void);
@@ -61,17 +65,17 @@ class	Replies
 		class	ErrException: public std::exception
 		{
 			private:
-				const char *	_message;
+				std::string	*_message;
 
 			public:
 				ErrException(const char * message) {
-					this->_message = strdup(message); // ft_strdup
+					this->_message = ft_strdup(message); // ft_strdup
 				}
 				virtual	~ErrException() throw() {
 					delete this->_message;
 				}
 				virtual const char * what() const throw() {
-					return (this->_message);
+					return (this->_message->c_str());
 				}
 		};
 };

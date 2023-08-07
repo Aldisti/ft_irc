@@ -12,7 +12,18 @@
 
 #include "Server.hpp"
 
-Server::Server(std::string pass): _toClean(false), _pass(pass), _npollfds(1)
+void	Server::closeServer(void)
+{
+	close(this->_sfd);
+	while (this->_users.size())
+	{
+		delete this->_users.back();
+		this->_users.pop_back();
+	}
+	MY_DEBUG("##### SERVER DELETED SUCCESSFULLY #####")
+}
+
+Server::Server(std::string pass): _end(false), _toClean(false), _pass(pass), _npollfds(1)
 {
 	struct addrinfo	*res;
 	int				on = 1;
@@ -43,13 +54,7 @@ Server::Server(std::string pass): _toClean(false), _pass(pass), _npollfds(1)
 
 Server::~Server(void)
 {
-	close(this->_sfd);
-	while (this->_users.size())
-	{
-		delete this->_users.back();
-		this->_users.pop_back();
-	}
-	MY_DEBUG("##### SERVER DELETED SUCCESSFULLY #####")
+	this->closeServer();
 }
 
 std::string	Server::getPass(void) const
@@ -57,7 +62,7 @@ std::string	Server::getPass(void) const
 	return (this->_pass);
 }
 
-User		*Server::getUser(int fd) const
+User	*Server::getUser(int fd) const
 {
 	for (std::vector<User *>::const_iterator ite = this->_users.begin(); ite != this->_users.end(); ite++)
 		if ((*ite)->getSockFd() == fd)
@@ -65,7 +70,7 @@ User		*Server::getUser(int fd) const
 	return (NULL);
 }
 
-User		*Server::getUser(std::string nick) const
+User	*Server::getUser(std::string nick) const
 {
 	for (std::vector<User *>::const_iterator ite = this->_users.begin(); ite != this->_users.end(); ite++)
 		if ((*ite)->getNick() == nick)
@@ -73,7 +78,17 @@ User		*Server::getUser(std::string nick) const
 	return (NULL);
 }
 
-void		Server::registerUser(void)
+std::vector<User *>	Server::getUsers(void) const
+{
+	return (this->_users);
+}
+
+void	Server::setEnd(bool end)
+{
+	this->_end = end;
+}
+
+void	Server::registerUser(void)
 {
 	if (this->_pollfds[0].revents != POLLIN || this->_pollfds[0].fd == -1) {
 		return ;
@@ -132,6 +147,8 @@ void		Server::checkFd(void)
 	for (int i = 1; i < this->_npollfds; i++)
 	{
 		tmp = this->getUser(this->_pollfds[i].fd);
+		if (!tmp)
+			continue ;
 		MY_DEBUG(">> checking user: index [" << i << "] sfd [" << tmp->getSockFd() << "] revents [" << this->_pollfds[i].revents << "]")
 		if (this->checkPing(tmp, i))
 			continue ;
@@ -279,7 +296,7 @@ void	Server::setEvent(int fd, int event)
 void	Server::polling(void)
 {
 	int	rs;
-	while (true)
+	while (!this->_end || this->_users.size() != 0)
 	{
 		rs = poll(this->_pollfds, this->_npollfds, TIMEOUT);
 		if (rs < 0)
