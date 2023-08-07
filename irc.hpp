@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/07 11:14:06 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/07 15:02:08 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,13 +44,12 @@
 #define BUFFSIZE 1024
 #define BACKLOG 50     // how many pending connections queue will hold
 #ifdef DEBUG
-# define TIMEOUT 2147483647
+# define TIMEOUT 1000
 #else
 # define TIMEOUT 0
 #endif
 #define NPOS std::string::npos
-#define USR_TIMEOUT 30 * 1000
-#define PING_TIMEOUT 
+#define PING_TIMEOUT 15 * 1000
 
 // commands
 #define CAP std::string("CAP")

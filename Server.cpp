@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/07 12:16:36 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/07 15:19:04 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,36 @@ void		Server::registerUser(void)
 	MY_DEBUG("########## REGISTRATION COMPLETED ##########")
 }
 
+void		Server::checkClean(User *usr, int index)
+{
+	if (usr == NULL || index < 0 || index > this->_npollfds
+		|| !usr->getClose() || usr->getWriteBuff() != "")
+		return ;
+	this->_toClean = true;
+	this->_pollfds[index].fd = -1;
+}
+
+bool		Server::checkPing(User *usr, int i)
+{
+	if (!usr->getPing() && ft_gettime() - usr->getTime() >= PING_TIMEOUT)
+	{
+		MY_DEBUG(">> sending PING message\n\n")
+		usr->setWriteBuff(usr->getWriteBuff() + MSG_PING);
+		this->setEvent(usr->getSockFd(), POLLOUT);
+		usr->resetTime();
+		usr->setPing(true);
+	}
+	else if (usr->getPing() && ft_gettime() - usr->getTime() >= PING_TIMEOUT)
+	{
+		MY_DEBUG(">> PING_TIMEOUT elapsed\n\n")
+		usr->setClose(true);
+		usr->setWriteBuff("");
+		this->checkClean(usr, i);
+		return (true);
+	}
+	return (false);
+}
+
 void		Server::checkFd(void)
 {
 	User	*tmp;
@@ -101,14 +131,12 @@ void		Server::checkFd(void)
 	MY_DEBUG("########## CHECKING FDs ##########")
 	for (int i = 1; i < this->_npollfds; i++)
 	{
-		// if (ft_gettime() - usr->getTime() >= USR_TIMEOUT && ft_gettime() - usr->getTime() < PING_TIMEOUT)
-		// {
-			
-		// }
-		if (this->_pollfds[i].revents == 0 || this->_pollfds[i].fd == -1)
-			continue ;
 		tmp = this->getUser(this->_pollfds[i].fd);
 		MY_DEBUG(">> checking user: index [" << i << "] sfd [" << tmp->getSockFd() << "] revents [" << this->_pollfds[i].revents << "]")
+		if (this->checkPing(tmp, i))
+			continue ;
+		if (this->_pollfds[i].revents == 0 || this->_pollfds[i].fd == -1)
+			continue ;
 		MY_DEBUG((int) this->_buff[BUFFSIZE - 1])
 		if (this->_pollfds[i].revents == POLLIN && this->_pollfds[i].fd != -1)
 			this->pollIn(tmp, i);
@@ -121,13 +149,8 @@ void		Server::checkFd(void)
 			this->_pollfds[i].events = POLLOUT;
 			MY_DEBUG(">> user events set to POLLOUT [" << POLLOUT << "]")
 		}
-		if (tmp->getClose() && tmp->getWriteBuff() == "")
-		{
-			this->_toClean = true;
-			this->_pollfds[i].fd = -1;
-		}
+		this->checkClean(tmp, i);
 	}
-	MY_DEBUG("########## CHECKED FDs ##########")
 }
 
 void	Server::pollIn(User *usr, int index)
@@ -135,6 +158,7 @@ void	Server::pollIn(User *usr, int index)
 	int			r;
 
 	usr->resetTime();
+	usr->setPing(false);
 	memset((void *) this->_buff, 0, BUFFSIZE); // ft_memset()
 	r = recv(usr->getSockFd(), this->_buff, BUFFSIZE, MSG_DONTWAIT);
 	MY_DEBUG(">> received [" << r << "]:" << std::endl << "[" << std::string(this->_buff).substr(0, std::string(this->_buff).size() - 2)

@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 08:27:25 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/07 11:08:46 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/07 15:14:17 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,9 +103,8 @@ bool	User::checkNick(std::string nick)
 	return (true);
 }
 
-User::User(int sockfd): _sockfd(sockfd), _registered(0), _op(false), _close(false), _time(ft_gettime()), _readBuff(""), _writeBuff("")
+User::User(int sockfd): _sockfd(sockfd), _registered(0), _op(false), _close(false), _ping(false), _time(ft_gettime()), _readBuff(""), _writeBuff("")
 {
-	std::cout << "time: " << this->_time << std::endl;
 	return ;
 }
 
@@ -156,6 +155,11 @@ bool		User::getOperator(void) const
 bool		User::getClose(void) const
 {
 	return (this->_close);
+}
+
+bool		User::getPing(void) const
+{
+	return (this->_ping);
 }
 
 long		User::getTime(void) const
@@ -211,6 +215,11 @@ void		User::setOperator(bool op)
 void		User::setClose(bool close)
 {
 	this->_close = close;
+}
+
+void		User::setPing(bool ping)
+{
+	this->_ping = ping;
 }
 
 void		User::setNick(std::string nick)
