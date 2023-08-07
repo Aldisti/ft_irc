@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/04 15:16:51 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/07 12:16:36 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,10 @@ void		Server::checkFd(void)
 	MY_DEBUG("########## CHECKING FDs ##########")
 	for (int i = 1; i < this->_npollfds; i++)
 	{
+		// if (ft_gettime() - usr->getTime() >= USR_TIMEOUT && ft_gettime() - usr->getTime() < PING_TIMEOUT)
+		// {
+			
+		// }
 		if (this->_pollfds[i].revents == 0 || this->_pollfds[i].fd == -1)
 			continue ;
 		tmp = this->getUser(this->_pollfds[i].fd);
@@ -130,6 +134,7 @@ void	Server::pollIn(User *usr, int index)
 {
 	int			r;
 
+	usr->resetTime();
 	memset((void *) this->_buff, 0, BUFFSIZE); // ft_memset()
 	r = recv(usr->getSockFd(), this->_buff, BUFFSIZE, MSG_DONTWAIT);
 	MY_DEBUG(">> received [" << r << "]:" << std::endl << "[" << std::string(this->_buff).substr(0, std::string(this->_buff).size() - 2)
