@@ -6,14 +6,14 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/07 16:27:06 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/07 17:17:56 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/08 11:28:37 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
 
 
-Channel::Channel(User *creator): _creator(creator)
+Channel::Channel(User *creator, std::string name): _creator(creator), _name(name)
 {
 	this->_users.push_back(creator);
 }
@@ -66,6 +66,27 @@ User	*Channel::getUser(std::string nick) const
 		if (this->_users[i]->getNick() == nick)
 			return (this->_users[i]);
 	return (NULL);
+}
+
+User	*Channel::getUser(User *usr) const
+{
+	for (int i = 0; i < (int) this->_users.size(); i++)
+		if (this->_users[i] == usr)
+			return (this->_users[i]);
+	return (NULL);
+}
+
+std::string	Channel::getUserList(void) const
+{
+	std::string	list = "";
+
+	for (int i = 0; i < (int) this->_users.size(); i++)
+	{
+		if (i)
+			list += " ";
+		list += this->_users[i]->getNick();
+	}
+	return (list);
 }
 
 void	Channel::setCreator(User *creator)

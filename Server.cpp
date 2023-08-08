@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/07 17:30:48 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/08 10:25:02 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,16 @@ Channel	*Server::getChannel(std::string name) const
 		if (this->_channels[i]->getName() == name)
 			return (this->_channels[i]);
 	return (NULL);
+}
+
+std::vector<Channel *>	Server::getChannels(void) const
+{
+	return (this->_channels);
+}
+
+void	Server::addChannel(Channel *c)
+{
+	this->_channels.push_back(c);
 }
 
 void	Server::setEnd(bool end)
