@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/08 12:52:27 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/08 16:03:25 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,7 @@ void	Commands::errorCommand(Server &srv, User *usr, std::vector<std::string> par
 	(void)	srv;
 	message = params.size() == 0 ? std::string("") : params[0];
 	usr->setClose(true);
-	usr->setWriteBuff(usr->getWriteBuff() + MSG_ERROR(message));
+	usr->setWriteBuff(usr->getWriteBuff() + MSG_ERROR(usr->getNick(), message));
 }
 
 void	Commands::operCommand(Server &srv, User *usr, std::vector<std::string> params)
@@ -196,7 +196,7 @@ void	Commands::privmsgCommand(Server &srv, User *usr, std::vector<std::string> p
 	}
 	else
 	{
-		chn = srv.getChannel(params[0]);
+		chn = srv.getChannel(ft_tolower(params[0]));
 		if (chn == NULL)
 	 		throw (Replies::ErrException(ERR_NOSUCHCHANNEL(usr->getNick(), usr->getUser(), chn->getName()).c_str()));
 		if (chn->getUser(usr->getNick()) == NULL)
@@ -270,7 +270,7 @@ void	Commands::wallopsCommand(Server &srv, User *usr, std::vector<std::string> p
 		if (tmpUsers[i]->getNick() == usr->getNick() || !(tmpUsers[i]->getMode() & WALLOP))
 			continue ;
 		tmpUsers[i]->setWriteBuff(tmpUsers[i]->getWriteBuff() + PREFIX(usr->getNick(),
-					usr->getUser()) + " " + WALLOPS + " :" + params[0] + DEL);
+					usr->getUser()) + " " + usr->getNick() + " " + WALLOPS + " :" + params[0] + DEL);
 		srv.setEvent(tmpUsers[i]->getSockFd(), POLLOUT);
 	}
 }
@@ -298,7 +298,9 @@ void	Commands::squitCommand(Server &srv, User *usr, std::vector<std::string> par
 
 void	Commands::killCommand(Server &srv, User *usr, std::vector<std::string> params)
 {
-	User	*tmp = NULL;
+	User						*tmp = NULL;
+	std::vector<std::string>	*partParams;
+	std::vector<Channel *>		channels;
 
 	if (usr->getReg() < 7)
 		throw (Replies::ErrException(ERR_NOTREGISTERED(usr->getNick(), usr->getUser()).c_str()));
@@ -309,8 +311,22 @@ void	Commands::killCommand(Server &srv, User *usr, std::vector<std::string> para
 	if ((tmp = srv.getUser(params[0])) == NULL)
 		throw (Replies::ErrException(ERR_NOSUCHNICK(usr->getNick(), usr->getUser(), params[0]).c_str()));
 	MY_DEBUG(">> killing user with nick: " << tmp->getNick())
+	channels = srv.getChannels();
+	for (int i = 0; i < (int) channels.size(); i++)
+		try
+		{
+			partParams = new std::vector<std::string>();
+			partParams->push_back(channels[i]->getName());
+			Commands::partCommand(srv, tmp, *partParams);
+			delete partParams;
+		}
+		catch (Replies::ErrException &e)
+		{
+			delete partParams;
+		}
 	tmp->setClose(true);
-	tmp->setWriteBuff(usr->getWriteBuff() + MSG_KILL(usr->getNick(), params[1]));
+	usr->setWriteBuff(usr->getWriteBuff() + MSG_KILL(usr->getNick(), tmp->getNick(), params[1]));
+	tmp->setWriteBuff(tmp->getWriteBuff() + MSG_KILL(usr->getNick(), tmp->getNick(), params[1]));
 	srv.setEvent(tmp->getSockFd(), POLLOUT);
 }
 
@@ -336,9 +352,6 @@ void	Commands::awayCommand(Server &srv, User *usr, std::vector<std::string> para
 
 void	Commands::joinCommand(Server &srv, User *usr, std::vector<std::string> params)
 {
-	(void) srv;
-	(void) usr;
-	(void) params;
 	Channel						*tmp;
 	std::vector<std::string>	channelNames;
 	std::vector<User *>			users;
@@ -357,11 +370,16 @@ void	Commands::joinCommand(Server &srv, User *usr, std::vector<std::string> para
   			channels[i]->removeUser(usr->getNick());
   		return ;
   	}
-  	channelNames = ft_split(params[0], ",");
-  	for (int i = 0; i < (int) channelNames.size(); i++)
+  	channelNames = ft_split(ft_tolower(params[0]), ",");
+  	for (int i = 0; i < (int) channelNames.size(); i++)		
   		std::cout << "<< " << channelNames[i] << std::endl;
   	for (int i = 0; i < (int) channelNames.size(); i++)
   	{
+		if (CHANNEL.find(channelNames[i][0]) == NPOS || channelNames[i].size() > 51)
+			throw (Replies::ErrException(ERR_NOSUCHCHANNEL(usr->getNick(), usr->getUser(), channelNames[i]).c_str()));
+		for (int j = 0; j < (int) NOT_CHANSTRING.size(); j++)
+			if (channelNames[i].find(NOT_CHANSTRING[j]) != NPOS)
+				throw (Replies::ErrException(ERR_NOSUCHCHANNEL(usr->getNick(), usr->getUser(), channelNames[i]).c_str()));
   		if ((tmp = srv.getChannel(channelNames[i])) == NULL)
   		{
   			tmp = new Channel(usr, channelNames[i]);
@@ -374,7 +392,7 @@ void	Commands::joinCommand(Server &srv, User *usr, std::vector<std::string> para
   			MY_DEBUG(">> channel joined " << channelNames[i])
   		}
   		else
-  			continue ;
+  			throw (Replies::ErrException(ERR_USERONCHANNEL(usr->getNick(), usr->getUser(), channelNames[i]).c_str()));
 		users = tmp->getUsers();
   		usr->setWriteBuff(usr->getWriteBuff() + MSG_JOIN(usr->getNick(), usr->getUser(), channelNames[i]));
   		usr->setWriteBuff(usr->getWriteBuff() + RPL_NOTOPIC(usr->getNick(), usr->getUser(), channelNames[i]));
@@ -399,7 +417,7 @@ void	Commands::partCommand(Server &srv, User *usr, std::vector<std::string> para
 		throw (Replies::ErrException(ERR_NOTREGISTERED(usr->getNick(), usr->getUser()).c_str()));
 	if (params.size() < 1)
 		throw (Replies::ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), KILL).c_str()));
-	chnNames = ft_split(params[0], std::string(","));
+	chnNames = ft_split(ft_tolower(params[0]), std::string(","));
 	partMessage = params.size() == 1 ? usr->getNick() : params[1];
 	for (int i = 0; i < (int) chnNames.size(); i++)
 	{
@@ -412,9 +430,7 @@ void	Commands::partCommand(Server &srv, User *usr, std::vector<std::string> para
 		for (int j = 0; j < (int) usrVec.size(); j++)
 		{
 			tmp = usrVec[j];
-			if (tmp == usr)
-				continue ;
-			tmp->setWriteBuff(tmp->getWriteBuff() + PREFIX(usr->getNick(), usr->getUser()) + partMessage + DEL);
+			tmp->setWriteBuff(tmp->getWriteBuff() + PREFIX(usr->getNick(), usr->getUser()) + " " + PART + " " + chn->getName() + " :" + partMessage + DEL);
 			srv.setEvent(tmp->getSockFd(), POLLOUT);
 		}
 		chn->removeUser(usr->getNick());

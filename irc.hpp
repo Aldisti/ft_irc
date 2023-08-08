@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/08 12:44:21 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/08 15:56:56 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,8 +80,8 @@
 #define MSG_CAP std::string("CAP * LS\r\n")
 #define MSG_PONG(ip) std::string("PONG :" + ip + "\r\n")
 #define MSG_PING std::string("PING :" + SRV_NAME + "\r\n")
-#define MSG_ERROR(message) std::string(":" + SRV_NAME + " ERROR :" + message + "\r\n")
-#define MSG_KILL(nick, message) std::string(":" + nick + " KILL :" + message + DEL)
+#define MSG_ERROR(nick, message) std::string(":" + SRV_NAME + " " + nick + " ERROR :" + message + "\r\n")
+#define MSG_KILL(killer, killed, message) std::string(":" + killer + " KILL " + killed + " :" + message + DEL)
 #define MSG_AWAY std::string("away")
 #define MSG_PART(nick) nick
 #define MSG_JOIN(nick, user, channel) std::string(PREFIX(nick, user) + " JOIN :" + channel + DEL)
@@ -92,6 +92,7 @@
 #define DIGITS std::string("0123456789")
 #define HEXDIGITS std::string("0123456789ABCDEF")
 #define SPECIAL std::string("[\\]^_`{|}")
+#define NOT_CHANSTRING std::string("\0\7\12\15\40\54\72") // NUL, BELL, CR, LF, " ", "," and ":"
 #define DEL	std::string("\r\n")
 #define MAX_BUFF 512
 
@@ -108,11 +109,11 @@
 #define RPL_NOWAWAY(nick, user) std::string(DOMAIN + " 306 " + "You have been marked as being away" + DEL)
 #define RPL_NOTOPIC(nick, user, channel) std::string(DOMAIN + " 331 " + nick + " " + channel + " :No topic is set" + DEL)
 #define RPL_NAMREPLY(nick, user, channel, names) std::string(DOMAIN + " 353 " + nick + " = " + channel + " :" + names + DEL)
-#define RPL_ENDOFNAMES(nick, user, channel) std::string(DOMAIN + "366 " + nick + " " + channel + " :End of NAMES list" + DEL)
+#define RPL_ENDOFNAMES(nick, user, channel) std::string(DOMAIN + " 366 " + nick + " " + channel + " :End of /NAMES list" + DEL)
 #define RPL_YOUREOPER(nick, user) std::string(DOMAIN + " 381 :You are now an IRC operator" + DEL)
 #define ERR_NOSUCHNICK(nick, user, name) std::string(PREFIX(nick, user) + " 401 " + name + " :no such nick" + DEL)
 #define ERR_NOSUCHSERVER(nick, user, server) std::string(PREFIX(nick, user) + " 402 " + server + " :no such server\r\n")
-#define ERR_NOSUCHCHANNEL(nick, user, channel) std::string(PREFIX(nick, user) + " 403 " + channel + " :No such channel" + DEL)
+#define ERR_NOSUCHCHANNEL(nick, user, channel) std::string(PREFIX(nick, user) + " 403 " + nick + " " + channel + " :No such channel" + DEL)
 #define ERR_CANNOTSENDTOCHAN(nick, user, channel) std::string(PREFIX(nick, user) + " 404 " + channel + " :Cannot send to channel" + DEL)
 #define ERR_TOOMANYCHANNELS(nick, user, channel) std::string(PREFIX(nick, user) + "405 " + channel + " :You have joined too many channels" + DEL)
 #define ERR_TOOMANYTARGETS(nick, user, target, code, msg) std::string(PREFIX(nick, user) + "407 " + target + " :" + code + " recipients. " + msg + DEL)
@@ -124,6 +125,7 @@
 #define ERR_ERRONEUSNICKNAME(nick, user) std::string(PREFIX(nick, user) + " 432 " + nick + " :Erroneous nickname\r\n")
 #define ERR_NICKNAMEINUSE(nick, user) std::string(PREFIX(nick, user) + " 433 " + nick + " :Nickname is already in use\r\n")
 #define ERR_NOTONCHANNEL(nick, user, channel) std::string(PREFIX(nick, user) + " 442 " + channel + " :You're not on that channel" + DEL)
+#define ERR_USERONCHANNEL(nick, user, channel) std::string(PREFIX(nick, user) + " 443 " + nick + " " + user + " " + channel + " :is already on channel" + DEL)
 #define ERR_NOTREGISTERED(nick, user) std::string(PREFIX(nick, user) + " 451 :You have not registered\r\n")
 #define ERR_NEEDMOREPARAMS(nick, user, cmd) std::string(PREFIX(nick, user) + " 461 " + cmd + " :Not enough parameters\r\n")
 #define ERR_ALREADYREGISTERED(nick, user) std::string(PREFIX(nick, user) + " 462 :Unauthorized command (already registered)\r\n")
