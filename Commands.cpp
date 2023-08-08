@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/08 09:41:40 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/08 11:34:37 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ void	Commands::initCommands(void)
 	Commands::commands[KILL] = Commands::killCommand;
 	Commands::commands[AWAY] = Commands::awayCommand;
 	Commands::commands[JOIN] = Commands::joinCommand;
+	Commands::commands[PART] = Commands::partCommand;
 }
 
 void	Commands::passCommand(Server &srv, User *usr, std::vector<std::string> params)
@@ -125,7 +126,7 @@ void	Commands::pingCommand(Server &srv, User *usr, std::vector<std::string> para
 void	Commands::pongCommand(Server &srv, User *usr, std::vector<std::string> params)
 {
 	(void) srv;
-	if (params[0] != IP && params[0] != SRV_NAME)
+	if (params[0] != usr->getNick() && params[0] != IP)
 		throw (Replies::ErrException(ERR_NOSUCHSERVER(usr->getNick(), usr->getUser(), params[0]).c_str()));
 	#ifdef DEBUG
 		std::cout << ">> PONG command executed" << std::endl;
@@ -166,8 +167,9 @@ void	Commands::operCommand(Server &srv, User *usr, std::vector<std::string> para
 
 void	Commands::privmsgCommand(Server &srv, User *usr, std::vector<std::string> params)
 {
-	User	*tmp;
-//	Channel	*chn;
+	User				*tmp;
+	Channel				*chn;
+	std::vector<User *>	usrVec;
 
 	if (usr->getReg() < 7)
 		throw (Replies::ErrException(ERR_NOTREGISTERED(usr->getNick(), usr->getUser()).c_str()));
@@ -192,10 +194,24 @@ void	Commands::privmsgCommand(Server &srv, User *usr, std::vector<std::string> p
 				" :" + params[1] + DEL);
 		srv.setEvent(tmp->getSockFd(), POLLOUT);
 	}
-//	else
-//	{
-//		
-//	}
+	else
+	{
+		chn = srv.getChannel(params[0]);
+		if (chn == NULL)
+	 		throw (Replies::ErrException(ERR_NOSUCHCHANNEL(usr->getNick(), usr->getUser(), chn->getName()).c_str()));
+		if (chn->getUser(usr->getNick()) == NULL)
+	 		throw (Replies::ErrException(ERR_CANNOTSENDTOCHAN(usr->getNick(), usr->getUser(), chn->getName()).c_str()));
+		usrVec = chn->getUsers();
+		for (int i = 0; i < (int) usrVec.size(); i++)
+		{
+			tmp = usrVec[i];
+			if (tmp == usr)
+				continue ;
+			tmp->setWriteBuff(tmp->getWriteBuff() + PREFIX(usr->getNick(), usr->getUser()) + " " + PRIVMSG + " " + tmp->getNick() +
+					" :" + params[1] + DEL);
+			srv.setEvent(tmp->getSockFd(), POLLOUT);
+		}
+	}
 }
 
 void	Commands::modeCommand(Server &srv, User *usr, std::vector<std::string> params)
@@ -345,4 +361,38 @@ void	Commands::joinCommand(Server &srv, User *usr, std::vector<std::string> para
 	// 		throw (Replies::ErrException(ERR_NOSUCHCHANNEL(usr->getNick(), usr->getUser(), channelNames[i]).c_str()));
 		
 	// }
+}
+
+void	Commands::partCommand(Server &srv, User *usr, std::vector<std::string> params)
+{
+	std::vector<std::string>	chnNames;
+	User						*tmp;
+	Channel						*chn;
+	std::vector<User *>			usrVec;
+	std::string					partMessage;
+
+	if (usr->getReg() < 7)
+		throw (Replies::ErrException(ERR_NOTREGISTERED(usr->getNick(), usr->getUser()).c_str()));
+	if (params.size() < 1)
+		throw (Replies::ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), KILL).c_str()));
+	chnNames = ft_split(params[0], std::string(","));
+	partMessage = params.size() == 1 ? usr->getNick() : params[1];
+	for (int i = 0; i < (int) chnNames.size(); i++)
+	{
+		chn = srv.getChannel(chnNames[i]);
+		if (chn == NULL)
+	 		throw (Replies::ErrException(ERR_NOSUCHCHANNEL(usr->getNick(), usr->getUser(), chn->getName()).c_str()));
+		if (chn->getUser(usr->getNick()) == NULL)
+	 		throw (Replies::ErrException(ERR_NOTONCHANNEL(usr->getNick(), usr->getUser(), chn->getName()).c_str()));
+		usrVec = chn->getUsers();
+		for (int j = 0; j < (int) usrVec.size(); j++)
+		{
+			tmp = usrVec[j];
+			if (tmp == usr)
+				continue ;
+			tmp->setWriteBuff(tmp->getWriteBuff() + PREFIX(usr->getNick(), usr->getUser()) + partMessage + DEL);
+			srv.setEvent(tmp->getSockFd(), POLLOUT);
+		}
+		chn->removeUser(usr->getNick());
+	}
 }

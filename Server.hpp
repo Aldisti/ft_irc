@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 10:15:13 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/07 17:20:27 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/08 09:50:13 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,13 @@ class Server
 		void		closeServer(void);
 		
 		// getters
-		std::string			getPass(void) const;
-		std::string			getIp(void) const;
-		User				*getUser(int fd) const;
-		User				*getUser(std::string nick) const;
-		std::vector<User *>	getUsers() const;
-		Channel				*getChannel(std::string name) const;
+		std::string				getPass(void) const;
+		std::string				getIp(void) const;
+		User					*getUser(int fd) const;
+		User					*getUser(std::string nick) const;
+		std::vector<User *>		getUsers() const;
+		Channel					*getChannel(std::string name) const;
+		std::vector<Channel *>	getChannels() const;
 
 		// setters
 		void				setEnd(bool end);

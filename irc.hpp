@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/08 09:21:33 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/08 11:35:09 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@
 #define KILL std::string("KILL")
 #define AWAY std::string("AWAY")
 #define JOIN std::string("JOIN")
+#define PART std::string("PART")
 
 // messages
 #define MSG_CAP std::string("CAP * LS\r\n")
@@ -82,6 +83,7 @@
 #define MSG_ERROR(message) std::string(":" + SRV_NAME + " ERROR :" + message + "\r\n")
 #define MSG_KILL(nick, message) std::string(":" + nick + " KILL :" + message + DEL)
 #define MSG_AWAY std::string("away")
+#define MSG_PART(nick) nick
 
 // irc format
 #define CHANNEL std::string("#&+!")
@@ -92,19 +94,21 @@
 #define DEL	std::string("\r\n")
 #define MAX_BUFF 512
 
-#define PREFIX(nick, user) std::string(":" + nick + "!" + user + "@" + SRV_NAME)
+#define PREFIX(nick, user) std::string(":" + nick + "!" + user + "@" + IP)
+#define DOMAIN std::string(":" + SRV_NAME)
 
 // replies/errors
-#define RPL_WELCOME(nick, user, server) std::string(PREFIX(nick, user) + " 001 " \
-		 + server + " " + nick + "!" + user + "@" + SRV_NAME + "\r\n")
-#define RPL_UMODEIS(nick, user, modes) std::string(PREFIX(nick, user) + " 221 :" + modes + DEL)
-#define RPL_AWAY(nick, user, awayNick, msg) std::string(PREFIX(nick, user) + " 301 " + awayNick + " :" + msg + DEL)
-#define RPL_UNAWAY(nick, user) std::string(PREFIX(nick, user) + " 305 " + "You are no longer marked as being away" + DEL)
-#define RPL_NOWAWAY(nick, user) std::string(PREFIX(nick, user) + " 306 " + "You have been marked as being away" + DEL)
-#define RPL_YOUREOPER(nick, user) std::string(PREFIX(nick, user) + " 381 :You are now an IRC operator" + DEL)
+#define RPL_WELCOME(nick, user, server) std::string(DOMAIN + " 001 " + nick + " :Welcome to " \
+		 + server + " " + nick + "!" + user + "@" + IP + "\r\n")
+#define RPL_UMODEIS(nick, user, modes) std::string(DOMAIN + " 221 :" + modes + DEL)
+#define RPL_AWAY(nick, user, awayNick, msg) std::string(DOMAIN + " 301 " + awayNick + " :" + msg + DEL)
+#define RPL_UNAWAY(nick, user) std::string(DOMAIN + " 305 " + "You are no longer marked as being away" + DEL)
+#define RPL_NOWAWAY(nick, user) std::string(DOMAIN + " 306 " + "You have been marked as being away" + DEL)
+#define RPL_YOUREOPER(nick, user) std::string(DOMAIN + " 381 :You are now an IRC operator" + DEL)
 #define ERR_NOSUCHNICK(nick, user, name) std::string(PREFIX(nick, user) + " 401 " + name + " :no such nick" + DEL)
 #define ERR_NOSUCHSERVER(nick, user, server) std::string(PREFIX(nick, user) + " 402 " + server + " :no such server\r\n")
 #define ERR_NOSUCHCHANNEL(nick, user, channel) std::string(PREFIX(nick, user) + " 403 " + channel + " :No such channel" + DEL)
+#define ERR_CANNOTSENDTOCHAN(nick, user, channel) std::string(PREFIX(nick, user) + " 404 " + channel + " :Cannot send to channel" + DEL)
 #define ERR_TOOMANYCHANNELS(nick, user, channel) std::string(PREFIX(nick, user) + "405 " + channel + " :You have joined too many channels" + DEL)
 #define ERR_TOOMANYTARGETS(nick, user, target, code, msg) std::string(PREFIX(nick, user) + "407 " + target + " :" + code + " recipients. " + msg + DEL)
 #define ERR_NORECIPIENT(nick, user, cmd) std::string(PREFIX(nick, user) + " 411 :No recipient given (" + cmd + ")\r\n")
@@ -114,6 +118,7 @@
 #define ERR_NONICKNAMEGIVEN(nick, user) std::string(PREFIX(nick, user) + " 431 :No nickname given\r\n")
 #define ERR_ERRONEUSNICKNAME(nick, user) std::string(PREFIX(nick, user) + " 432 " + nick + " :Erroneous nickname\r\n")
 #define ERR_NICKNAMEINUSE(nick, user) std::string(PREFIX(nick, user) + " 433 " + nick + " :Nickname is already in use\r\n")
+#define ERR_NOTONCHANNEL(nick, user, channel) std::string(PREFIX(nick, user) + " 442 " + channel + " :You're not on that channel" + DEL)
 #define ERR_NOTREGISTERED(nick, user) std::string(PREFIX(nick, user) + " 451 :You have not registered\r\n")
 #define ERR_NEEDMOREPARAMS(nick, user, cmd) std::string(PREFIX(nick, user) + " 461 " + cmd + " :Not enough parameters\r\n")
 #define ERR_ALREADYREGISTERED(nick, user) std::string(PREFIX(nick, user) + " 462 :Unauthorized command (already registered)\r\n")
