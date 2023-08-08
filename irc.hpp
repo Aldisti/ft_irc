@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/08 11:35:09 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/08 12:44:21 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@
 #define MSG_KILL(nick, message) std::string(":" + nick + " KILL :" + message + DEL)
 #define MSG_AWAY std::string("away")
 #define MSG_PART(nick) nick
-#define MSG_JOIN(channel) std::string(DOMAIN + " JOIN :" + channel + DEL)
+#define MSG_JOIN(nick, user, channel) std::string(PREFIX(nick, user) + " JOIN :" + channel + DEL)
 
 // irc format
 #define CHANNEL std::string("#&+!")
@@ -97,18 +97,19 @@
 
 #define PREFIX(nick, user) std::string(":" + nick + "!" + user + "@" + IP)
 #define DOMAIN std::string(":" + SRV_NAME)
+#define C_NAME(nick, user) std::string(nick + "!" + user + "@" + IP)
 
 // replies/errors
 #define RPL_WELCOME(nick, user, server) std::string(DOMAIN + " 001 " + nick + " :Welcome to " \
 		 + server + " " + nick + "!" + user + "@" + IP + "\r\n")
-#define RPL_UMODEIS(nick, user, modes) std::string(DOMAIN + " 221 :" + modes + DEL)
-#define RPL_AWAY(nick, user, awayNick, msg) std::string(DOMAIN + " 301 " + awayNick + " :" + msg + DEL)
+#define RPL_UMODEIS(nick, user, modes) std::string(DOMAIN + " 221 " + nick + " :" + modes + DEL)
+#define RPL_AWAY(nick, user, awayNick, msg) std::string(DOMAIN + " 301 " + nick + " " + awayNick + " :" + msg + DEL)
 #define RPL_UNAWAY(nick, user) std::string(DOMAIN + " 305 " + "You are no longer marked as being away" + DEL)
 #define RPL_NOWAWAY(nick, user) std::string(DOMAIN + " 306 " + "You have been marked as being away" + DEL)
+#define RPL_NOTOPIC(nick, user, channel) std::string(DOMAIN + " 331 " + nick + " " + channel + " :No topic is set" + DEL)
+#define RPL_NAMREPLY(nick, user, channel, names) std::string(DOMAIN + " 353 " + nick + " = " + channel + " :" + names + DEL)
+#define RPL_ENDOFNAMES(nick, user, channel) std::string(DOMAIN + "366 " + nick + " " + channel + " :End of NAMES list" + DEL)
 #define RPL_YOUREOPER(nick, user) std::string(DOMAIN + " 381 :You are now an IRC operator" + DEL)
-#define RPL_NOTOPIC(nick, user, channel) std::string(DOMAIN + " 331 " + channel + " :No topic is set" + DEL)
-#define RPL_NAMREPLY(nick, user, channel, names) std::string(DOMAIN + " 353 " + channel + " :" + names + DEL)
-#define RPL_ENDOFNAMES(nick, user, channel) std::string(DOMAIN + "366 " + channel + " :End of NAMES list" + DEL)
 #define ERR_NOSUCHNICK(nick, user, name) std::string(PREFIX(nick, user) + " 401 " + name + " :no such nick" + DEL)
 #define ERR_NOSUCHSERVER(nick, user, server) std::string(PREFIX(nick, user) + " 402 " + server + " :no such server\r\n")
 #define ERR_NOSUCHCHANNEL(nick, user, channel) std::string(PREFIX(nick, user) + " 403 " + channel + " :No such channel" + DEL)

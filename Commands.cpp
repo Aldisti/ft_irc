@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/08 11:34:37 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/08 12:52:27 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,7 +207,7 @@ void	Commands::privmsgCommand(Server &srv, User *usr, std::vector<std::string> p
 			tmp = usrVec[i];
 			if (tmp == usr)
 				continue ;
-			tmp->setWriteBuff(tmp->getWriteBuff() + PREFIX(usr->getNick(), usr->getUser()) + " " + PRIVMSG + " " + tmp->getNick() +
+			tmp->setWriteBuff(tmp->getWriteBuff() + PREFIX(usr->getNick(), usr->getUser()) + " " + PRIVMSG + " " + chn->getName() +
 					" :" + params[1] + DEL);
 			srv.setEvent(tmp->getSockFd(), POLLOUT);
 		}
@@ -222,8 +222,10 @@ void	Commands::modeCommand(Server &srv, User *usr, std::vector<std::string> para
 	(void) srv;
 	if (usr->getReg() < 7)
 		throw (Replies::ErrException(ERR_NOTREGISTERED(usr->getNick(), usr->getUser()).c_str()));
-	if (params.size() < 2)
+	if (params.size() < 1)
 		throw (Replies::ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), MODE).c_str()));
+	if (CHANNEL.find(params[0][0]) != NPOS)
+		return ;
 	if (usr->getNick() != params[0])
 		throw (Replies::ErrException(ERR_USERSDONTMATCH(usr->getNick(), usr->getUser()).c_str()));
 	for (int i = 1; i < (int) params.size(); i++)
@@ -332,69 +334,57 @@ void	Commands::awayCommand(Server &srv, User *usr, std::vector<std::string> para
 	}
 }
 
-// void	Commands::joinCommand(Server &srv, User *usr, std::vector<std::string> params)
-// {
-// 	(void) srv;
-// 	(void) usr;
-// 	(void) params;
-// 	Channel						*tmp;
-// 	std::vector<std::string>	channelNames;
+void	Commands::joinCommand(Server &srv, User *usr, std::vector<std::string> params)
+{
+	(void) srv;
+	(void) usr;
+	(void) params;
+	Channel						*tmp;
+	std::vector<std::string>	channelNames;
+	std::vector<User *>			users;
 
-	// if (usr->getReg() < 7)
-	// 	throw (Replies::ErrException(ERR_NOTREGISTERED(usr->getNick(), usr->getUser()).c_str()));
-	// if (params.size() < 1)
-	// 	throw (Replies::ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), JOIN).c_str()));
-	// if (params[0] == "0")
-	// {
-	// 	return ;
-	// }
-	// channelNames = ft_split(params[0], ",");
-	// for (int i = 0; i < (int) channelNames.size(); i++)
-	// 	std::cout << "<< " << channelNames[i] << std::endl;
-	// for (int i = 0; i < (int) channelNames.size(); i++)
-	// {
-	// 	if ((tmp = srv.getChannel(channelNames[i])) == NULL)
-	// 		throw (Replies::ErrException(ERR_NOSUCHCHANNEL(usr->getNick(), usr->getUser(), channelNames[i]).c_str()));
-		
-	// }
-  // 	if (usr->getReg() < 7)
-  // 		throw (Replies::ErrException(ERR_NOTREGISTERED(usr->getNick(), usr->getUser()).c_str()));
-  // 	if (params.size() < 1)
-  // 		throw (Replies::ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), JOIN).c_str()));
-  // 	if (params[0] == "0")
-  // 	{
-  // 		std::vector<Channel *>	channels;
+  	if (usr->getReg() < 7)
+  		throw (Replies::ErrException(ERR_NOTREGISTERED(usr->getNick(), usr->getUser()).c_str()));
+  	if (params.size() < 1)
+  		throw (Replies::ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), JOIN).c_str()));
+  	if (params[0] == "0")
+  	{
+  		std::vector<Channel *>	channels;
 
-  // 		MY_DEBUG(">> exiting all the channels")
-  // 		channels = srv.getChannels();
-  // 		for (int i = 0; i < (int) channels.size(); i++)
-  // 			channels[i]->removeUser(usr->getNick());
-  // 		return ;
-  // 	}
-  // 	channelNames = ft_split(params[0], ",");
-  // 	for (int i = 0; i < (int) channelNames.size(); i++)
-  // 		std::cout << "<< " << channelNames[i] << std::endl;
-  // 	for (int i = 0; i < (int) channelNames.size(); i++)
-  // 	{
-  // 		if ((tmp = srv.getChannel(channelNames[i])) == NULL)
-  // 		{
-  // 			tmp = new Channel(usr, channelNames[i]);
-  // 			srv.addChannel(tmp);
-  // 			MY_DEBUG(">> adding new channel " << channelNames[i])
-  // 		}
-  // 		else if (tmp->getUser(usr) == NULL)
-  // 		{
-  // 			tmp->addUser(usr);
-  // 			MY_DEBUG(">> channel joined " << channelNames[i])
-  // 		}
-  // 		else
-  // 			continue ;
-  // 		usr->setWriteBuff(usr->getWriteBuff() + MSG_JOIN(channelNames[i]));
-  // 		usr->setWriteBuff(usr->getWriteBuff() + RPL_NOTOPIC(usr->getNick(), usr->getUser(), channelNames[i]));
-  // 		usr->setWriteBuff(usr->getWriteBuff() + RPL_NAMREPLY(usr->getNick(), usr->getUser(), channelNames[i], tmp->getUserList()));
-  // 		usr->setWriteBuff(usr->getWriteBuff() + RPL_ENDOFNAMES(usr->getNick(), usr->getUser(), channelNames[i]));
-  // 	}
-  // }
+  		MY_DEBUG(">> exiting all the channels")
+  		channels = srv.getChannels();
+  		for (int i = 0; i < (int) channels.size(); i++)
+  			channels[i]->removeUser(usr->getNick());
+  		return ;
+  	}
+  	channelNames = ft_split(params[0], ",");
+  	for (int i = 0; i < (int) channelNames.size(); i++)
+  		std::cout << "<< " << channelNames[i] << std::endl;
+  	for (int i = 0; i < (int) channelNames.size(); i++)
+  	{
+  		if ((tmp = srv.getChannel(channelNames[i])) == NULL)
+  		{
+  			tmp = new Channel(usr, channelNames[i]);
+  			srv.addChannel(tmp);
+  			MY_DEBUG(">> adding new channel " << channelNames[i])
+  		}
+  		else if (tmp->getUser(usr) == NULL)
+  		{
+  			tmp->addUser(usr);
+  			MY_DEBUG(">> channel joined " << channelNames[i])
+  		}
+  		else
+  			continue ;
+		users = tmp->getUsers();
+  		usr->setWriteBuff(usr->getWriteBuff() + MSG_JOIN(usr->getNick(), usr->getUser(), channelNames[i]));
+  		usr->setWriteBuff(usr->getWriteBuff() + RPL_NOTOPIC(usr->getNick(), usr->getUser(), channelNames[i]));
+		for (int j = 0; j < (int) users.size(); j++)
+		{
+  			users[j]->setWriteBuff(users[j]->getWriteBuff() + RPL_NAMREPLY(users[j]->getNick(), users[j]->getUser(), channelNames[i], tmp->getUserList()));
+  			users[j]->setWriteBuff(users[j]->getWriteBuff() + RPL_ENDOFNAMES(users[j]->getNick(), users[j]->getUser(), channelNames[i]));
+			srv.setEvent(users[j]->getSockFd(), POLLOUT);
+		}
+  	}
 }
 
 void	Commands::partCommand(Server &srv, User *usr, std::vector<std::string> params)
