@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 10:15:13 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/07 15:06:06 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/07 17:20:27 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,9 @@
 # define SERVER_HPP
 
 # include "irc.hpp"
-# include "User.hpp"
-# include "Commands.hpp"
 
 class User;
+class Channel;
 
 class Server
 {
@@ -27,6 +26,7 @@ class Server
 		bool							_toClean;
 		const std::string				_pass;
 		std::vector<User *>				_users;
+		std::vector<Channel *>			_channels;
 		std::vector<struct sockaddr>	_theirAddr;
 		socklen_t						_sinAddr;
 		struct addrinfo					_hints;
@@ -57,6 +57,7 @@ class Server
 		User				*getUser(int fd) const;
 		User				*getUser(std::string nick) const;
 		std::vector<User *>	getUsers() const;
+		Channel				*getChannel(std::string name) const;
 
 		// setters
 		void				setEnd(bool end);
