@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 08:59:58 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/07 15:02:49 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/08 09:27:56 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ class	Commands
 		static void	wallopsCommand(Server &srv, User *usr, std::vector<std::string> params);
 		static void	squitCommand(Server &srv, User *usr, std::vector<std::string> params);
 		static void	killCommand(Server &srv, User *usr, std::vector<std::string> params);
+		static void	awayCommand(Server &srv, User *usr, std::vector<std::string> params);
 		// functions
 		static void	initCommands(void);
 		// vaiables

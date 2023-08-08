@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 10:24:01 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/07 14:41:53 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/08 09:03:16 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ class User
 		std::string	_real;
 		std::string	_readBuff;
 		std::string	_writeBuff;
+		std::string	_awayMsg;
 
 	public:
 		// CO functions
@@ -57,6 +58,7 @@ class User
 		std::string		getReal(void) const;
 		std::string		getReadBuff(void) const;
 		std::string		getWriteBuff(void) const;
+		std::string		getAwayMsg(void) const;
 
 		// setters
 		void		setSockFd(int sfd);
@@ -70,6 +72,7 @@ class User
 		void		setReal(std::string real);
 		void		setReadBuff(std::string buff);
 		void		setWriteBuff(std::string buff);
+		void		setAwayMsg(std::string awayMsg);
 		void		resetTime(void);
 
 		// functions

@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/07 15:02:08 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/08 09:21:33 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,12 @@
 #include <map>
 #include <ctime>
 
-//#define DEBUG
-#define DEBUG_B 0
+#define DEBUG
+#define DEBUG_B 1
 #define MY_DEBUG(string) if(DEBUG_B) \
 	std::cout << string << std::endl;
 #define MYPORT "8001"  // the port users will be connecting to
-#define IP std::string("10.12.3.5")
+#define IP std::string("10.12.3.3")
 #define SRV_NAME std::string("hcierVI")
 #define OPER_PASSWORD std::string("admin")
 
@@ -56,7 +56,8 @@
 // mode
 #define WALLOP 1
 #define OPERATOR 2
-#define VALID_MODES std::string("woO")
+#define F_AWAY 4
+#define VALID_MODES std::string("woOa")
 
 // commands
 #define CAP std::string("CAP")
@@ -72,6 +73,7 @@
 #define WALLOPS std::string("WALLOPS")
 #define SQUIT std::string("SQUIT")
 #define KILL std::string("KILL")
+#define AWAY std::string("AWAY")
 
 // messages
 #define MSG_CAP std::string("CAP * LS\r\n")
@@ -79,8 +81,10 @@
 #define MSG_PING std::string("PING :" + SRV_NAME + "\r\n")
 #define MSG_ERROR(message) std::string(":" + SRV_NAME + " ERROR :" + message + "\r\n")
 #define MSG_KILL(nick, message) std::string(":" + nick + " KILL :" + message + DEL)
+#define MSG_AWAY std::string("away")
 
 // irc format
+#define CHANNEL std::string("#&+!")
 #define LETTERS std::string("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
 #define DIGITS std::string("0123456789")
 #define HEXDIGITS std::string("0123456789ABCDEF")
@@ -94,7 +98,9 @@
 #define RPL_WELCOME(nick, user, server) std::string(PREFIX(nick, user) + " 001 " \
 		 + server + " " + nick + "!" + user + "@" + SRV_NAME + "\r\n")
 #define RPL_UMODEIS(nick, user, modes) std::string(PREFIX(nick, user) + " 221 :" + modes + DEL)
-#define RPL_AWAY(nick, user, msg) std::string(PREFIX(nick, user) + " 301 " + nick + " :" + msg + DEL)
+#define RPL_AWAY(nick, user, awayNick, msg) std::string(PREFIX(nick, user) + " 301 " + awayNick + " :" + msg + DEL)
+#define RPL_UNAWAY(nick, user) std::string(PREFIX(nick, user) + " 305 " + "You are no longer marked as being away" + DEL)
+#define RPL_NOWAWAY(nick, user) std::string(PREFIX(nick, user) + " 306 " + "You have been marked as being away" + DEL)
 #define RPL_YOUREOPER(nick, user) std::string(PREFIX(nick, user) + " 381 :You are now an IRC operator" + DEL)
 #define ERR_NOSUCHNICK(nick, user, name) std::string(PREFIX(nick, user) + " 401 " + name + " :no such nick" + DEL)
 #define ERR_NOSUCHSERVER(nick, user, server) std::string(PREFIX(nick, user) + " 402 " + server + " :no such server\r\n")

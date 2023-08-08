@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 10:46:40 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/07 15:28:48 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/08 09:17:59 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,9 @@ int	ft_convertToMode(char c)
 			break ;
 		case 'O':
 			return (OPERATOR);
+			break ;
+		case 'a':
+			return (F_AWAY);
 			break ;
 		default:
 			return (0);
