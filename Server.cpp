@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/08 10:25:02 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/08 15:24:22 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -270,8 +270,9 @@ void	Server::pollOut(User *usr, int index)
 }
 
 void	Server::cleanPollfds(void) {
-	int		size;
-	User	*usr;
+	int					size;
+	User				*usr;
+	std::vector<User *>	users;
 
 	size = this->_users.size();
 	MY_DEBUG(">> cycling through users")
@@ -301,6 +302,16 @@ void	Server::cleanPollfds(void) {
 			this->_npollfds--;
 		}
 	}
+	// for (int i = 0; i < (int) this->_channels.size(); i++)
+	// {
+	// 	users = this->_channels[i]->getUsers();
+	// 	for (int j = 0; j < (int) users.size(); j++)
+	// 	{
+	// 		users[j]->setWriteBuff(users[j]->getWriteBuff() + RPL_NAMREPLY(users[j]->getNick(), users[j]->getUser(), this->_channels[i]->getName(), this->_channels[i]->getUserList()));
+  	// 		users[j]->setWriteBuff(users[j]->getWriteBuff() + RPL_ENDOFNAMES(users[j]->getNick(), users[j]->getUser(), this->_channels[i]->getName()));
+	// 		this->setEvent(users[j]->getSockFd(), POLLOUT);
+	// 	}
+	// }
 	if (this->_pollfds[this->_npollfds - 1].fd == -1)
 		memset((void *) &this->_pollfds[--this->_npollfds], 0, sizeof(struct pollfd)); // ft_memset
 	this->_toClean = false;

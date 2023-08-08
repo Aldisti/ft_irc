@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 10:46:40 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/08 09:17:59 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/08 15:59:49 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,13 @@ std::string	ft_toupper(std::string str)
 {
 	for (int i = 0; i < (int) str.size(); i++)
 		str[i] = std::toupper(str[i]);
+	return (str);
+}
+
+std::string	ft_tolower(std::string str)
+{
+	for (int i = 0; i < (int) str.size(); i++)
+		str[i] = std::tolower(str[i]);
 	return (str);
 }
 
