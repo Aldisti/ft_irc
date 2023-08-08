@@ -13,10 +13,7 @@
 #ifndef USER_HPP
 # define USER_HPP
 
-# include "utils.hpp"
 # include "irc.hpp"
-# include "Server.hpp"
-# include "Commands.hpp"
 
 class Server;
 

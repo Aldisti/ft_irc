@@ -30,6 +30,7 @@ void	Commands::initCommands(void)
 	Commands::commands[SQUIT] = Commands::squitCommand;
 	Commands::commands[KILL] = Commands::killCommand;
 	Commands::commands[AWAY] = Commands::awayCommand;
+	Commands::commands[JOIN] = Commands::joinCommand;
 }
 
 void	Commands::passCommand(Server &srv, User *usr, std::vector<std::string> params)
@@ -317,4 +318,31 @@ void	Commands::awayCommand(Server &srv, User *usr, std::vector<std::string> para
 		usr->setMode(usr->getMode() | F_AWAY);
 		usr->setWriteBuff(usr->getWriteBuff() + RPL_NOWAWAY(usr->getNick(), usr->getUser()).c_str());
 	}
+}
+
+void	Commands::joinCommand(Server &srv, User *usr, std::vector<std::string> params)
+{
+	(void) srv;
+	(void) usr;
+	(void) params;
+	// Channel						*tmp;
+	// std::vector<std::string>	channelNames;
+
+	// if (usr->getReg() < 7)
+	// 	throw (Replies::ErrException(ERR_NOTREGISTERED(usr->getNick(), usr->getUser()).c_str()));
+	// if (params.size() < 1)
+	// 	throw (Replies::ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), JOIN).c_str()));
+	// if (params[0] == "0")
+	// {
+	// 	return ;
+	// }
+	// channelNames = ft_split(params[0], ",");
+	// for (int i = 0; i < (int) channelNames.size(); i++)
+	// 	std::cout << "<< " << channelNames[i] << std::endl;
+	// for (int i = 0; i < (int) channelNames.size(); i++)
+	// {
+	// 	if ((tmp = srv.getChannel(channelNames[i])) == NULL)
+	// 		throw (Replies::ErrException(ERR_NOSUCHCHANNEL(usr->getNick(), usr->getUser(), channelNames[i]).c_str()));
+		
+	// }
 }

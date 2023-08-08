@@ -48,7 +48,6 @@
 # define TIMEOUT 1000
 #else
 # define TIMEOUT 2147483647
-
 #endif
 #define NPOS std::string::npos
 #define PING_TIMEOUT 15 * 1000
@@ -74,6 +73,7 @@
 #define SQUIT std::string("SQUIT")
 #define KILL std::string("KILL")
 #define AWAY std::string("AWAY")
+#define JOIN std::string("JOIN")
 
 // messages
 #define MSG_CAP std::string("CAP * LS\r\n")
@@ -104,6 +104,9 @@
 #define RPL_YOUREOPER(nick, user) std::string(PREFIX(nick, user) + " 381 :You are now an IRC operator" + DEL)
 #define ERR_NOSUCHNICK(nick, user, name) std::string(PREFIX(nick, user) + " 401 " + name + " :no such nick" + DEL)
 #define ERR_NOSUCHSERVER(nick, user, server) std::string(PREFIX(nick, user) + " 402 " + server + " :no such server\r\n")
+#define ERR_NOSUCHCHANNEL(nick, user, channel) std::string(PREFIX(nick, user) + " 403 " + channel + " :No such channel" + DEL)
+#define ERR_TOOMANYCHANNELS(nick, user, channel) std::string(PREFIX(nick, user) + "405 " + channel + " :You have joined too many channels" + DEL)
+#define ERR_TOOMANYTARGETS(nick, user, target, code, msg) std::string(PREFIX(nick, user) + "407 " + target + " :" + code + " recipients. " + msg + DEL)
 #define ERR_NORECIPIENT(nick, user, cmd) std::string(PREFIX(nick, user) + " 411 :No recipient given (" + cmd + ")\r\n")
 #define ERR_NOTEXTTOSEND(nick, user) std::string(PREFIX(nick, user) + "412 :No text to send" + DEL)
 #define ERR_BADMASK(nick, user, mask) std::string(PREFIX(nick, user) + "415 " + mask + " :Bad Server/host mask" + DEL)
@@ -115,7 +118,15 @@
 #define ERR_NEEDMOREPARAMS(nick, user, cmd) std::string(PREFIX(nick, user) + " 461 " + cmd + " :Not enough parameters\r\n")
 #define ERR_ALREADYREGISTERED(nick, user) std::string(PREFIX(nick, user) + " 462 :Unauthorized command (already registered)\r\n")
 #define ERR_PASSWDMISMATCH(nick, user) std::string(PREFIX(nick, user) + " 464 :Password incorrect" + DEL)
+#define ERR_BADCHANMASK(nick, user, channel) std::string(PREFIX(nick, user) + " 476 " + channel + " :Bad Channel Mask" + DEL)
 #define ERR_NOPRIVILEGES(nick, user) std::string(PREFIX(nick, user) + " 481 :Permission Denied- You're not an IRC operator" + DEL)
 #define ERR_UMODEUNKNOWNFLAG(nick, user) std::string(PREFIX(nick, user) + " 501 :Unknown MODE flag" + DEL)
 #define ERR_USERSDONTMATCH(nick, user) std::string(PREFIX(nick, user) + " 502 :Cannot change mode for other users" + DEL)
 #define ERR_BADSYNTAX(nick, user) std::string(PREFIX(nick, user) + " 542 :bad syntax\r\n")
+
+
+#include "utils.hpp"
+#include "User.hpp"
+#include "Channel.hpp"
+#include "Server.hpp"
+#include "Commands.hpp"

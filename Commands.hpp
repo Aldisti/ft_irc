@@ -13,11 +13,7 @@
 #ifndef COMMANDS_HPP
 # define COMMANDS_HPP
 
-# include <map>
 # include "irc.hpp"
-# include "utils.hpp"
-# include "User.hpp"
-# include "Server.hpp"
 
 class	Server;
 class	User;
@@ -48,6 +44,7 @@ class	Commands
 		static void	squitCommand(Server &srv, User *usr, std::vector<std::string> params);
 		static void	killCommand(Server &srv, User *usr, std::vector<std::string> params);
 		static void	awayCommand(Server &srv, User *usr, std::vector<std::string> params);
+		static void	joinCommand(Server &srv, User *usr, std::vector<std::string> params);
 		// functions
 		static void	initCommands(void);
 		// vaiables
