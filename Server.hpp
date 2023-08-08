@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 10:15:13 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/08 09:50:13 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/08 10:24:34 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,8 @@ class Server
 		User					*getUser(std::string nick) const;
 		std::vector<User *>		getUsers() const;
 		Channel					*getChannel(std::string name) const;
-		std::vector<Channel *>	getChannels() const;
+		std::vector<Channel *>	getChannels(void) const;
+		void					addChannel(Channel *c);
 
 		// setters
 		void				setEnd(bool end);
