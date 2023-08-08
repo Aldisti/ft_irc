@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/08 09:21:33 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/08 11:21:25 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@
 #define MY_DEBUG(string) if(DEBUG_B) \
 	std::cout << string << std::endl;
 #define MYPORT "8001"  // the port users will be connecting to
-#define IP std::string("10.12.3.3")
+#define IP std::string("10.12.3.5")
 #define SRV_NAME std::string("hcierVI")
 #define OPER_PASSWORD std::string("admin")
 
@@ -82,6 +82,7 @@
 #define MSG_ERROR(message) std::string(":" + SRV_NAME + " ERROR :" + message + "\r\n")
 #define MSG_KILL(nick, message) std::string(":" + nick + " KILL :" + message + DEL)
 #define MSG_AWAY std::string("away")
+#define MSG_JOIN(channel) std::string(DOMAIN + " JOIN :" + channel + DEL)
 
 // irc format
 #define CHANNEL std::string("#&+!")
@@ -93,6 +94,7 @@
 #define MAX_BUFF 512
 
 #define PREFIX(nick, user) std::string(":" + nick + "!" + user + "@" + SRV_NAME)
+#define DOMAIN std::string(":" + SRV_NAME)
 
 // replies/errors
 #define RPL_WELCOME(nick, user, server) std::string(PREFIX(nick, user) + " 001 " \
@@ -101,6 +103,9 @@
 #define RPL_AWAY(nick, user, awayNick, msg) std::string(PREFIX(nick, user) + " 301 " + awayNick + " :" + msg + DEL)
 #define RPL_UNAWAY(nick, user) std::string(PREFIX(nick, user) + " 305 " + "You are no longer marked as being away" + DEL)
 #define RPL_NOWAWAY(nick, user) std::string(PREFIX(nick, user) + " 306 " + "You have been marked as being away" + DEL)
+#define RPL_NOTOPIC(nick, user, channel) std::string(PREFIX(nick, user) + " 331 " + channel + " :No topic is set" + DEL)
+#define RPL_NAMREPLY(nick, user, channel, names) std::string(PREFIX(nick, user) + " 353 " + channel + " :" + names + DEL)
+#define RPL_ENDOFNAMES(nick, user, channel) std::string(PREFIX(nick, user) + "366 " + channel + " :End of NAMES list" + DEL)
 #define RPL_YOUREOPER(nick, user) std::string(PREFIX(nick, user) + " 381 :You are now an IRC operator" + DEL)
 #define ERR_NOSUCHNICK(nick, user, name) std::string(PREFIX(nick, user) + " 401 " + name + " :no such nick" + DEL)
 #define ERR_NOSUCHSERVER(nick, user, server) std::string(PREFIX(nick, user) + " 402 " + server + " :no such server\r\n")

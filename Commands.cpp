@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/08 09:41:40 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/08 11:35:54 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -282,19 +282,15 @@ void	Commands::killCommand(Server &srv, User *usr, std::vector<std::string> para
 {
 	User	*tmp = NULL;
 
-	MY_DEBUG(">> checking registration status of " << usr->getNick())
 	if (usr->getReg() < 7)
 		throw (Replies::ErrException(ERR_NOTREGISTERED(usr->getNick(), usr->getUser()).c_str()));
-	MY_DEBUG(">> checking operator status of " << usr->getNick())
 	if (!usr->getOperator())
 		throw (Replies::ErrException(ERR_NOPRIVILEGES(usr->getNick(), usr->getUser()).c_str()));
-	MY_DEBUG(">> checking params for KILL")
 	if (params.size() < 2)
 		throw (Replies::ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), KILL).c_str()));
-	MY_DEBUG(">> trying to find user with nick: " + params[0])
 	if ((tmp = srv.getUser(params[0])) == NULL)
 		throw (Replies::ErrException(ERR_NOSUCHNICK(usr->getNick(), usr->getUser(), params[0]).c_str()));
-	MY_DEBUG(">> user found with nick: " << tmp->getNick())
+	MY_DEBUG(">> killing user with nick: " << tmp->getNick())
 	tmp->setClose(true);
 	tmp->setWriteBuff(usr->getWriteBuff() + MSG_KILL(usr->getNick(), params[1]));
 	srv.setEvent(tmp->getSockFd(), POLLOUT);
@@ -320,29 +316,49 @@ void	Commands::awayCommand(Server &srv, User *usr, std::vector<std::string> para
 	}
 }
 
-void	Commands::joinCommand(Server &srv, User *usr, std::vector<std::string> params)
-{
-	(void) srv;
-	(void) usr;
-	(void) params;
-	// Channel						*tmp;
-	// std::vector<std::string>	channelNames;
+// void	Commands::joinCommand(Server &srv, User *usr, std::vector<std::string> params)
+// {
+// 	(void) srv;
+// 	(void) usr;
+// 	(void) params;
+// 	Channel						*tmp;
+// 	std::vector<std::string>	channelNames;
 
-	// if (usr->getReg() < 7)
-	// 	throw (Replies::ErrException(ERR_NOTREGISTERED(usr->getNick(), usr->getUser()).c_str()));
-	// if (params.size() < 1)
-	// 	throw (Replies::ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), JOIN).c_str()));
-	// if (params[0] == "0")
-	// {
-	// 	return ;
-	// }
-	// channelNames = ft_split(params[0], ",");
-	// for (int i = 0; i < (int) channelNames.size(); i++)
-	// 	std::cout << "<< " << channelNames[i] << std::endl;
-	// for (int i = 0; i < (int) channelNames.size(); i++)
-	// {
-	// 	if ((tmp = srv.getChannel(channelNames[i])) == NULL)
-	// 		throw (Replies::ErrException(ERR_NOSUCHCHANNEL(usr->getNick(), usr->getUser(), channelNames[i]).c_str()));
-		
-	// }
-}
+// 	if (usr->getReg() < 7)
+// 		throw (Replies::ErrException(ERR_NOTREGISTERED(usr->getNick(), usr->getUser()).c_str()));
+// 	if (params.size() < 1)
+// 		throw (Replies::ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), JOIN).c_str()));
+// 	if (params[0] == "0")
+// 	{
+// 		std::vector<Channel *>	channels;
+
+// 		MY_DEBUG(">> exiting all the channels")
+// 		channels = srv.getChannels();
+// 		for (int i = 0; i < (int) channels.size(); i++)
+// 			channels[i]->removeUser(usr->getNick());
+// 		return ;
+// 	}
+// 	channelNames = ft_split(params[0], ",");
+// 	for (int i = 0; i < (int) channelNames.size(); i++)
+// 		std::cout << "<< " << channelNames[i] << std::endl;
+// 	for (int i = 0; i < (int) channelNames.size(); i++)
+// 	{
+// 		if ((tmp = srv.getChannel(channelNames[i])) == NULL)
+// 		{
+// 			tmp = new Channel(usr, channelNames[i]);
+// 			srv.addChannel(tmp);
+// 			MY_DEBUG(">> adding new channel " << channelNames[i])
+// 		}
+// 		else if (tmp->getUser(usr) == NULL)
+// 		{
+// 			tmp->addUser(usr);
+// 			MY_DEBUG(">> channel joined " << channelNames[i])
+// 		}
+// 		else
+// 			continue ;
+// 		usr->setWriteBuff(usr->getWriteBuff() + MSG_JOIN(channelNames[i]));
+// 		usr->setWriteBuff(usr->getWriteBuff() + RPL_NOTOPIC(usr->getNick(), usr->getUser(), channelNames[i]));
+// 		usr->setWriteBuff(usr->getWriteBuff() + RPL_NAMREPLY(usr->getNick(), usr->getUser(), channelNames[i], tmp->getUserList()));
+// 		usr->setWriteBuff(usr->getWriteBuff() + RPL_ENDOFNAMES(usr->getNick(), usr->getUser(), channelNames[i]));
+// 	}
+// }
