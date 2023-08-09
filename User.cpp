@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 08:27:25 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/08 09:05:06 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/09 14:04:03 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	User::checkBuff(Server &server)
 		std::cout << "########## CHECKING READ BUFFER ##########" << std::endl;
 		std::cout << "############ USER->SOCKFD [" << this->_sockfd << "] ##########" << std::endl;
 	#endif
-	if (this->_readBuff.size() < MAX_BUFF && this->_readBuff.substr(this->_readBuff.size() - 2) != DEL) {
+	if (this->_readBuff.size() < MAX_BUFF && this->_readBuff.substr(this->_readBuff.size() - DEL.size()) != DEL) {
 		#ifdef DEBUG
 			std::cout << ">> readBuff is not ready" << std::endl;
 		#endif

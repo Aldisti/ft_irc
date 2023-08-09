@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/07 16:27:06 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/08 14:49:29 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/09 10:54:25 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,6 @@ std::string	Channel::getUserList(void) const
 			list += " ";
 		list += C_NAME(this->_users[i]->getNick(), this->_users[i]->getUser());
 	}
-	std::cout << "\033[32m" << list << "\033[0m" << std::endl;
 	return (list);
 }
 
