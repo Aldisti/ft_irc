@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/09 10:53:37 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/09 14:06:42 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void	Commands::nickCommand(Server &srv, User *usr, std::vector<std::string> para
 		throw (Replies::ErrException(ERR_ERRONEUSNICKNAME(usr->getNick(), usr->getUser()).c_str()));
 	if (srv.getUser(params[0]))
 		throw (Replies::ErrException(ERR_NICKNAMEINUSE(usr->getNick(), usr->getUser()).c_str()));
-	usr->setNick(params[0]);
+	usr->setNick(ft_tolower(params[0]));
 	usr->setReg(usr->getReg() | 2);
 	#ifdef DEBUG
 		std::cout << ">> NICK command executed" << std::endl
@@ -96,7 +96,7 @@ void	Commands::userCommand(Server &srv, User *usr, std::vector<std::string> para
 		throw (Replies::ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), PASS).c_str()));
 	if ((usr->getReg() >> 2) % 2)
 		throw (Replies::ErrException(ERR_ALREADYREGISTERED(usr->getNick(), usr->getUser()).c_str()));
-	usr->setUser(params[0]);
+	usr->setUser(ft_tolower(params[0]));
 	usr->setMode(atoi(params[1].c_str())); // ft_atoi
 	usr->setReal(params[3]);
 	usr->setReg(usr->getReg() | 4);
@@ -187,7 +187,7 @@ void	Commands::noticeCommand(Server &srv, User *usr, std::vector<std::string> pa
 	if (CHANNEL.find(params[0][0]) == NPOS)
 	{
 		MY_DEBUG(">> trying to find user with nick: " + params[0])
-		if ((tmp = srv.getUser(params[0])) == NULL)
+		if ((tmp = srv.getUser(ft_tolower(params[0]))) == NULL)
 			throw (Replies::ErrException(ERR_NOSUCHNICK(usr->getNick(), usr->getUser(), params[0]).c_str()));
 		MY_DEBUG(">> user found with nick: " << tmp->getNick())
 		if (tmp->getMode() & F_AWAY)
@@ -234,7 +234,7 @@ void	Commands::privmsgCommand(Server &srv, User *usr, std::vector<std::string> p
 	if (CHANNEL.find(params[0][0]) == NPOS)
 	{
 		MY_DEBUG(">> trying to find user with nick: " + params[0])
-		if ((tmp = srv.getUser(params[0])) == NULL)
+		if ((tmp = srv.getUser(ft_tolower(params[0]))) == NULL)
 			throw (Replies::ErrException(ERR_NOSUCHNICK(usr->getNick(), usr->getUser(), params[0]).c_str()));
 		MY_DEBUG(">> user found with nick: " << tmp->getNick())
 		if (tmp->getMode() & F_AWAY)
@@ -276,7 +276,7 @@ void	Commands::modeCommand(Server &srv, User *usr, std::vector<std::string> para
 		throw (Replies::ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), MODE).c_str()));
 	if (CHANNEL.find(params[0][0]) != NPOS)
 		return ;
-	if (usr->getNick() != params[0])
+	if (usr->getNick() != ft_tolower(params[0]))
 		throw (Replies::ErrException(ERR_USERSDONTMATCH(usr->getNick(), usr->getUser()).c_str()));
 	for (int i = 1; i < (int) params.size(); i++)
 	{
@@ -358,7 +358,7 @@ void	Commands::killCommand(Server &srv, User *usr, std::vector<std::string> para
 		throw (Replies::ErrException(ERR_NOPRIVILEGES(usr->getNick(), usr->getUser()).c_str()));
 	if (params.size() < 2)
 		throw (Replies::ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), KILL).c_str()));
-	if ((tmp = srv.getUser(params[0])) == NULL)
+	if ((tmp = srv.getUser(ft_tolower(params[0]))) == NULL)
 		throw (Replies::ErrException(ERR_NOSUCHNICK(usr->getNick(), usr->getUser(), params[0]).c_str()));
 	MY_DEBUG(">> killing user with nick: " << tmp->getNick())
 	channels = srv.getChannels();

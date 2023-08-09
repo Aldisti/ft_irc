@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 10:46:40 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/09 09:54:45 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/09 13:36:37 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,12 @@ std::string	ft_toupper(std::string str)
 std::string	ft_tolower(std::string str)
 {
 	for (int i = 0; i < (int) str.size(); i++)
-		str[i] = std::tolower(str[i]);
+	{
+		if (UPPER_CHARS.find(str[i]) != NPOS)
+			str[i] = LOWER_CHARS[UPPER_CHARS.find(str[i])];
+		else
+			str[i] = std::tolower(str[i]);
+	}
 	return (str);
 }
 

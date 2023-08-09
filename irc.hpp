@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/09 10:56:29 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/09 14:05:17 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@
 #include <map>
 #include <ctime>
 
-// #define DEBUG
-#define DEBUG_B 0
+#define DEBUG
+#define DEBUG_B 1
 #define MY_DEBUG(string) if(DEBUG_B) \
 	std::cout << string << std::endl;
 #define MYPORT "8001"  // the port users will be connecting to
@@ -100,6 +100,8 @@
 #define HEXDIGITS std::string("0123456789ABCDEF")
 #define SPECIAL std::string("[\\]^_`{|}")
 #define NOT_CHANSTRING std::string("\0\7\12\15\40\54\72") // NUL, BELL, CR, LF, " ", "," and ":"
+#define UPPER_CHARS std::string("{}|^")
+#define LOWER_CHARS std::string("[]\\~")
 #define DEL	std::string("\r\n")
 #define MAX_BUFF 512
 
@@ -137,10 +139,10 @@
 #define ERR_NICKNAMEINUSE(nick, user) std::string(PREFIX(nick, user) + " 433 " + nick + " :Nickname is already in use\r\n")
 #define ERR_NOTONCHANNEL(nick, user, channel) std::string(PREFIX(nick, user) + " 442 " + nick + " " + channel + " :You're not on that channel" + DEL)
 #define ERR_USERONCHANNEL(nick, user, channel) std::string(PREFIX(nick, user) + " 443 " + nick + " " + user + " " + channel + " :is already on channel" + DEL)
-#define ERR_NOTREGISTERED(nick, user) std::string(PREFIX(nick, user) + " 451 :You have not registered\r\n")
+#define ERR_NOTREGISTERED(nick, user) std::string(DOMAIN + " 451 :You have not registered\r\n")
 #define ERR_NEEDMOREPARAMS(nick, user, cmd) std::string(PREFIX(nick, user) + " 461 " + nick + " " + cmd + " :Not enough parameters\r\n")
 #define ERR_ALREADYREGISTERED(nick, user) std::string(PREFIX(nick, user) + " 462 " + nick + " :Unauthorized command (already registered)\r\n")
-#define ERR_PASSWDMISMATCH(nick, user) std::string(PREFIX(nick, user) + " 464 " + nick + " :Password incorrect" + DEL)
+#define ERR_PASSWDMISMATCH(nick, user) std::string(PREFIX(nick, user) + " 464 :Password incorrect" + DEL)
 #define ERR_BADCHANMASK(nick, user, channel) std::string(PREFIX(nick, user) + " 476 " + nick + " " + channel + " :Bad Channel Mask" + DEL)
 #define ERR_NOPRIVILEGES(nick, user) std::string(PREFIX(nick, user) + " 481 " + nick + " :Permission Denied- You're not an IRC operator" + DEL)
 #define ERR_UMODEUNKNOWNFLAG(nick, user) std::string(PREFIX(nick, user) + " 501 " + nick + " :Unknown MODE flag" + DEL)
