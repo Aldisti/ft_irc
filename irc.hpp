@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/09 09:54:44 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/09 10:56:29 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,17 @@
 #include <map>
 #include <ctime>
 
-#define DEBUG
-#define DEBUG_B 1
+// #define DEBUG
+#define DEBUG_B 0
 #define MY_DEBUG(string) if(DEBUG_B) \
 	std::cout << string << std::endl;
 #define MYPORT "8001"  // the port users will be connecting to
-#define IP std::string("10.12.3.3")
+#define IP std::string("10.12.3.5")
 #define SRV_NAME std::string("hcierVI")
 #define VERSION std::string("0.7")
 #define OPER_PASSWORD std::string("admin")
+
+// colors
 
 // utils
 #define BUFFSIZE 1024

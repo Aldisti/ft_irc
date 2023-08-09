@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/09 10:44:04 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/09 10:53:37 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -434,8 +434,6 @@ void	Commands::joinCommand(Server &srv, User *usr, std::vector<std::string> para
   		return ;
   	}
   	channelNames = ft_split(ft_tolower(params[0]), ",");
-  	for (int i = 0; i < (int) channelNames.size(); i++)		
-  		std::cout << "<< " << channelNames[i] << std::endl;
   	for (int i = 0; i < (int) channelNames.size(); i++)
   	{
 		if (CHANNEL.find(channelNames[i][0]) == NPOS || channelNames[i].size() > 51)
