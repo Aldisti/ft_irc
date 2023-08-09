@@ -26,6 +26,7 @@ void	Commands::initCommands(void)
 	Commands::commands[OPER] = Commands::operCommand;
 	Commands::commands[MODE] = Commands::modeCommand;
 	Commands::commands[PRIVMSG] = Commands::privmsgCommand;
+	Commands::commands[NOTICE] = Commands::noticeCommand;
 	Commands::commands[WALLOPS] = Commands::wallopsCommand;
 	Commands::commands[SQUIT] = Commands::squitCommand;
 	Commands::commands[KILL] = Commands::killCommand;
@@ -77,8 +78,9 @@ void	Commands::nickCommand(Server &srv, User *usr, std::vector<std::string> para
 		<< "usr->sfd [" << usr->getSockFd() << "] "
 		<< "usr->nick [" << usr->getNick() << "] " << std::endl;
 	#endif
-	if (usr->getReg() >= 7) {
+	if (usr->getReg() == 7) {
 		usr->setWriteBuff(usr->getWriteBuff() + RPL_WELCOME(usr->getNick(), usr->getUser(), SRV_NAME));
+		usr->setWriteBuff(usr->getWriteBuff() + RPL_YOURHOST(usr->getNick()));
 		#ifdef DEBUG
 			std::cout << ">> USER registered correctly from NICK command" << std::endl;
 		#endif
@@ -104,8 +106,9 @@ void	Commands::userCommand(Server &srv, User *usr, std::vector<std::string> para
 		<< "usr->user [" << usr->getUser() << "] "
 		<< "usr->real [" << usr->getReal() << "] " << std::endl;
 	#endif
-	if (usr->getReg() >= 7) {
+	if (usr->getReg() == 7) {
 		usr->setWriteBuff(usr->getWriteBuff() + RPL_WELCOME(usr->getNick(), usr->getUser(), SRV_NAME));
+		usr->setWriteBuff(usr->getWriteBuff() + RPL_YOURHOST(usr->getNick()));
 		#ifdef DEBUG
 			std::cout << ">> USER registered correctly from USER command" << std::endl;
 		#endif
@@ -166,6 +169,54 @@ void	Commands::operCommand(Server &srv, User *usr, std::vector<std::string> para
 	usr->setWriteBuff(usr->getWriteBuff() + RPL_YOUREOPER(usr->getNick(), usr->getUser()));
 }
 
+
+void	Commands::noticeCommand(Server &srv, User *usr, std::vector<std::string> params)
+{
+	User				*tmp;
+	Channel				*chn;
+	std::vector<User *>	usrVec;
+
+	if (usr->getReg() < 7)
+		throw (Replies::ErrException(ERR_NOTREGISTERED(usr->getNick(), usr->getUser()).c_str()));
+	if (params.size() < 1)
+		throw (Replies::ErrException(ERR_NORECIPIENT(usr->getNick(), usr->getUser(), PRIVMSG).c_str()));
+	if (params.size() < 2)
+		throw (Replies::ErrException(ERR_NOTEXTTOSEND(usr->getNick(), usr->getUser()).c_str()));
+	if (params[0].find('.') != NPOS)
+		throw (Replies::ErrException(ERR_BADMASK(usr->getNick(), usr->getUser(), params[0]).c_str()));
+	if (CHANNEL.find(params[0][0]) == NPOS)
+	{
+		MY_DEBUG(">> trying to find user with nick: " + params[0])
+		if ((tmp = srv.getUser(params[0])) == NULL)
+			throw (Replies::ErrException(ERR_NOSUCHNICK(usr->getNick(), usr->getUser(), params[0]).c_str()));
+		MY_DEBUG(">> user found with nick: " << tmp->getNick())
+		if (tmp->getMode() & F_AWAY)
+		{
+			usr->setWriteBuff(usr->getWriteBuff() + RPL_AWAY(usr->getNick(), usr->getUser(), tmp->getNick(), tmp->getAwayMsg()).c_str());
+			return ;
+		}
+		tmp->setWriteBuff(tmp->getWriteBuff() + MSG_NOTICE(usr->getNick(), usr->getUser(), tmp->getNick(), params[1]));
+		srv.setEvent(tmp->getSockFd(), POLLOUT);
+	}
+	else
+	{
+		chn = srv.getChannel(ft_tolower(params[0]));
+		if (chn == NULL)
+	 		throw (Replies::ErrException(ERR_NOSUCHCHANNEL(usr->getNick(), usr->getUser(), chn->getName()).c_str()));
+		if (chn->getUser(usr->getNick()) == NULL)
+	 		throw (Replies::ErrException(ERR_CANNOTSENDTOCHAN(usr->getNick(), usr->getUser(), chn->getName()).c_str()));
+		usrVec = chn->getUsers();
+		for (int i = 0; i < (int) usrVec.size(); i++)
+		{
+			tmp = usrVec[i];
+			if (tmp == usr)
+				continue ;
+			tmp->setWriteBuff(tmp->getWriteBuff() + MSG_NOTICE(usr->getNick(), usr->getUser(), chn->getName(), params[1]));
+			srv.setEvent(tmp->getSockFd(), POLLOUT);
+		}
+	}
+}
+
 void	Commands::privmsgCommand(Server &srv, User *usr, std::vector<std::string> params)
 {
 	User				*tmp;
@@ -191,8 +242,7 @@ void	Commands::privmsgCommand(Server &srv, User *usr, std::vector<std::string> p
 			usr->setWriteBuff(usr->getWriteBuff() + RPL_AWAY(usr->getNick(), usr->getUser(), tmp->getNick(), tmp->getAwayMsg()).c_str());
 			return ;
 		}
-		tmp->setWriteBuff(tmp->getWriteBuff() + PREFIX(usr->getNick(), usr->getUser()) + " " + PRIVMSG + " " + tmp->getNick() +
-				" :" + params[1] + DEL);
+		tmp->setWriteBuff(tmp->getWriteBuff() + MSG_PRIVMSG(usr->getNick(), usr->getUser(), tmp->getNick(), params[1]));
 		srv.setEvent(tmp->getSockFd(), POLLOUT);
 	}
 	else
@@ -208,8 +258,7 @@ void	Commands::privmsgCommand(Server &srv, User *usr, std::vector<std::string> p
 			tmp = usrVec[i];
 			if (tmp == usr)
 				continue ;
-			tmp->setWriteBuff(tmp->getWriteBuff() + PREFIX(usr->getNick(), usr->getUser()) + " " + PRIVMSG + " " + chn->getName() +
-					" :" + params[1] + DEL);
+			tmp->setWriteBuff(tmp->getWriteBuff() + MSG_PRIVMSG(usr->getNick(), usr->getUser(), chn->getName(), params[1]));
 			srv.setEvent(tmp->getSockFd(), POLLOUT);
 		}
 	}
@@ -444,10 +493,11 @@ void	Commands::partCommand(Server &srv, User *usr, std::vector<std::string> para
 		for (int j = 0; j < (int) usrVec.size(); j++)
 		{
 			tmp = usrVec[j];
-			tmp->setWriteBuff(tmp->getWriteBuff() + PREFIX(usr->getNick(), usr->getUser()) + " " + PART + " " + chn->getName() + " :" + partMessage + DEL);
+			tmp->setWriteBuff(tmp->getWriteBuff() + MSG_PART(usr->getNick(), usr->getUser(), chn->getName(), partMessage));
 			srv.setEvent(tmp->getSockFd(), POLLOUT);
 		}
 		chn->removeUser(usr->getNick());
+		if (chn->getUsers().size() == 0)
+			srv.removeChannel(chn);
 	}
 }
-

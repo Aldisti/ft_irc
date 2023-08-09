@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 10:46:40 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/08 15:59:49 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/09 09:54:45 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,5 +113,5 @@ long	ft_gettime(void)
 	time_t	now;
 
 	std::time(&now);
-	return (((long)((int) now)) * 1000);
+	return (((long)((int) now)));
 }

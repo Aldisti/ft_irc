@@ -34,6 +34,7 @@ class Server
 		char							_buff[BUFFSIZE];
 		int								_npollfds;
 		int								_sfd;
+
 		// functions
 		void	checkClean(User *usr, int index);
 		void	checkPing(User *usr);
@@ -50,6 +51,8 @@ class Server
 		void		cleanPollfds(void);
 		void		setEvent(int fd, int event);
 		void		closeServer(void);
+		void		addChannel(Channel *c);
+		void		removeChannel(Channel *c);
 		
 		// getters
 		std::string				getPass(void) const;
@@ -59,7 +62,6 @@ class Server
 		std::vector<User *>		getUsers() const;
 		Channel					*getChannel(std::string name) const;
 		std::vector<Channel *>	getChannels(void) const;
-		void					addChannel(Channel *c);
 
 		// setters
 		void				setEnd(bool end);
