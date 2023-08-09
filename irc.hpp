@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/09 13:46:40 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/09 15:18:17 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <errno.h>
@@ -107,8 +108,8 @@
 #define C_NAME(nick, user) std::string(nick + "!" + user + "@" + IP)
 
 // replies/errors
-#define RPL_WELCOME(nick, user, server) std::string(DOMAIN + " 001 " + nick + " :Welcome to " \
-		 + server + " " + nick + "!" + user + "@" + IP + "\r\n")
+#define RPL_WELCOME(nick, user, server, ip) std::string(DOMAIN + " 001 " + nick + " :Welcome to " \
+		 + server + " " + nick + "!" + user + "@" + ip + "\r\n")
 #define RPL_YOURHOST(nick) std::string(DOMAIN + " 002 " + nick + " :Your host is " + SRV_NAME + ", running version " + VERSION + DEL)
 #define RPL_CREATED(nick, date) std::string(DOMAIN + " 003 " + nick + " :This server was created " + date + DEL)
 #define RPL_MYINFO(nick) std::string(DOMAIN + " 004 " + nick + " " + SRV_NAME + " "\

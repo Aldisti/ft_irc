@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/09 14:30:23 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/09 15:24:22 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void	Commands::nickCommand(Server &srv, User *usr, std::vector<std::string> para
 		<< "usr->nick [" << usr->getNick() << "] " << std::endl;
 	#endif
 	if (usr->getReg() == 7) {
-		usr->setWriteBuff(usr->getWriteBuff() + RPL_WELCOME(usr->getNick(), usr->getUser(), SRV_NAME));
+		usr->setWriteBuff(usr->getWriteBuff() + RPL_WELCOME(usr->getNick(), usr->getUser(), SRV_NAME, usr->getIp()));
 		usr->setWriteBuff(usr->getWriteBuff() + RPL_YOURHOST(usr->getNick()));
 		#ifdef DEBUG
 			std::cout << ">> USER registered correctly from NICK command" << std::endl;
@@ -108,7 +108,7 @@ void	Commands::userCommand(Server &srv, User *usr, std::vector<std::string> para
 		<< "usr->real [" << usr->getReal() << "] " << std::endl;
 	#endif
 	if (usr->getReg() == 7) {
-		usr->setWriteBuff(usr->getWriteBuff() + RPL_WELCOME(usr->getNick(), usr->getUser(), SRV_NAME));
+		usr->setWriteBuff(usr->getWriteBuff() + RPL_WELCOME(usr->getNick(), usr->getUser(), SRV_NAME, usr->getIp()));
 		usr->setWriteBuff(usr->getWriteBuff() + RPL_YOURHOST(usr->getNick()));
 		#ifdef DEBUG
 			std::cout << ">> USER registered correctly from USER command" << std::endl;
@@ -522,7 +522,7 @@ void	Commands::serviceCommand(Server &srv, User *usr, std::vector<std::string> p
 		<< "usr->sfd [" << usr->getSockFd() << "] "
 		<< "usr->nick [" << usr->getNick() << "] " << std::endl;
 	#endif
-	usr->setWriteBuff(usr->getWriteBuff() + RPL_WELCOME(usr->getNick(), usr->getUser(), SRV_NAME));
+	usr->setWriteBuff(usr->getWriteBuff() + RPL_WELCOME(usr->getNick(), usr->getUser(), SRV_NAME, usr->getIp()));
 	usr->setWriteBuff(usr->getWriteBuff() + RPL_YOURHOST(usr->getNick()));
 	#ifdef DEBUG
 		std::cout << ">> SERVICE registered correctly from NICK command" << std::endl;

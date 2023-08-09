@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 08:27:25 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/09 14:27:30 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/09 15:23:04 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,8 +103,9 @@ bool	User::checkNick(std::string nick)
 	return (true);
 }
 
-User::User(int sockfd): _sockfd(sockfd), _registered(0), _op(false), _close(false), _ping(false), _time(ft_gettime()), _readBuff(""), _writeBuff(""), _awayMsg(MSG_AWAY), _infoBot("")
+User::User(int sockfd, std::string ip): _sockfd(sockfd), _registered(0), _op(false), _close(false), _ping(false), _time(ft_gettime()), _readBuff(""), _writeBuff(""), _awayMsg(MSG_AWAY), _infoBot("")
 {
+	this->_ip = ip;
 	return ;
 }
 
@@ -202,6 +203,11 @@ std::string	User::getInfoBot(void) const
 	return (this->_infoBot);
 }
 
+std::string	User::getIp(void) const
+{
+	return (this->_ip);
+}
+
 void		User::setSockFd(int sfd)
 {
 	this->_sockfd = sfd;
@@ -265,6 +271,11 @@ void		User::setAwayMsg(std::string awayMsg)
 void		User::setInfoBot(std::string infoBot)
 {
 	this->_infoBot = infoBot;
+}
+
+void		User::setIp(std::string ip)
+{
+	this->_ip = ip;
 }
 
 void		User::resetTime(void)
