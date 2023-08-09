@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/08 15:24:22 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/09 10:12:19 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,19 @@ std::vector<Channel *>	Server::getChannels(void) const
 void	Server::addChannel(Channel *c)
 {
 	this->_channels.push_back(c);
+}
+
+void	Server::removeChannel(Channel *c)
+{
+	for (int i = 0; i < (int) this->_channels.size(); i++)
+	{
+		if (c == this->_channels[i])
+		{
+			delete this->_channels[i];
+			this->_channels.erase(this->_channels.begin() + i);
+			break ;
+		}
+	}
 }
 
 void	Server::setEnd(bool end)

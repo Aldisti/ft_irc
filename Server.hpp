@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 10:15:13 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/08 10:24:34 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/09 10:07:46 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ class Server
 		char							_buff[BUFFSIZE];
 		int								_npollfds;
 		int								_sfd;
+
 		// functions
 		void	checkClean(User *usr, int index);
 		bool	checkPing(User *usr, int i);
@@ -50,6 +51,8 @@ class Server
 		void		cleanPollfds(void);
 		void		setEvent(int fd, int event);
 		void		closeServer(void);
+		void		addChannel(Channel *c);
+		void		removeChannel(Channel *c);
 		
 		// getters
 		std::string				getPass(void) const;
@@ -59,7 +62,6 @@ class Server
 		std::vector<User *>		getUsers() const;
 		Channel					*getChannel(std::string name) const;
 		std::vector<Channel *>	getChannels(void) const;
-		void					addChannel(Channel *c);
 
 		// setters
 		void				setEnd(bool end);

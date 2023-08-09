@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 08:59:58 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/08 10:34:40 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/09 08:25:58 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ class	Commands
 		static void	pongCommand(Server &srv, User *usr, std::vector<std::string> params);
 		static void	errorCommand(Server &srv, User *usr, std::vector<std::string> params);
 		static void	operCommand(Server &srv, User *usr, std::vector<std::string> params);
+		static void	noticeCommand(Server &srv, User *usr, std::vector<std::string> params);
 		static void	privmsgCommand(Server &srv, User *usr, std::vector<std::string> params);
 		static void	modeCommand(Server &srv, User *usr, std::vector<std::string> params);
 		static void	wallopsCommand(Server &srv, User *usr, std::vector<std::string> params);
