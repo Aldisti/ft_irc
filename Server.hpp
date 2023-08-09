@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 10:15:13 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/08 10:24:34 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/09 10:42:44 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ class Server
 		int								_sfd;
 		// functions
 		void	checkClean(User *usr, int index);
-		bool	checkPing(User *usr, int i);
+		void	checkPing(User *usr);
 
 	public:
 		// functions

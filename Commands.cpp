@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/08 16:03:25 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/09 10:44:04 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,10 +138,11 @@ void	Commands::errorCommand(Server &srv, User *usr, std::vector<std::string> par
 {
 	std::string	message;
 
-	(void)	srv;
+	Commands::leaveAllChannels(srv, usr);
 	message = params.size() == 0 ? std::string("") : params[0];
 	usr->setClose(true);
 	usr->setWriteBuff(usr->getWriteBuff() + MSG_ERROR(usr->getNick(), message));
+	srv.setEvent(usr->getSockFd(), POLLOUT);
 }
 
 void	Commands::operCommand(Server &srv, User *usr, std::vector<std::string> params)
@@ -350,6 +351,24 @@ void	Commands::awayCommand(Server &srv, User *usr, std::vector<std::string> para
 	}
 }
 
+void	Commands::leaveAllChannels(Server &srv, User *usr)
+{
+	std::vector<Channel *>		channels;
+	std::vector<std::string>	name(1, "");
+
+	MY_DEBUG(">> exiting all the channels")
+	channels = srv.getChannels();
+	for (int i = 0; i < (int) channels.size(); i++)
+	{
+		if (channels[i]->getUser(usr) == NULL)
+			continue ;
+		if (i)
+			name[0] += ",";
+		name[0] += channels[i]->getName();
+	}
+	Commands::partCommand(srv, usr, name);
+}
+
 void	Commands::joinCommand(Server &srv, User *usr, std::vector<std::string> params)
 {
 	Channel						*tmp;
@@ -362,12 +381,7 @@ void	Commands::joinCommand(Server &srv, User *usr, std::vector<std::string> para
   		throw (Replies::ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), JOIN).c_str()));
   	if (params[0] == "0")
   	{
-  		std::vector<Channel *>	channels;
-
-  		MY_DEBUG(">> exiting all the channels")
-  		channels = srv.getChannels();
-  		for (int i = 0; i < (int) channels.size(); i++)
-  			channels[i]->removeUser(usr->getNick());
+  		Commands::leaveAllChannels(srv, usr);
   		return ;
   	}
   	channelNames = ft_split(ft_tolower(params[0]), ",");

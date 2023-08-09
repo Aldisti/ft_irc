@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/08 15:56:56 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/09 10:31:30 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@
 # define TIMEOUT 2147483647
 #endif
 #define NPOS std::string::npos
-#define PING_TIMEOUT 15 * 1000
+#define PING_TIMEOUT 5 * 1000
 
 // mode
 #define WALLOP 1
