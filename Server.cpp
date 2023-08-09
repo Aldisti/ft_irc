@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/08 15:24:22 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/09 10:44:39 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,25 +141,22 @@ void		Server::checkClean(User *usr, int index)
 	this->_pollfds[index].fd = -1;
 }
 
-bool		Server::checkPing(User *usr, int i)
+void		Server::checkPing(User *usr)
 {
-	if (!usr->getPing() && ft_gettime() - usr->getTime() >= PING_TIMEOUT)
+	if (!usr->getClose() && !usr->getPing() && ft_gettime() - usr->getTime() >= PING_TIMEOUT)
 	{
-		MY_DEBUG(">> sending PING message\n\n")
+		MY_DEBUG(">> sending PING message")
 		usr->setWriteBuff(usr->getWriteBuff() + MSG_PING);
 		this->setEvent(usr->getSockFd(), POLLOUT);
 		usr->resetTime();
 		usr->setPing(true);
 	}
-	else if (usr->getPing() && ft_gettime() - usr->getTime() >= PING_TIMEOUT)
+	else if (!usr->getClose() && usr->getPing() && ft_gettime() - usr->getTime() >= PING_TIMEOUT)
 	{
-		MY_DEBUG(">> PING_TIMEOUT elapsed\n\n")
-		usr->setClose(true);
-		usr->setWriteBuff("");
-		this->checkClean(usr, i);
-		return (true);
+		MY_DEBUG(">> PING_TIMEOUT elapsed")
+		std::vector<std::string>	message(1, "Connection lost");
+		Commands::errorCommand(*this, usr, message);
 	}
-	return (false);
 }
 
 void		Server::checkFd(void)
@@ -173,19 +170,21 @@ void		Server::checkFd(void)
 		if (!tmp)
 			continue ;
 		MY_DEBUG(">> checking user: index [" << i << "] sfd [" << tmp->getSockFd() << "] revents [" << this->_pollfds[i].revents << "]")
-		if (this->checkPing(tmp, i))
-			continue ;
+		this->checkPing(tmp);
 		if (this->_pollfds[i].revents == 0 || this->_pollfds[i].fd == -1)
 			continue ;
 		MY_DEBUG((int) this->_buff[BUFFSIZE - 1])
-		if (this->_pollfds[i].revents == POLLIN && this->_pollfds[i].fd != -1)
+		if (!tmp->getClose() && this->_pollfds[i].revents == POLLIN && this->_pollfds[i].fd != -1)
 			this->pollIn(tmp, i);
 		else if (this->_pollfds[i].revents == POLLOUT && this->_pollfds[i].fd != -1)
 			this->pollOut(tmp, i);
-		if (tmp->getWriteBuff() == "") {
+		if (tmp->getWriteBuff() == "")
+		{
 			this->_pollfds[i].events = POLLIN;
 			MY_DEBUG(">> user events set to POLLIN [" << POLLIN << "]")
-		} else {
+		}
+		else
+		{
 			this->_pollfds[i].events = POLLOUT;
 			MY_DEBUG(">> user events set to POLLOUT [" << POLLOUT << "]")
 		}
@@ -302,16 +301,6 @@ void	Server::cleanPollfds(void) {
 			this->_npollfds--;
 		}
 	}
-	// for (int i = 0; i < (int) this->_channels.size(); i++)
-	// {
-	// 	users = this->_channels[i]->getUsers();
-	// 	for (int j = 0; j < (int) users.size(); j++)
-	// 	{
-	// 		users[j]->setWriteBuff(users[j]->getWriteBuff() + RPL_NAMREPLY(users[j]->getNick(), users[j]->getUser(), this->_channels[i]->getName(), this->_channels[i]->getUserList()));
-  	// 		users[j]->setWriteBuff(users[j]->getWriteBuff() + RPL_ENDOFNAMES(users[j]->getNick(), users[j]->getUser(), this->_channels[i]->getName()));
-	// 		this->setEvent(users[j]->getSockFd(), POLLOUT);
-	// 	}
-	// }
 	if (this->_pollfds[this->_npollfds - 1].fd == -1)
 		memset((void *) &this->_pollfds[--this->_npollfds], 0, sizeof(struct pollfd)); // ft_memset
 	this->_toClean = false;

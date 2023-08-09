@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 08:59:58 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/08 10:34:40 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/09 10:15:55 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,9 @@ class	Commands
 		// constructor and destructor are private 'cause this is a static class
 		Commands(void) {};
 		~Commands(void) {};
+
+		// functions
+		static void	leaveAllChannels(Server &srv, User *usr);
 
 	public:
 
