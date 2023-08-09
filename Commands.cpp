@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/09 10:44:04 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/09 14:30:23 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void	Commands::initCommands(void)
 	Commands::commands[AWAY] = Commands::awayCommand;
 	Commands::commands[JOIN] = Commands::joinCommand;
 	Commands::commands[PART] = Commands::partCommand;
+	Commands::commands[SERVICE] = Commands::serviceCommand;
 }
 
 void	Commands::passCommand(Server &srv, User *usr, std::vector<std::string> params)
@@ -500,4 +501,30 @@ void	Commands::partCommand(Server &srv, User *usr, std::vector<std::string> para
 		if (chn->getUsers().size() == 0)
 			srv.removeChannel(chn);
 	}
+}
+
+void	Commands::serviceCommand(Server &srv, User *usr, std::vector<std::string> params)
+{	
+	(void) srv;
+	if (usr->getReg() % 2 == 0)
+		throw (Replies::ErrException(ERR_NOTREGISTERED(usr->getNick(), usr->getUser()).c_str()));
+	if (usr->getReg() >> 3 % 2 == 0 || usr->getReg() >> 2 % 2 == 1 || usr->getReg() >> 1 % 2 == 1)
+		throw (Replies::ErrException(ERR_ALREADYREGISTERED(usr->getNick(), usr->getUser()).c_str()));
+	if (!User::checkNick(params[0]))
+		throw (Replies::ErrException(ERR_ERRONEUSNICKNAME(usr->getNick(), usr->getUser()).c_str()));
+	if (params.size() < 6)
+		throw (Replies::ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), SERVICE).c_str()));
+	usr->setNick(ft_tolower(params[0]));
+	usr->setReg(usr->getReg() | 8);
+	usr->setInfoBot(params[5]);
+	#ifdef DEBUG
+		std::cout << ">> SERVICE command executed" << std::endl
+		<< "usr->sfd [" << usr->getSockFd() << "] "
+		<< "usr->nick [" << usr->getNick() << "] " << std::endl;
+	#endif
+	usr->setWriteBuff(usr->getWriteBuff() + RPL_WELCOME(usr->getNick(), usr->getUser(), SRV_NAME));
+	usr->setWriteBuff(usr->getWriteBuff() + RPL_YOURHOST(usr->getNick()));
+	#ifdef DEBUG
+		std::cout << ">> SERVICE registered correctly from NICK command" << std::endl;
+	#endif
 }

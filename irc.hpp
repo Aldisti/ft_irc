@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/09 09:54:44 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/09 13:46:40 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@
 #define AWAY std::string("AWAY")
 #define JOIN std::string("JOIN")
 #define PART std::string("PART")
+#define SERVICE std::string("SERVICE")
 
 // messages
 #define MSG_CAP std::string("CAP * LS\r\n")
