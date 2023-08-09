@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/09 13:50:42 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/09 15:23:25 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,12 +126,15 @@ void	Server::setEnd(bool end)
 
 void	Server::registerUser(void)
 {
+	char	*ip;
+
 	if (this->_pollfds[0].revents != POLLIN || this->_pollfds[0].fd == -1) {
 		return ;
 	}
 	MY_DEBUG("########## REGISTERING USER ##########")
 	this->_theirAddr.resize(this->_theirAddr.size() + 1);
 	this->_pollfds[this->_npollfds].fd = accept(this->_sfd, &(this->_theirAddr.back()), &(this->_sinAddr));
+	ip = inet_ntoa((((struct sockaddr_in *) &(this->_theirAddr.back()))->sin_addr));
 	if (this->_pollfds[this->_npollfds].fd == -1)
 	{
 		this->_theirAddr.pop_back();
@@ -139,7 +142,7 @@ void	Server::registerUser(void)
 		throw (Server::ExceptionAccept());
 	}
 	this->_pollfds[this->_npollfds].events = POLLIN;
-	this->_users.push_back(new User(this->_pollfds[this->_npollfds].fd));
+	this->_users.push_back(new User(this->_pollfds[this->_npollfds].fd, std::string(ip)));
 	MY_DEBUG(">> new user: index[" << this->_npollfds << "] sfd [" << this->_pollfds[this->_npollfds].fd << "]")
 	this->_npollfds++;
 	MY_DEBUG("########## REGISTRATION COMPLETED ##########")
