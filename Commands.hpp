@@ -7,7 +7,6 @@
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 08:59:58 by gpanico           #+#    #+#             */
 /*   Updated: 2023/08/09 08:25:58 by gpanico          ###   ########.fr       */
-/*                                                                            */
 /* ************************************************************************** */
 
 #ifndef COMMANDS_HPP
@@ -26,6 +25,9 @@ class	Commands
 		// constructor and destructor are private 'cause this is a static class
 		Commands(void) {};
 		~Commands(void) {};
+
+		// functions
+		static void	leaveAllChannels(Server &srv, User *usr);
 
 	public:
 
