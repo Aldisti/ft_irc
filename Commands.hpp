@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 08:59:58 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/09 08:25:58 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/09 14:28:07 by gpanico          ###   ########.fr       */
 /* ************************************************************************** */
 
 #ifndef COMMANDS_HPP
@@ -49,6 +49,7 @@ class	Commands
 		static void	awayCommand(Server &srv, User *usr, std::vector<std::string> params);
 		static void	joinCommand(Server &srv, User *usr, std::vector<std::string> params);
 		static void	partCommand(Server &srv, User *usr, std::vector<std::string> params);
+		static void	serviceCommand(Server &srv, User *usr, std::vector<std::string> params);
 		// functions
 		static void	initCommands(void);
 		// vaiables

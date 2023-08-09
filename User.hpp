@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 10:24:01 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/08 09:03:16 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/09 15:22:21 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,12 @@ class User
 		std::string	_readBuff;
 		std::string	_writeBuff;
 		std::string	_awayMsg;
+		std::string	_infoBot;
+		std::string	_ip;
 
 	public:
 		// CO functions
-		User(int sockfd);
+		User(int sockfd, std::string ip);
 		User(User const &usr);
 		~User(void);
 		User		&operator=(User const &usr);
@@ -56,6 +58,8 @@ class User
 		std::string		getReadBuff(void) const;
 		std::string		getWriteBuff(void) const;
 		std::string		getAwayMsg(void) const;
+		std::string		getInfoBot(void) const;
+		std::string		getIp(void) const;
 
 		// setters
 		void		setSockFd(int sfd);
@@ -70,6 +74,8 @@ class User
 		void		setReadBuff(std::string buff);
 		void		setWriteBuff(std::string buff);
 		void		setAwayMsg(std::string awayMsg);
+		void		setInfoBot(std::string infoBot);
+		void		setIp(std::string ip);
 		void		resetTime(void);
 
 		// functions
