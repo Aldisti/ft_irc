@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/10 09:36:35 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/10 14:02:45 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/10 15:44:00 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,14 +73,21 @@ void	Bot::launch(void)
 		for (int i = 0; i < (int) replies.size(); i++)
 		{
 			reply = ft_parse(replies[i]);
-			if (reply[1] != PRIVMSG && reply[1] != ERROR && reply[1] != PING)
+			if (reply[1] != PRIVMSG && reply[1] != ERROR && reply[0] != PING)
 				continue ;
-			if (reply[1] == PING)
-				this->send(MSG_PONG(IP));
+			if (reply[0] == PING)
+				this->botSend(MSG_PONG(IP));
 			else if (reply[1] == ERROR)
 				throw (std::exception()); //throw something
 			else
-				this->;
+			{
+				this->botSend(BMSG_PRIVMSG(std::string("gpanico"), std::string("     1    2    3 ")));
+				this->botSend(BMSG_PRIVMSG(std::string("gpanico"), std::string("1   x  I o  I  x ")));
+				this->botSend(BMSG_PRIVMSG(std::string("gpanico"), std::string("     ―+―+― ")));
+				this->botSend(BMSG_PRIVMSG(std::string("gpanico"), std::string("2       I o  I   ")));
+				this->botSend(BMSG_PRIVMSG(std::string("gpanico"), std::string("     ―+―+― ")));
+				this->botSend(BMSG_PRIVMSG(std::string("gpanico"), std::string("3   o  I     I  x ")));
+			}
 		}
 	}
 }

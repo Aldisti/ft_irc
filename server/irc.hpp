@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/10 12:38:37 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/10 14:36:20 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@
 #define JOIN std::string("JOIN")
 #define PART std::string("PART")
 #define SERVICE std::string("SERVICE")
+#define ERROR std::string("ERROR")
 
 // messages
 #define MSG_CAP std::string("CAP * LS\r\n")
@@ -101,6 +102,7 @@
 // bot messages
 #define BMSG_PASS(password) std::string(PASS + " " + password + DEL)
 #define BMSG_SERVICE(nick, info) std::string(SERVICE + " " + nick + " 0 0 0 0 :" + info + DEL)
+#define BMSG_PRIVMSG(dest, msg) std::string("PRIVMSG " + dest + " :" + msg + DEL)
 
 // irc format
 #define CHANNEL std::string("#&+!")

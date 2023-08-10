@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/10 12:34:57 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/10 15:15:26 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -460,7 +460,8 @@ void	Commands::joinCommand(Server &srv, User *usr, std::vector<std::string> para
   		usr->setWriteBuff(usr->getWriteBuff() + RPL_NOTOPIC(usr->getNick(), usr->getUser(), channelNames[i]));
 		for (int j = 0; j < (int) users.size(); j++)
 		{
-  			users[j]->setWriteBuff(users[j]->getWriteBuff() + RPL_NAMREPLY(users[j]->getNick(), users[j]->getUser(), channelNames[i], tmp->getUserList()));
+  			users[j]->setWriteBuff(users[j]->getWriteBuff() + RPL_NAMREPLY(users[j]->getNick(), users[j]->getUser(),
+						channelNames[i], tmp->getUserList()));
   			users[j]->setWriteBuff(users[j]->getWriteBuff() + RPL_ENDOFNAMES(users[j]->getNick(), users[j]->getUser(), channelNames[i]));
 			srv.setEvent(users[j]->getSockFd(), POLLOUT);
 		}
