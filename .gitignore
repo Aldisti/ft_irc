@@ -28,6 +28,7 @@ server
 minishell
 cub3d
 ircserv
+ircbot
 
 # Prerequisites
 *.d
