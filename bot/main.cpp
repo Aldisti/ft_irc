@@ -21,7 +21,7 @@ int main(void)
 		bot.registerBot();
 		bot.launch();
 	}
-	catch (std::exception &e)
+	catch (ErrException &e)
 	{
 		std::cout << e.what() << std::endl;
 	}

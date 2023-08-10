@@ -12,7 +12,6 @@
 
 #include "Channel.hpp"
 
-
 Channel::Channel(User *creator, std::string name): _creator(creator), _name(name)
 {
 	this->_users.push_back(creator);

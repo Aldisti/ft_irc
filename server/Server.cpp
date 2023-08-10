@@ -40,17 +40,17 @@ Server::Server(std::string pass): _end(false), _toClean(false), _pass(pass), _np
 	this->_hints.ai_protocol = 0;
 	this->_hints.ai_flags = AI_PASSIVE;
 	if (getaddrinfo(IP.c_str(), MYPORT, &this->_hints, &res))
-		throw (Server::ExceptionGetAddressInfo());
+		throw (ErrException("getaddrinfo() failed"));
 	this->_sfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 	if (this->_sfd == -1)
-		throw (Server::ExceptionSocket());
+		throw (ErrException("socket() failed"));
 	if (setsockopt(this->_sfd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on)))
-		throw (Server::ExceptionSetSockOpt());
+		throw (ErrException("setsockopt() failed"));
 	if (bind(this->_sfd, res->ai_addr, res->ai_addrlen))
-		throw (Server::ExceptionBind());
+		throw (ErrException("bind() failed"));
 	freeaddrinfo(res);
 	if (listen(this->_sfd, BACKLOG))
-		throw (Server::ExceptionListen());
+		throw (ErrException("listen() faied"));
 	memset((void *) this->_pollfds, 0, sizeof(this->_pollfds)); // ft_memset
 	this->_pollfds[0].fd = this->_sfd;
 	this->_pollfds[0].events = POLLIN;
@@ -134,14 +134,14 @@ void	Server::registerUser(void)
 	MY_DEBUG("########## REGISTERING USER ##########")
 	this->_theirAddr.resize(this->_theirAddr.size() + 1);
 	this->_pollfds[this->_npollfds].fd = accept(this->_sfd, &(this->_theirAddr.back()), &(this->_sinAddr));
-	ip = inet_ntoa((((struct sockaddr_in *) &(this->_theirAddr.back()))->sin_addr));
 	if (this->_pollfds[this->_npollfds].fd == -1)
 	{
 		this->_theirAddr.pop_back();
 		MY_DEBUG("########## REGISTRATION FAILED ##########")
-		throw (Server::ExceptionAccept());
+		throw (ErrException("accept() failed"));
 	}
 	this->_pollfds[this->_npollfds].events = POLLIN;
+	ip = inet_ntoa((((struct sockaddr_in *) &(this->_theirAddr.back()))->sin_addr));
 	this->_users.push_back(new User(this->_pollfds[this->_npollfds].fd, std::string(ip)));
 	MY_DEBUG(">> new user: index[" << this->_npollfds << "] sfd [" << this->_pollfds[this->_npollfds].fd << "]")
 	this->_npollfds++;
@@ -227,11 +227,11 @@ void	Server::pollIn(User *usr, int index)
 	usr->setPing(false);
 	memset((void *) this->_buff, 0, BUFFSIZE); // ft_memset()
 	r = recv(usr->getSockFd(), this->_buff, BUFFSIZE, MSG_DONTWAIT);
-	MY_DEBUG(">> received [" << r << "]:" << std::endl << "[" << std::string(this->_buff).substr(0, std::string(this->_buff).size() - 2)
-			<< "]")
+	MY_DEBUG(">> received [" << r << "]:" << std::endl << "["
+			<< std::string(this->_buff).substr(0, std::string(this->_buff).size() - 2) << "]")
 	if (r < 0)
 	{
-		MY_DEBUG("recv() failed") // throw something
+		throw (ErrException("recv() failed"));
 		this->closeConnection(usr, index);
 		return ;
 	}
@@ -243,7 +243,7 @@ void	Server::pollIn(User *usr, int index)
 	usr->setReadBuff(usr->getReadBuff() + std::string(this->_buff));
 	try {
 		usr->checkBuff(*this);
-	} catch (Replies::ErrException &e) {
+	} catch (ErrException &e) {
 		usr->setWriteBuff(usr->getWriteBuff() + e.what());
 		usr->setReadBuff("");
 		MY_DEBUG(">> buffer checking failed" << std::endl << usr->getWriteBuff())
@@ -262,7 +262,7 @@ void	Server::pollOut(User *usr, int index)
 	MY_DEBUG(">> sent [" << s << "]:" << std::endl << "[" << writeBuff.substr(0, s - DEL.size()) << "]")
 	if (s < 0)
 	{
-		MY_DEBUG("send() failed") // throw something
+		throw (ErrException("send() failed"));
 		this->closeConnection(usr, index);
 		return ;
 	}
@@ -339,9 +339,8 @@ void	Server::polling(void)
 		rs = poll(this->_pollfds, this->_npollfds, TIMEOUT);
 		if (rs < 0)
 		{
-			std::cerr << "poll() failed" << std::endl; // throw something
 			close(this->_sfd);
-			return ;
+			throw (ErrException("poll() failed"));
 		}
 		this->registerUser();
 		this->checkFd();

@@ -26,5 +26,5 @@ class Game
 		Game &operator=(Game const &gm);
 
 		// getters
-
+		
 };

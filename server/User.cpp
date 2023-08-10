@@ -20,52 +20,37 @@ void	User::checkBuff(Server &server)
 	std::string					cmdName;
 	std::string					command;
 
-	#ifdef DEBUG
-		std::cout << "########## CHECKING READ BUFFER ##########" << std::endl;
-		std::cout << "############ USER->SOCKFD [" << this->_sockfd << "] ##########" << std::endl;
-	#endif
+	MY_DEBUG("########## CHECKING READ BUFFER ##########")
+	MY_DEBUG("############ USER->SOCKFD [" << this->_sockfd << "] ##########")
 	if (this->_readBuff.size() < MAX_BUFF && this->_readBuff.substr(this->_readBuff.size() - DEL.size()) != DEL) {
-		#ifdef DEBUG
-			std::cout << ">> readBuff is not ready" << std::endl;
-		#endif
+		MY_DEBUG(">> readBuff is not ready")
 		return ;
 	}
 	if (this->_readBuff.size() > MAX_BUFF - 2)
 	{
 		this->_readBuff.resize(MAX_BUFF - 2);
 		this->_readBuff += DEL;
-		#ifdef DEBUG
-			std::cout << ">> readBuff resized" << std::endl;
-		#endif
+		MY_DEBUG(">> readBuff resized")
 	}
-	#ifdef DEBUG
-		std::cout << ">> readBuff:" << std::endl;
-		std::cout << "[" << this->_readBuff.substr(0, this->_readBuff.size() - DEL.size()) << "]" << std::endl;
-	#endif
+	MY_DEBUG(">> readBuff:" << std::endl << "[" << this->_readBuff.substr(0, this->_readBuff.size() - DEL.size()) << "]")
 	commands = ft_split(this->_readBuff, DEL);
 	for (int i = 0; i < (int) commands.size(); i++)
 	{
 		command = commands[i];
 		try {
-			#ifdef DEBUG
-				std::cout << ">> starting to parse: [" << command << "]" << std::endl;
-			#endif
+			MY_DEBUG(">> starting to parse: [" << command << "]")
 			cmd = ft_parse(command);
 		} catch (std::exception &e) {
 			this->_readBuff = "";
-			#ifdef DEBUG
-				std::cout << ">> parse failed" << std::endl;
-				std::cout << "##### FINISHED CHECKING READ BUFFER ######" << std::endl;
-			#endif
-			throw Replies::ErrException(ERR_BADSYNTAX(this->_nick, this->_user).c_str());
+			MY_DEBUG(">> parse failed")
+			MY_DEBUG("##### FINISHED CHECKING READ BUFFER ######")
+			throw ErrException(ERR_BADSYNTAX(this->_nick, this->_user).c_str());
 		}
 		if (command[0] == ':' && cmd[0] != this->_nick) {
 			this->_readBuff = "";
-			#ifdef DEBUG
-				std::cout << ">> prefix nickname wrong: |" << cmd[0] << "| != |" << this->_nick << "|" << std::endl;
-				std::cout << "##### FINISHED CHECKING READ BUFFER ######" << std::endl;
-			#endif
-			throw Replies::ErrException(ERR_NOSUCHNICK(this->_nick, this->_user, cmd[0]).c_str());
+			MY_DEBUG(">> prefix nickname wrong: |" << cmd[0] << "| != |" << this->_nick << "|")
+			MY_DEBUG("##### FINISHED CHECKING READ BUFFER ######")
+			throw ErrException(ERR_NOSUCHNICK(this->_nick, this->_user, cmd[0]).c_str());
 		}
 		else if (command[0] == ':')
 			cmd.erase(cmd.begin());
@@ -75,19 +60,14 @@ void	User::checkBuff(Server &server)
 			Commands::commands.at(ft_toupper(cmdName))(server, this, cmd);
 		} catch (std::out_of_range &e) {
 			this->_readBuff = "";
-			#ifdef DEBUG
-				std::cout << ">> Command not found [" << cmdName << "]" << std::endl;
-				std::cout << ">> Error: [" << e.what() << "]" << std::endl;
-				std::cout << "##### FINISHED CHECKING READ BUFFER ######" << std::endl;
-			#endif
-			throw Replies::ErrException(ERR_UNKNOWNCOMMAND(this->_nick, this->_user, cmdName).c_str());
+			MY_DEBUG(">> Command not found [" << cmdName << "]" << std::endl << ">> Error: [" << e.what() << "]")
+			MY_DEBUG("##### FINISHED CHECKING READ BUFFER ######")
+			throw ErrException(ERR_UNKNOWNCOMMAND(this->_nick, this->_user, cmdName).c_str());
 		}
 	}
 	this->_readBuff = "";
-	#ifdef DEBUG
-		std::cout << ">> checkBuff completed without errors" << std::endl;
-		std::cout << "##### FINISHED CHECKING READ BUFFER ######" << std::endl;
-	#endif
+	MY_DEBUG(">> checkBuff completed without errors")
+	MY_DEBUG("##### FINISHED CHECKING READ BUFFER ######")
 }
 
 bool	User::checkNick(std::string nick)

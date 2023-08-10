@@ -10,10 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVER_HPP
-# define SERVER_HPP
-
-# include "irc.hpp"
+#pragma once
+#include "irc.hpp"
 
 class User;
 class Channel;
@@ -38,22 +36,22 @@ class Server
 		// functions
 		void	checkClean(User *usr, int index);
 		void	checkPing(User *usr);
+		void	registerUser(void);
+		void	checkFd(void);
+		void	pollIn(User *usr, int index);
+		void	pollOut(User *usr, int index);
+		void	cleanPollfds(void);
+		void	closeServer(void);
+		void	closeConnection(User *usr, int index);
 
 	public:
 		// functions
 		Server(std::string pass);
 		~Server(void);
-		void		registerUser(void);
-		void		checkFd(void);
-		void		polling(void);
-		void		pollIn(User *usr, int index);
-		void		pollOut(User *usr, int index);
-		void		cleanPollfds(void);
 		void		setEvent(int fd, int event);
-		void		closeServer(void);
-		void		closeConnection(User *usr, int index);
 		void		addChannel(Channel *c);
 		void		removeChannel(Channel *c);
+		void		polling(void);
 		
 		// getters
 		std::string				getPass(void) const;
@@ -66,56 +64,4 @@ class Server
 
 		// setters
 		void				setEnd(bool end);
-
-	public:
-		// exceptions
-		class ExceptionGetAddressInfo: public std::exception
-		{
-			virtual const char *what() const throw()
-			{
-				return ("getaddrinfo() failed");
-			}
-		};
-
-		class ExceptionSocket: public std::exception
-		{
-			virtual const char *what() const throw()
-			{
-				return ("socket() failed");
-			}
-		};
-
-		class ExceptionSetSockOpt: public std::exception
-		{
-			virtual const char *what() const throw()
-			{
-				return ("setsockopt() failed");
-			}
-		};
-
-		class ExceptionBind: public std::exception
-		{
-			virtual const char *what() const throw()
-			{
-				return ("bind() failed");
-			}
-		};
-
-		class ExceptionListen: public std::exception
-		{
-			virtual const char *what() const throw()
-			{
-				return ("listen() failed");
-			}
-		};
-
-		class ExceptionAccept: public std::exception
-		{
-			virtual const char *what() const throw()
-			{
-				return ("accept() failed");
-			}
-		};
 };
-
-#endif

@@ -9,10 +9,8 @@
 /*   Updated: 2023/08/09 14:28:07 by gpanico          ###   ########.fr       */
 /* ************************************************************************** */
 
-#ifndef COMMANDS_HPP
-# define COMMANDS_HPP
-
-# include "irc.hpp"
+#pragma once
+#include "irc.hpp"
 
 class	Server;
 class	User;
@@ -55,32 +53,3 @@ class	Commands
 		// vaiables
 		static std::map<std::string, cmd_p>	commands;
 };
-
-class	Replies
-{
-	private:
-		// constructor and destructor are private 'cause this is a static class
-		Replies(void) {};
-		~Replies(void) {};
-
-	public:
-		// exceptions
-		class	ErrException: public std::exception
-		{
-			private:
-				std::string	*_message;
-
-			public:
-				ErrException(const char * message) {
-					this->_message = ft_strdup(message); // ft_strdup
-				}
-				virtual	~ErrException() throw() {
-					delete this->_message;
-				}
-				virtual const char * what() const throw() {
-					return (this->_message->c_str());
-				}
-		};
-};
-
-#endif

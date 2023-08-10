@@ -17,30 +17,28 @@ Bot::Bot(std::string port, std::string pass): _pass(pass)
 	struct sockaddr_in	their_addr;
 	struct hostent		*hostname;
 
-	std::cout << "Constructor called" << std::endl;
 	memset((void *) &their_addr, 0, sizeof(struct sockaddr_in));	//ft_memset
 	this->_sfd = socket(AF_INET, SOCK_STREAM, 0);
-	std::cout << "Socket called" << std::endl;
 	if (this->_sfd == -1)
-		throw (Server::ExceptionSocket());
+		throw (ErrException("socket failed"));
 	hostname = gethostbyname(IP.c_str());
 	their_addr.sin_family = AF_INET;
 	their_addr.sin_port = htons(atoi(port.c_str()));
 	their_addr.sin_addr.s_addr = *(unsigned long *)hostname->h_addr;
 	if (connect(this->_sfd, (struct sockaddr *)&their_addr, sizeof(struct sockaddr_in)))
-		throw (Server::ExceptionSocket()); // throw something new
+		throw (ErrException("connect() failed"));
 }
 
 void	Bot::botSend(std::string str) const
 {
 	if (send(this->_sfd, str.c_str(), str.length(), 0) < 0)
-		throw (std::exception()); // throw something new
+		throw (ErrException("send() failed"));
 }
 
 void	Bot::botRecv(void)
 {
 	if (recv(this->_sfd, this->_buff, MAX_BUFF, 0) < 0)
-		throw (std::exception()); // throw something new
+		throw (ErrException("recv() failed"));
 }
 
 void	Bot::registerBot(void)
@@ -56,7 +54,7 @@ void	Bot::registerBot(void)
 	{
 		reply = ft_parse(replies[i]);
 		if (std::atoi(reply[1].c_str()) > 400)
-			throw (std::exception()); //throw something
+			throw (ErrException("registration to server failed"));
 	}
 }
 
@@ -78,7 +76,7 @@ void	Bot::launch(void)
 			if (reply[0] == PING)
 				this->botSend(MSG_PONG(IP));
 			else if (reply[1] == ERROR)
-				throw (std::exception()); //throw something
+				throw (ErrException("ERROR: connection with server lost"));
 			else
 			{
 				this->botSend(BMSG_PRIVMSG(std::string("gpanico"), std::string("     1    2    3 ")));

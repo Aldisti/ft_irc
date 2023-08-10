@@ -23,7 +23,13 @@ int	main(void) {
 //		return (1);
 //	}
 	Commands::initCommands();
-	srv = new Server(PASSWORD);
-	srv->polling();
-	delete srv;
+	try
+	{
+		srv = new Server(PASSWORD);
+		srv->polling();
+	}
+	catch (ErrException &e)
+	{
+		delete srv;
+	}
 }

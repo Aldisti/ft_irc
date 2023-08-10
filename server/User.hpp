@@ -10,10 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef USER_HPP
-# define USER_HPP
-
-# include "irc.hpp"
+#pragma once
+#include "irc.hpp"
 
 class Server;
 
@@ -84,5 +82,3 @@ class User
 		// static functions
 		static bool	checkNick(std::string nick);
 };
-
-#endif
