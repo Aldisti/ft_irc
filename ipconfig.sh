@@ -1,6 +1,6 @@
 #!/bin/sh
 
-FILE="irc.hpp"
+FILE="server/irc.hpp"
 TO_FIND="define IP"
 LINES=100
 i=1
