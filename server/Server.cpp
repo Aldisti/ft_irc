@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/10 11:31:46 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/11 14:09:29 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	Server::closeServer(void)
 	MY_DEBUG("##### SERVER DELETED SUCCESSFULLY #####")
 }
 
-Server::Server(std::string pass): _end(false), _toClean(false), _pass(pass), _npollfds(1)
+Server::Server(char *port, std::string pass): _end(false), _toClean(false), _pass(pass), _npollfds(1)
 {
 	struct addrinfo	*res;
 	int				on = 1;
@@ -39,7 +39,7 @@ Server::Server(std::string pass): _end(false), _toClean(false), _pass(pass), _np
 	this->_hints.ai_socktype = SOCK_STREAM;
 	this->_hints.ai_protocol = 0;
 	this->_hints.ai_flags = AI_PASSIVE;
-	if (getaddrinfo(IP.c_str(), MYPORT, &this->_hints, &res))
+	if (getaddrinfo(IP.c_str(), port, &this->_hints, &res))
 		throw (ErrException("getaddrinfo() failed"));
 	this->_sfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 	if (this->_sfd == -1)

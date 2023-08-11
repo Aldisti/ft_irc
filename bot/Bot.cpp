@@ -6,13 +6,13 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/10 09:36:35 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/11 12:54:17 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/11 14:10:52 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Bot.hpp"
 
-Bot::Bot(std::string port, std::string pass): _pass(pass)
+Bot::Bot(char *port, std::string pass): _pass(pass)
 {
 	struct sockaddr_in	their_addr;
 	struct hostent		*hostname;
@@ -23,7 +23,7 @@ Bot::Bot(std::string port, std::string pass): _pass(pass)
 		throw (ErrException("socket failed"));
 	hostname = gethostbyname(IP.c_str());
 	their_addr.sin_family = AF_INET;
-	their_addr.sin_port = htons(atoi(port.c_str()));
+	their_addr.sin_port = htons(atoi(port));
 	their_addr.sin_addr.s_addr = *(unsigned long *)hostname->h_addr;
 	if (connect(this->_sfd, (struct sockaddr *)&their_addr, sizeof(struct sockaddr_in)))
 		throw (ErrException("connect() failed"));

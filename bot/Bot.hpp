@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/10 09:34:51 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/11 12:36:32 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/11 14:11:03 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ class	Bot
 
 	public:
 		// constructors and destructors
-		Bot(std::string port, std::string pass);
+		Bot(char *port, std::string pass);
 		~Bot(void);
 
 		// getters

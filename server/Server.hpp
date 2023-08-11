@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 10:15:13 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/10 11:32:28 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/11 14:11:40 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ class Server
 
 	public:
 		// functions
-		Server(std::string pass);
+		Server(char *port, std::string pass);
 		~Server(void);
 		void		setEvent(int fd, int event);
 		void		addChannel(Channel *c);
