@@ -12,21 +12,33 @@
 
 #pragma once
 #include "../server/irc.hpp"
+#include "Game.hpp"
 
 class	Bot
 {
 	private:
-		int				_sfd;
-		std::string		_pass;
-		char			_buff[MAX_BUFF];
+		// variables
+		int					_sfd;
+		std::string			_pass;
+		char				_buff[MAX_BUFF];
+		std::vector<Game *>	_games;
 
-	public:
-		Bot(std::string port, std::string pass);
-		~Bot(void);
-		void	registerBot(void);
-		void	launch(void);
-
-	private:
+		// functions
 		void	botSend(std::string str) const;
 		void	botRecv(void);
+
+	public:
+		// constructors and destructors
+		Bot(std::string port, std::string pass);
+		~Bot(void);
+
+		// getters
+		std::vector<Game *>	getGames(void) const;
+		Game				*getGameByNick(std::string nick) const;
+
+		// setters
+
+		// fuctions
+		void	registerBot(void);
+		void	launch(void);
 };

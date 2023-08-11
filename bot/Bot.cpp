@@ -41,6 +41,19 @@ void	Bot::botRecv(void)
 		throw (ErrException("recv() failed"));
 }
 
+std::vector<Game *>	Bot::getGames(void) const
+{
+	return (this->_games);
+}
+
+Game	*Bot::getGameByNick(std::string nick) const
+{
+	for (int i = 0; i < (int) this->_games.size(); i++)
+		if (nick == this->_games[i]->getP1() || nick == this->_games[i]->getP2())
+			return (this->_games[i]);
+	return (NULL);
+}
+
 void	Bot::registerBot(void)
 {
 	std::vector<std::string>	replies;
