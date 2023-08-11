@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 08:27:25 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/11 15:09:35 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/11 16:13:36 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,9 +83,11 @@ bool	User::checkNick(std::string nick)
 	return (true);
 }
 
-User::User(int sockfd, std::string ip): _sockfd(sockfd), _registered(0), _op(false), _close(false), _ping(false), _time(Utils::ft_gettime()), _readBuff(""), _writeBuff(""), _awayMsg(MSG_AWAY), _infoBot("")
+User::User(int sockfd, std::string ip): _sockfd(sockfd), _registered(0), _op(false), _close(false),
+	_ping(false), _time(Utils::ft_gettime()), _readBuff(""), _writeBuff(""), _awayMsg(MSG_AWAY), _infoBot("")
 {
 	this->_ip = ip;
+	this->_mode = 0;
 	return ;
 }
 

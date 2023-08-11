@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/10 09:36:35 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/11 15:09:46 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/11 16:05:22 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,7 +233,7 @@ void	Bot::continueGame(std::string nick, Game *game, std::vector<std::string> re
 		{
 			this->botSend(game->getMatPrint(game->getP2()));
 			this->botSend(BMSG_PRIVMSG(
-						(game->getP2() == nick ? game->getP1() : game->getP1()), std::string("YOU LOSE")));
+						(game->getP2() == nick ? game->getP1() : game->getP2()), std::string("YOU LOSE")));
 		}
 	}
 	else if (game->getEnd())
