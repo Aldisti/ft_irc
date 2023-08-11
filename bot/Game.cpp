@@ -188,7 +188,7 @@ std::vector<std::string>	Game::getMatPrint(std::string player) const
 	{
 		if (i > 0)
 			msg.push_back(BMSG_PRIVMSG(player, "     ―+―+― "));
-		tmp = ft_itoa(i + 1) + std::string("   ");
+		tmp = Utils::ft_itoa(i + 1) + std::string("   ");
 		for (int j = 0; j < 3; j++)
 		{
 			tmp += Game::values[this->_mat[i][j]];

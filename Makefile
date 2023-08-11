@@ -13,9 +13,10 @@
 NAME		= ircserv
 NAME_BOT	= ircbot
 # files
-SRV_SRC		= $(wildcard server/*.cpp)
+SRV_SRC		= server/Server.cpp server/User.cpp server/Channel.cpp \
+				server/Commands.cpp server/Utils.cpp server/main.cpp
 SRV_OBJ		= $(SRV_SRC:%.cpp=%.o)
-BOT_SRC		= $(wildcard bot/*.cpp) server/utils.cpp
+BOT_SRC		= bot/Bot.cpp bot/Game.cpp bot/main.cpp server/Utils.cpp
 BOT_OBJ		= $(BOT_SRC:%.cpp=%.o)
 
 CC		= c++
@@ -27,7 +28,7 @@ GREEN	= \033[0;32m
 YELLOW	= \033[1;33m
 BLUE	= \033[1;34m
 RESET	= \033[0;0m
-	
+
 $(shell ./ipconfig.sh)
 
 %.o : %.cpp
