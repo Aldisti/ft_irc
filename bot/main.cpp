@@ -3,27 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/21 11:17:48 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/08 11:20:17 by gpanico          ###   ########.fr       */
+/*   Created: 2023/08/10 10:17:01 by gpanico           #+#    #+#             */
+/*   Updated: 2023/08/11 12:04:33 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "irc.hpp"
-#include "User.hpp"
-#include "Server.hpp"
+#include "Bot.hpp"
 
-int	main(void) {
-	Server	*srv;
-
-//	if (signal(SIGINT, SIG_IGN) == SIG_ERR)
-//	{
-//		std::cerr << "An error occured when setting signal handling" << std::endl;
-//		return (1);
-//	}
-	Commands::initCommands();
-	srv = new Server("123");
-	srv->polling();
-	delete srv;
+int main(void)
+{
+	Bot	bot(std::string(MYPORT), PASSWORD);
+	std::srand((unsigned) std::time(0));
+	try
+	{
+		bot.registerBot();
+		bot.launch();
+	}
+	catch (ErrException &e)
+	{
+		std::cout << e.what() << std::endl;
+	}
+	return (0);
 }

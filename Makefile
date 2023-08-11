@@ -6,14 +6,17 @@
 #    By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/21 11:08:49 by adi-stef          #+#    #+#              #
-#    Updated: 2023/08/09 16:19:42 by adi-stef         ###   ########.fr        #
+#    Updated: 2023/08/10 12:37:27 by gpanico          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME	= ircserv
+NAME		= ircserv
+NAME_BOT	= ircbot
 # files
-SRC		= $(wildcard *.cpp)
-OBJ		= $(SRC:%.cpp=%.o)
+SRV_SRC		= $(wildcard server/*.cpp)
+SRV_OBJ		= $(SRV_SRC:%.cpp=%.o)
+BOT_SRC		= $(wildcard bot/*.cpp) server/utils.cpp
+BOT_OBJ		= $(BOT_SRC:%.cpp=%.o)
 
 CC		= c++
 FLAGS	= -Wall -Wextra -Werror -std=c++98
@@ -31,20 +34,28 @@ $(shell ./ipconfig.sh)
 	@printf "\r\033[K$(GREEN)Compiling $(NAME)...$(RESET)"
 	@$(CC) $(FLAGS) -c $< -o $@
 
-$(NAME): $(OBJ)
-	@$(CC) $(FLAGS) $(OBJ) -o $(NAME)
+$(NAME): $(SRV_OBJ)
+	@$(CC) $(FLAGS) $(SRV_OBJ) -o $(NAME)
 	@printf "\r\033[K$(GREEN)$(NAME) compiled successfully$(RESET)\n"
+
+$(NAME_BOT): $(BOT_OBJ)
+	@$(CC) $(FLAGS) $(BOT_OBJ) -o $(NAME_BOT)
+	@printf "\r\033[K$(GREEN)$(NAME_BOT) compiled successfully$(RESET)\n"
 
 all: $(NAME)
 
+bonus: $(NAME) $(NAME_BOT)
+
 clean:
-	@$(RM) $(OBJ)
+	@$(RM) $(SRV_OBJ)
+	@$(RM) $(BOT_OBJ)
 	@printf "$(RED)object files removed$(RESET)\n"
 
 fclean: clean
 	@$(RM) $(NAME)
+	@$(RM) $(NAME_BOT)
 	@printf "$(RED)executable removed$(RESET)\n"
 
-re: fclean all
+re: fclean all bonus
 
 .PHONY: all clean fclean re
