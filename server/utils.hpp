@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/07 09:37:05 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/09 09:54:52 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/11 11:28:29 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,3 +21,12 @@ std::string					*ft_strdup(const char *c);
 std::string					ft_toupper(std::string str);
 std::string					ft_tolower(std::string str);
 long						ft_gettime(void);
+bool						ft_isdigit(std::string str);
+
+template <typename T>
+std::string	ft_itoa(T num)
+{
+	std::ostringstream ss;
+	ss << num;
+	return (ss.str());
+}

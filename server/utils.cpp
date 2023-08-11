@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/01 10:46:40 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/09 13:36:37 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/11 11:27:51 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,3 +120,12 @@ long	ft_gettime(void)
 	std::time(&now);
 	return (((long)((int) now)));
 }
+
+bool	ft_isdigit(std::string str)
+{
+	for (int i = 0; i < (int) str.length(); i++)
+		if (!std::isdigit(str[i]))
+			return (false);
+	return (true);
+}
+

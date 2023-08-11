@@ -6,13 +6,16 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/10 09:34:51 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/10 12:16:21 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/11 12:36:32 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 #include "../server/irc.hpp"
 #include "Game.hpp"
+#define	START std::string("start")
+#define	ACCEPT std::string("accept")
+#define P2_REQUEST std::string("???")
 
 class	Bot
 {
@@ -25,7 +28,10 @@ class	Bot
 
 		// functions
 		void	botSend(std::string str) const;
+		void	botSend(std::vector<std::string> msg) const;
 		void	botRecv(void);
+		void	addGame(Game *game);
+		void	removeGame(Game *game);
 
 	public:
 		// constructors and destructors
@@ -41,4 +47,7 @@ class	Bot
 		// fuctions
 		void	registerBot(void);
 		void	launch(void);
+		void	startGame(std::string nick, std::vector<std::string> reply);
+		void	newRequest(std::string nick, Game *game, std::vector<std::string> reply);
+		void	continueGame(std::string nick, Game *game, std::vector<std::string> reply);
 };

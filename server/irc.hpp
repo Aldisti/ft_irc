@@ -6,13 +6,14 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/10 14:36:20 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/11 12:56:31 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <iomanip>
 #include <string>
@@ -32,17 +33,17 @@
 #include <poll.h>
 #include <map>
 #include <ctime>
+#include <algorithm>
 
-#define DEBUG
 #define DEBUG_B 1
 #define MY_DEBUG(string) if(DEBUG_B) \
 	std::cout << string << std::endl;
 #define MYPORT "8001"  // the port users will be connecting to
-#define IP std::string("")
+#define IP std::string("10.12.3.3")
 #define SRV_NAME std::string("hcierVI")
 #define BOT_NAME std::string("reltiH")
 #define BOT_INFO std::string("play tic tac toe")
-#define VERSION std::string("0.9")
+#define VERSION std::string("1.0")
 #define OPER_PASSWORD std::string("admin")
 #define PASSWORD std::string("123")
 
@@ -51,11 +52,7 @@
 // utils
 #define BUFFSIZE 1024
 #define BACKLOG 50     // how many pending connections queue will hold
-#ifdef DEBUG
-# define TIMEOUT 1000
-#else
-# define TIMEOUT 2147483647
-#endif
+#define TIMEOUT 1000
 #define NPOS std::string::npos
 #define PING_TIMEOUT 15
 

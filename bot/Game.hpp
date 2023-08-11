@@ -6,7 +6,7 @@
 /*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/10 14:08:44 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/10 14:46:13 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/11 12:35:58 by gpanico          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,17 +21,18 @@ class Game
 {
 	private:
 		//variables
-		char		**_mat;
-		std::string	_p1;
-		std::string	_p2;
-		int			_turn;
-		bool		_end;
+		static std::map<char, std::string>	values;
+		char								**_mat;
+		std::string							_p1;
+		std::string							_p2;
+		int									_turn;
+		bool								_end;
+		std::vector<int>					_slots;
 
 		// functions
 		bool	checkRows(void) const;
 		bool	checkCols(void) const;
 		bool	checkDiags(void) const;
-		bool	checkVictory(void);
 
 	public:
 		Game(std::string p1, std::string p2);
@@ -40,14 +41,20 @@ class Game
 		Game &operator=(Game const &gm);
 
 		// getters
-		char		**getMat(void) const;
-		std::string	getP1(void) const;
-		std::string	getP2(void) const;
-		int			getTurn(void) const;
-		bool		getEnd(void) const;
+		char				**getMat(void) const;
+		std::string			getP1(void) const;
+		std::string			getP2(void) const;
+		int					getTurn(void) const;
+		bool				getEnd(void) const;
+		std::vector<int>	getSlots(void) const;
 
 		// setters
-		
+		void	setP2(std::string p2);
+
 		// functions
-		void	makeMove(int i, int j);
+		bool						checkVictory(void) const;
+		void						makeMove(int i, int j);
+		void						botMove(void);
+		bool						isNickTurn(std::string nick) const;
+		std::vector<std::string>	getMatPrint(std::string player) const;
 };
