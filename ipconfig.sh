@@ -1,20 +1,27 @@
 #!/bin/sh
 
-FILE="irc.hpp"
+FILE="server/irc.hpp"
 TO_FIND="define IP"
-LINES=100
-i=1
+NEW_LINE="#define IP std::string(\"$(ip a | grep 'inet 10' | awk '{print $2}' | rev | cut -c 4- | rev)\")"
+LINES=$(cat $FILE | wc -l)
+IS_THERE=$(cat $FILE | grep "$TO_FIND" | wc -l)
 
-while [ $i -lt $LINES ]; do
-	if [ $(cat $FILE | head -$i | grep "$TO_FIND" | wc -l) -eq 1 ]; then
+i=1
+while read line; do
+	i=$((i + 1))
+	if [ $IS_THERE -gt 0 ] && [ $(echo $line | grep "$TO_FIND" | wc -l) -gt 0 ]; then
+		if [ "$line" = "$NEW_LINE" ]; then
+			return 0
+		fi
+		break
+	elif [ $IS_THERE -eq 0 ] && [ "$line" = "" ]; then
 		break
 	fi
-	i=$((i + 1))
-done
+done < "$FILE"
 
 if [ $i -eq $LINES ]; then
-	return 1
+	return 0
 fi
 
-sed -i $i"s/.*/#define IP std::string(\"$(ip a | grep "inet 10" | awk '{print $2}' | rev | cut -c 4- | rev)\")/" $FILE
+sed -i $i"s/.*/$NEW_LINE/" $FILE
 

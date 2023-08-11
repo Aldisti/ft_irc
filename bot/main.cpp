@@ -1,23 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.hpp                                          :+:      :+:    :+:   */
+/*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/07 09:37:05 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/09 09:54:52 by gpanico          ###   ########.fr       */
+/*   Created: 2023/08/10 10:17:01 by gpanico           #+#    #+#             */
+/*   Updated: 2023/08/11 14:48:06 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#include "Bot.hpp"
 
-#include "irc.hpp"
-
-std::vector<std::string>	ft_split(std::string str, std::string del);
-std::vector<std::string>	ft_parse(std::string line);
-int							ft_convertToMode(char c);
-std::string					*ft_strdup(const char *c);
-std::string					ft_toupper(std::string str);
-std::string					ft_tolower(std::string str);
-long						ft_gettime(void);
+int main(void)
+{
+	Bot	bot(std::string(MYPORT), PASSWORD);
+	std::srand((unsigned) std::time(0));
+	try
+	{
+		bot.registerBot();
+		bot.launch();
+	}
+	catch (ErrException &e)
+	{
+		std::cout << e.what() << std::endl;
+	}
+	return (0);
+}
