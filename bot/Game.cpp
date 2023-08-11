@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 11:24:52 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/11 14:48:06 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/11 15:13:43 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,6 @@ Game::Game(std::string p1, std::string p2): _p1(p1), _p2(p2)
 
 Game::Game(Game const &gm)
 {
-	for (int i = 0; i < 3; i++)
-		delete [] this->_mat[i];
-	delete [] this->_mat;
 	*this = gm;
 }
 
@@ -48,6 +45,9 @@ Game	&Game::operator=(Game const &gm)
 {
 	if(this == &gm)
 		return (*this);
+	for (int i = 0; i < 3; i++)
+		delete [] this->_mat[i];
+	delete [] this->_mat;
 	this->_mat = gm.getMat();
 	this->_p1 = gm.getP1();
 	this->_p2 = gm.getP2();
@@ -59,7 +59,9 @@ Game	&Game::operator=(Game const &gm)
 
 Game::~Game(void)
 {
-	return ;
+	for (int i = 0; i < 3; i++)
+		delete [] this->_mat[i];
+	delete [] this->_mat;
 }
 
 char	**Game::getMat(void) const
@@ -186,7 +188,7 @@ std::vector<std::string>	Game::getMatPrint(std::string player) const
 	{
 		if (i > 0)
 			msg.push_back(BMSG_PRIVMSG(player, "     ―+―+― "));
-		tmp = Utils::ft_itoa(i + 1) + std::string("   ");
+		tmp = Utils::Utils::ft_itoa(i + 1) + std::string("   ");
 		for (int j = 0; j < 3; j++)
 		{
 			tmp += Game::values[this->_mat[i][j]];

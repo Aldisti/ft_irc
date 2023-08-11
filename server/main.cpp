@@ -5,18 +5,21 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/10 10:17:01 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/11 15:21:02 by adi-stef         ###   ########.fr       */
+/*   Created: 2023/06/21 11:17:48 by adi-stef          #+#    #+#             */
+/*   Updated: 2023/08/11 15:21:10 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Bot.hpp"
+#include "irc.hpp"
+#include "User.hpp"
+#include "Server.hpp"
 
-int main(int argc, char *argv[])
-{
+int	main(int argc, char *argv[]) {
+	Server	*srv;
+
 	if (argc != 3)
 	{
-		std::cerr << "Usage error: ./ircbot <port> <password>" << std::endl;
+		std::cerr << "Usage error: ./ircserv <port> <password>" << std::endl;
 		return (1);
 	}
 	else if (!Utils::ft_isdigit(std::string(argv[1])) || std::atoi(argv[1]) < 1024
@@ -30,16 +33,19 @@ int main(int argc, char *argv[])
 		std::cerr << "Error: invalid password" << std::endl;
 		return (1);
 	}
-	std::srand((unsigned) std::time(0));
+	else if (signal(SIGINT, SIG_IGN) == SIG_ERR)
+	{
+		std::cerr << "An error occured when setting signal handling" << std::endl;
+		return (1);
+	}
+	Commands::initCommands();
 	try
 	{
-		Bot	bot(argv[1], std::string(argv[2]));
-		bot.registerBot();
-		bot.launch();
+		srv = new Server(argv[1], std::string(argv[2]));
+		srv->polling();
 	}
 	catch (ErrException &e)
 	{
-		std::cout << e.what() << std::endl;
+		delete srv;
 	}
-	return (0);
 }
