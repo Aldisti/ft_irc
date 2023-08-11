@@ -6,16 +6,17 @@
 #    By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/21 11:08:49 by adi-stef          #+#    #+#              #
-#    Updated: 2023/08/10 12:37:27 by gpanico          ###   ########.fr        #
+#    Updated: 2023/08/11 14:50:47 by adi-stef         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= ircserv
 NAME_BOT	= ircbot
 # files
-SRV_SRC		= $(wildcard server/*.cpp)
+SRV_SRC		= server/Server.cpp server/User.cpp server/Channel.cpp \
+				server/Commands.cpp server/Utils.cpp server/main.cpp
 SRV_OBJ		= $(SRV_SRC:%.cpp=%.o)
-BOT_SRC		= $(wildcard bot/*.cpp) server/utils.cpp
+BOT_SRC		= bot/Bot.cpp bot/Game.cpp bot/main.cpp server/Utils.cpp
 BOT_OBJ		= $(BOT_SRC:%.cpp=%.o)
 
 CC		= c++
@@ -27,7 +28,7 @@ GREEN	= \033[0;32m
 YELLOW	= \033[1;33m
 BLUE	= \033[1;34m
 RESET	= \033[0;0m
-	
+
 $(shell ./ipconfig.sh)
 
 %.o : %.cpp
