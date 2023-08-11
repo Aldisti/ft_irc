@@ -16,6 +16,7 @@
 mlx
 mlx/*
 *tester*
+*.un~
 
 # Executables
 push_swap

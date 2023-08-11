@@ -35,7 +35,7 @@ class	Bot
 
 	public:
 		// constructors and destructors
-		Bot(std::string port, std::string pass);
+		Bot(char *port, std::string pass);
 		~Bot(void);
 
 		// getters

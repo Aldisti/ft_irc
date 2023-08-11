@@ -12,18 +12,18 @@
 
 #include "Bot.hpp"
 
-Bot::Bot(std::string port, std::string pass): _pass(pass)
+Bot::Bot(char *port, std::string pass): _pass(pass)
 {
 	struct sockaddr_in	their_addr;
 	struct hostent		*hostname;
 
-	Utils::ft_memset((void *) &their_addr, 0, sizeof(struct sockaddr_in));	//Utils::ft_memset
+	Utils::ft_memset((void *) &their_addr, 0, sizeof(struct sockaddr_in));
 	this->_sfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->_sfd == -1)
 		throw (ErrException("socket failed"));
 	hostname = gethostbyname(IP.c_str());
 	their_addr.sin_family = AF_INET;
-	their_addr.sin_port = htons(atoi(port.c_str()));
+	their_addr.sin_port = htons(std::atoi(port));
 	their_addr.sin_addr.s_addr = *(unsigned long *)hostname->h_addr;
 	if (connect(this->_sfd, (struct sockaddr *)&their_addr, sizeof(struct sockaddr_in)))
 		throw (ErrException("connect() failed"));
