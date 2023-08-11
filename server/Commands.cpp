@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/10 15:15:26 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/11 15:09:27 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	Commands::nickCommand(Server &srv, User *usr, std::vector<std::string> para
 		throw (ErrException(ERR_ERRONEUSNICKNAME(usr->getNick(), usr->getUser()).c_str()));
 	if (srv.getUser(params[0]))
 		throw (ErrException(ERR_NICKNAMEINUSE(usr->getNick(), usr->getUser()).c_str()));
-	usr->setNick(ft_tolower(params[0]));
+	usr->setNick(Utils::ft_tolower(params[0]));
 	usr->setReg(usr->getReg() | 2);
 	MY_DEBUG(">> NICK command executed" << std::endl << "usr->sfd [" << usr->getSockFd() << "] " 
 			<< "usr->nick [" << usr->getNick() << "] ")
@@ -88,7 +88,7 @@ void	Commands::userCommand(Server &srv, User *usr, std::vector<std::string> para
 		throw (ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), PASS).c_str()));
 	if ((usr->getReg() >> 2) % 2)
 		throw (ErrException(ERR_ALREADYREGISTERED(usr->getNick(), usr->getUser()).c_str()));
-	usr->setUser(ft_tolower(params[0]));
+	usr->setUser(Utils::ft_tolower(params[0]));
 	usr->setMode(atoi(params[1].c_str())); // ft_atoi
 	usr->setReal(params[3]);
 	usr->setReg(usr->getReg() | 4);
@@ -165,7 +165,7 @@ void	Commands::noticeCommand(Server &srv, User *usr, std::vector<std::string> pa
 	if (CHANNEL.find(params[0][0]) == NPOS)
 	{
 		MY_DEBUG(">> trying to find user with nick: " + params[0])
-		if ((tmp = srv.getUser(ft_tolower(params[0]))) == NULL)
+		if ((tmp = srv.getUser(Utils::ft_tolower(params[0]))) == NULL)
 			throw (ErrException(ERR_NOSUCHNICK(usr->getNick(), usr->getUser(), params[0]).c_str()));
 		MY_DEBUG(">> user found with nick: " << tmp->getNick())
 		if (tmp->getMode() & F_AWAY)
@@ -178,7 +178,7 @@ void	Commands::noticeCommand(Server &srv, User *usr, std::vector<std::string> pa
 	}
 	else
 	{
-		chn = srv.getChannel(ft_tolower(params[0]));
+		chn = srv.getChannel(Utils::ft_tolower(params[0]));
 		if (chn == NULL)
 	 		throw (ErrException(ERR_NOSUCHCHANNEL(usr->getNick(), usr->getUser(), chn->getName()).c_str()));
 		if (chn->getUser(usr->getNick()) == NULL)
@@ -212,7 +212,7 @@ void	Commands::privmsgCommand(Server &srv, User *usr, std::vector<std::string> p
 	if (CHANNEL.find(params[0][0]) == NPOS)
 	{
 		MY_DEBUG(">> trying to find user with nick: " + params[0])
-		if ((tmp = srv.getUser(ft_tolower(params[0]))) == NULL)
+		if ((tmp = srv.getUser(Utils::ft_tolower(params[0]))) == NULL)
 			throw (ErrException(ERR_NOSUCHNICK(usr->getNick(), usr->getUser(), params[0]).c_str()));
 		MY_DEBUG(">> user found with nick: " << tmp->getNick())
 		if (tmp->getMode() & F_AWAY)
@@ -225,7 +225,7 @@ void	Commands::privmsgCommand(Server &srv, User *usr, std::vector<std::string> p
 	}
 	else
 	{
-		chn = srv.getChannel(ft_tolower(params[0]));
+		chn = srv.getChannel(Utils::ft_tolower(params[0]));
 		if (chn == NULL)
 	 		throw (ErrException(ERR_NOSUCHCHANNEL(usr->getNick(), usr->getUser(), chn->getName()).c_str()));
 		if (chn->getUser(usr->getNick()) == NULL)
@@ -254,7 +254,7 @@ void	Commands::modeCommand(Server &srv, User *usr, std::vector<std::string> para
 		throw (ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), MODE).c_str()));
 	if (CHANNEL.find(params[0][0]) != NPOS)
 		return ;
-	if (usr->getNick() != ft_tolower(params[0]))
+	if (usr->getNick() != Utils::ft_tolower(params[0]))
 		throw (ErrException(ERR_USERSDONTMATCH(usr->getNick(), usr->getUser()).c_str()));
 	for (int i = 1; i < (int) params.size(); i++)
 	{
@@ -267,12 +267,12 @@ void	Commands::modeCommand(Server &srv, User *usr, std::vector<std::string> para
 				if (first == '+') {
 					if (params[i][j] == 'o' || params[i][j] == 'O')
 						continue ;
-					usr->setMode(usr->getMode() | ft_convertToMode(params[i][j]));
+					usr->setMode(usr->getMode() | Utils::ft_convertToMode(params[i][j]));
 				}
 				else {
 					if (params[i][j] == 'o' || params[i][j] == 'O')
 						usr->setOperator(false);
-					usr->setMode(usr->getMode() & (~ft_convertToMode(params[i][j])));
+					usr->setMode(usr->getMode() & (~Utils::ft_convertToMode(params[i][j])));
 				}
 				modes.append(1, params[i][j]);
 			}
@@ -336,7 +336,7 @@ void	Commands::killCommand(Server &srv, User *usr, std::vector<std::string> para
 		throw (ErrException(ERR_NOPRIVILEGES(usr->getNick(), usr->getUser()).c_str()));
 	if (params.size() < 2)
 		throw (ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), KILL).c_str()));
-	if ((tmp = srv.getUser(ft_tolower(params[0]))) == NULL)
+	if ((tmp = srv.getUser(Utils::ft_tolower(params[0]))) == NULL)
 		throw (ErrException(ERR_NOSUCHNICK(usr->getNick(), usr->getUser(), params[0]).c_str()));
 	MY_DEBUG(">> killing user with nick: " << tmp->getNick())
 	channels = srv.getChannels();
@@ -411,7 +411,7 @@ void	Commands::joinCommand(Server &srv, User *usr, std::vector<std::string> para
   		Commands::leaveAllChannels(srv, usr);
   		return ;
   	}
-  	channelNames = ft_split(ft_tolower(params[0]), ",");
+  	channelNames = Utils::ft_split(Utils::ft_tolower(params[0]), ",");
   	for (int i = 0; i < (int) channelNames.size(); i++)
   	{
 		if (CHANNEL.find(channelNames[i][0]) == NPOS || channelNames[i].size() > 51)
@@ -457,7 +457,7 @@ void	Commands::partCommand(Server &srv, User *usr, std::vector<std::string> para
 		throw (ErrException(ERR_NOTREGISTERED(usr->getNick(), usr->getUser()).c_str()));
 	if (params.size() < 1)
 		throw (ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), KILL).c_str()));
-	chnNames = ft_split(ft_tolower(params[0]), std::string(","));
+	chnNames = Utils::ft_split(Utils::ft_tolower(params[0]), std::string(","));
 	partMessage = params.size() == 1 ? usr->getNick() : params[1];
 	for (int i = 0; i < (int) chnNames.size(); i++)
 	{
@@ -490,7 +490,7 @@ void	Commands::serviceCommand(Server &srv, User *usr, std::vector<std::string> p
 		throw (ErrException(ERR_ERRONEUSNICKNAME(usr->getNick(), usr->getUser()).c_str()));
 	if (params.size() < 6)
 		throw (ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), SERVICE).c_str()));
-	usr->setNick(ft_tolower(params[0]));
+	usr->setNick(Utils::ft_tolower(params[0]));
 	usr->setReg(usr->getReg() | 8);
 	usr->setInfoBot(params[5]);
 	MY_DEBUG(">> SERVICE command executed" << std::endl << "usr->sfd [" << usr->getSockFd() << "] "

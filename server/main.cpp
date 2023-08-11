@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:17:48 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/11 14:32:22 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/11 15:21:10 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@ int	main(int argc, char *argv[]) {
 		std::cerr << "Usage error: ./ircserv <port> <password>" << std::endl;
 		return (1);
 	}
-	else if (!Utils::ft_isdigit(std::string(argv[1])) || std::atoi(argv[1]) < 1024 || Utils::ft_strcmp(argv[1], "2147483657") > 0)
+	else if (!Utils::ft_isdigit(std::string(argv[1])) || std::atoi(argv[1]) < 1024
+		|| (std::string(argv[1]).size() >= 10 && Utils::ft_strcmp(argv[1], "2147483657") > 0))
 	{
 		std::cerr << "Error: invalid port number" << std::endl;
 		return (1);

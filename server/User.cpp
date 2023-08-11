@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 08:27:25 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/10 14:29:29 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/11 15:09:35 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,13 +33,13 @@ void	User::checkBuff(Server &server)
 		MY_DEBUG(">> readBuff resized")
 	}
 	MY_DEBUG(">> readBuff:" << std::endl << "[" << this->_readBuff.substr(0, this->_readBuff.size() - DEL.size()) << "]")
-	commands = ft_split(this->_readBuff, DEL);
+	commands = Utils::ft_split(this->_readBuff, DEL);
 	for (int i = 0; i < (int) commands.size(); i++)
 	{
 		command = commands[i];
 		try {
 			MY_DEBUG(">> starting to parse: [" << command << "]")
-			cmd = ft_parse(command);
+			cmd = Utils::ft_parse(command);
 		} catch (std::exception &e) {
 			this->_readBuff = "";
 			MY_DEBUG(">> parse failed")
@@ -57,7 +57,7 @@ void	User::checkBuff(Server &server)
 		cmdName = cmd[0];
 		cmd.erase(cmd.begin());
 		try {
-			Commands::commands.at(ft_toupper(cmdName))(server, this, cmd);
+			Commands::commands.at(Utils::ft_toupper(cmdName))(server, this, cmd);
 		} catch (std::out_of_range &e) {
 			this->_readBuff = "";
 			MY_DEBUG(">> Command not found [" << cmdName << "]" << std::endl << ">> Error: [" << e.what() << "]")
@@ -83,7 +83,7 @@ bool	User::checkNick(std::string nick)
 	return (true);
 }
 
-User::User(int sockfd, std::string ip): _sockfd(sockfd), _registered(0), _op(false), _close(false), _ping(false), _time(ft_gettime()), _readBuff(""), _writeBuff(""), _awayMsg(MSG_AWAY), _infoBot("")
+User::User(int sockfd, std::string ip): _sockfd(sockfd), _registered(0), _op(false), _close(false), _ping(false), _time(Utils::ft_gettime()), _readBuff(""), _writeBuff(""), _awayMsg(MSG_AWAY), _infoBot("")
 {
 	this->_ip = ip;
 	return ;
@@ -260,5 +260,5 @@ void		User::setIp(std::string ip)
 
 void		User::resetTime(void)
 {
-	this->_time = ft_gettime();
+	this->_time = Utils::ft_gettime();
 }

@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:59:18 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/11 14:09:29 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/11 15:13:26 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ Server::Server(char *port, std::string pass): _end(false), _toClean(false), _pas
 	int				on = 1;
 
 	this->_sinAddr = sizeof(struct sockaddr);
-	memset((void *) &this->_hints, 0, sizeof(struct addrinfo)); // ft_memset
+	Utils::ft_memset((void *) &this->_hints, 0, sizeof(struct addrinfo)); // ft_memset
 	this->_hints.ai_family = AF_UNSPEC;
 	this->_hints.ai_socktype = SOCK_STREAM;
 	this->_hints.ai_protocol = 0;
@@ -51,7 +51,7 @@ Server::Server(char *port, std::string pass): _end(false), _toClean(false), _pas
 	freeaddrinfo(res);
 	if (listen(this->_sfd, BACKLOG))
 		throw (ErrException("listen() faied"));
-	memset((void *) this->_pollfds, 0, sizeof(this->_pollfds)); // ft_memset
+	Utils::ft_memset((void *) this->_pollfds, 0, sizeof(this->_pollfds)); // ft_memset
 	this->_pollfds[0].fd = this->_sfd;
 	this->_pollfds[0].events = POLLIN;
 	MY_DEBUG("##### SERVER CREATED SUCCESSFULLY #####")
@@ -168,7 +168,7 @@ void		Server::checkClean(User *usr, int index)
 
 void		Server::checkPing(User *usr)
 {
-	if (!usr->getClose() && !usr->getPing() && ft_gettime() - usr->getTime() >= PING_TIMEOUT)
+	if (!usr->getClose() && !usr->getPing() && Utils::ft_gettime() - usr->getTime() >= PING_TIMEOUT)
 	{
 		MY_DEBUG(">> sending PING message")
 		usr->setWriteBuff(usr->getWriteBuff() + MSG_PING);
@@ -176,7 +176,7 @@ void		Server::checkPing(User *usr)
 		usr->resetTime();
 		usr->setPing(true);
 	}
-	else if (!usr->getClose() && usr->getPing() && ft_gettime() - usr->getTime() >= PING_TIMEOUT)
+	else if (!usr->getClose() && usr->getPing() && Utils::ft_gettime() - usr->getTime() >= PING_TIMEOUT)
 	{
 		MY_DEBUG(">> PING_TIMEOUT elapsed")
 		std::vector<std::string>	message(1, "Connection lost");
@@ -225,7 +225,7 @@ void	Server::pollIn(User *usr, int index)
 
 	usr->resetTime();
 	usr->setPing(false);
-	memset((void *) this->_buff, 0, BUFFSIZE); // ft_memset()
+	Utils::ft_memset((void *) this->_buff, 0, BUFFSIZE); // ft_memset()
 	r = recv(usr->getSockFd(), this->_buff, BUFFSIZE, MSG_DONTWAIT);
 	MY_DEBUG(">> received [" << r << "]:" << std::endl << "["
 			<< std::string(this->_buff).substr(0, std::string(this->_buff).size() - 2) << "]")
@@ -315,7 +315,7 @@ void	Server::cleanPollfds(void) {
 		}
 	}
 	if (this->_pollfds[this->_npollfds - 1].fd == -1)
-		memset((void *) &this->_pollfds[--this->_npollfds], 0, sizeof(struct pollfd)); // ft_memset
+		Utils::ft_memset((void *) &this->_pollfds[--this->_npollfds], 0, sizeof(struct pollfd)); // ft_memset
 	this->_toClean = false;
 }
 

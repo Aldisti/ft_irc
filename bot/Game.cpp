@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Game.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 11:24:52 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/11 14:47:15 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/11 15:13:43 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,7 +188,7 @@ std::vector<std::string>	Game::getMatPrint(std::string player) const
 	{
 		if (i > 0)
 			msg.push_back(BMSG_PRIVMSG(player, "     ―+―+― "));
-		tmp = Utils::ft_itoa(i + 1) + std::string("   ");
+		tmp = Utils::Utils::ft_itoa(i + 1) + std::string("   ");
 		for (int j = 0; j < 3; j++)
 		{
 			tmp += Game::values[this->_mat[i][j]];
