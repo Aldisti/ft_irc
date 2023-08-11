@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ErrException.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gpanico <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 11:29:20 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/11 11:29:22 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/11 15:15:00 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ class	ErrException: public std::exception
 
 	public:
 		ErrException(const char * message) {
-			this->_message = ft_strdup(message);
+			this->_message = Utils::ft_strdup(message);
 		}
 		virtual	~ErrException() throw() {
 			delete this->_message;

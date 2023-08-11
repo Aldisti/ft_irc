@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:21:38 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/11 12:56:31 by gpanico          ###   ########.fr       */
+/*   Updated: 2023/08/11 15:14:04 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@
 #define MY_DEBUG(string) if(DEBUG_B) \
 	std::cout << string << std::endl;
 #define MYPORT "8001"  // the port users will be connecting to
-#define IP std::string("10.12.3.3")
+#define IP std::string("10.12.3.5")
 #define SRV_NAME std::string("hcierVI")
 #define BOT_NAME std::string("reltiH")
 #define BOT_INFO std::string("play tic tac toe")
@@ -157,7 +157,7 @@
 #define ERR_USERSDONTMATCH(nick, user) std::string(PREFIX(nick, user) + " 502 " + nick + " :Cannot change mode for other users" + DEL)
 #define ERR_BADSYNTAX(nick, user) std::string(PREFIX(nick, user) + " 542 " + nick + " :bad syntax\r\n")
 
-#include "utils.hpp"
+#include "Utils.hpp"
 #include "ErrException.hpp"
 #include "User.hpp"
 #include "Channel.hpp"
