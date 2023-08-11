@@ -39,7 +39,7 @@
 #define MY_DEBUG(string) if(DEBUG_B) \
 	std::cout << string << std::endl;
 #define MYPORT "8001"  // the port users will be connecting to
-#define IP std::string("10.12.3.5")
+#define IP std::string("")
 #define SRV_NAME std::string("hcierVI")
 #define BOT_NAME std::string("reltiH")
 #define BOT_INFO std::string("play tic tac toe")

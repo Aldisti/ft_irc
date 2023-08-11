@@ -86,6 +86,7 @@ bool	User::checkNick(std::string nick)
 User::User(int sockfd, std::string ip): _sockfd(sockfd), _registered(0), _op(false), _close(false), _ping(false), _time(Utils::ft_gettime()), _readBuff(""), _writeBuff(""), _awayMsg(MSG_AWAY), _infoBot("")
 {
 	this->_ip = ip;
+	this->_mode = 0;
 	return ;
 }
 

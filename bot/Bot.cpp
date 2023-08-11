@@ -233,7 +233,7 @@ void	Bot::continueGame(std::string nick, Game *game, std::vector<std::string> re
 		{
 			this->botSend(game->getMatPrint(game->getP2()));
 			this->botSend(BMSG_PRIVMSG(
-						(game->getP2() == nick ? game->getP1() : game->getP1()), std::string("YOU LOSE")));
+						(game->getP2() == nick ? game->getP1() : game->getP2()), std::string("YOU LOSE")));
 		}
 	}
 	else if (game->getEnd())
