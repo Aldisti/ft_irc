@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 09:27:23 by gpanico           #+#    #+#             */
-/*   Updated: 2023/08/11 15:09:27 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/11 15:35:22 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,9 @@ void	Commands::passCommand(Server &srv, User *usr, std::vector<std::string> para
 void	Commands::capCommand(Server &srv, User *usr, std::vector<std::string> params)
 {
 	(void) usr;
-	(void) params;
 	(void) srv;
+	if (!params.size())
+		return ;
 	if (params[0] == "LS")
 		usr->setWriteBuff(usr->getWriteBuff() + MSG_CAP);
 	MY_DEBUG(">> CAP command executed")
@@ -65,9 +66,9 @@ void	Commands::nickCommand(Server &srv, User *usr, std::vector<std::string> para
 	if (params.size() == 0)
 		throw (ErrException(ERR_NONICKNAMEGIVEN(usr->getNick(), usr->getUser()).c_str()));
 	if (!User::checkNick(params[0]))
-		throw (ErrException(ERR_ERRONEUSNICKNAME(usr->getNick(), usr->getUser()).c_str()));
+		throw (ErrException(ERR_ERRONEUSNICKNAME(usr->getNick(), usr->getUser(), params[0]).c_str()));
 	if (srv.getUser(params[0]))
-		throw (ErrException(ERR_NICKNAMEINUSE(usr->getNick(), usr->getUser()).c_str()));
+		throw (ErrException(ERR_NICKNAMEINUSE(usr->getNick(), usr->getUser(), params[0]).c_str()));
 	usr->setNick(Utils::ft_tolower(params[0]));
 	usr->setReg(usr->getReg() | 2);
 	MY_DEBUG(">> NICK command executed" << std::endl << "usr->sfd [" << usr->getSockFd() << "] " 
@@ -85,7 +86,7 @@ void	Commands::userCommand(Server &srv, User *usr, std::vector<std::string> para
 	if (usr->getReg() % 2 == 0)
 		throw (ErrException(ERR_NOTREGISTERED(usr->getNick(), usr->getUser()).c_str()));
 	if (params.size() < 4)
-		throw (ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), PASS).c_str()));
+		throw (ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), USER).c_str()));
 	if ((usr->getReg() >> 2) % 2)
 		throw (ErrException(ERR_ALREADYREGISTERED(usr->getNick(), usr->getUser()).c_str()));
 	usr->setUser(Utils::ft_tolower(params[0]));
@@ -487,7 +488,7 @@ void	Commands::serviceCommand(Server &srv, User *usr, std::vector<std::string> p
 	if ((usr->getReg() >> 3) % 2 == 1 || (usr->getReg() >> 2) % 2 == 1 || (usr->getReg() >> 1) % 2 == 1)
 		throw (ErrException(ERR_ALREADYREGISTERED(usr->getNick(), usr->getUser()).c_str()));
 	if (!User::checkNick(params[0]))
-		throw (ErrException(ERR_ERRONEUSNICKNAME(usr->getNick(), usr->getUser()).c_str()));
+		throw (ErrException(ERR_ERRONEUSNICKNAME(usr->getNick(), usr->getUser(), params[0]).c_str()));
 	if (params.size() < 6)
 		throw (ErrException(ERR_NEEDMOREPARAMS(usr->getNick(), usr->getUser(), SERVICE).c_str()));
 	usr->setNick(Utils::ft_tolower(params[0]));
