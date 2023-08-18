@@ -6,7 +6,7 @@
 /*   By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:17:48 by adi-stef          #+#    #+#             */
-/*   Updated: 2023/08/11 15:21:10 by adi-stef         ###   ########.fr       */
+/*   Updated: 2023/08/11 15:43:11 by adi-stef         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,5 +47,7 @@ int	main(int argc, char *argv[]) {
 	catch (ErrException &e)
 	{
 		delete srv;
+		return (1);
 	}
+	delete srv;
 }
