@@ -6,7 +6,7 @@
 #    By: adi-stef <adi-stef@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/21 11:08:49 by adi-stef          #+#    #+#              #
-#    Updated: 2023/08/10 12:37:27 by gpanico          ###   ########.fr        #
+#    Updated: 2023/08/18 15:05:42 by adi-stef         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,7 @@ RESET	= \033[0;0m
 $(shell ./ipconfig.sh)
 
 %.o : %.cpp
-	@printf "\r\033[K$(GREEN)Compiling $(NAME)...$(RESET)"
+	@printf "\r\033[K$(GREEN)Compiling...$(RESET)"
 	@$(CC) $(FLAGS) -c $< -o $@
 
 $(NAME): $(SRV_OBJ)
